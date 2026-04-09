@@ -1,264 +1,375 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Willians &amp; Poliana 💍</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
-.app{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
-.hdr{background:#7F77DD;padding:16px 20px 12px}
+:root{
+  --color-background-primary:#1A1A2E;
+  --color-background-secondary:#16213E;
+  --color-text-primary:#E8E6F8;
+  --color-text-secondary:#A09DB8;
+  --color-border-tertiary:rgba(255,255,255,0.08);
+  --color-border-secondary:rgba(255,255,255,0.15);
+  --border-radius-lg:16px;
+  --border-radius-md:12px;
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+@media(prefers-color-scheme:light){
+  :root{
+    --color-background-primary:#FFFFFF;
+    --color-background-secondary:#F5F4FD;
+    --color-text-primary:#1A1730;
+    --color-text-secondary:#6B6887;
+    --color-border-tertiary:rgba(0,0,0,0.08);
+    --color-border-secondary:rgba(0,0,0,0.15);
+  }
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:var(--font-sans);font-size:15px;color:var(--color-text-primary);background:var(--color-background-secondary);min-height:100vh}
+
+/* APP SHELL */
+.app{display:flex;flex-direction:column;min-height:100vh;max-width:480px;margin:0 auto;background:var(--color-background-primary);position:relative}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#7F77DD 0%,#9B54A0 100%);padding:env(safe-area-inset-top,16px) 20px 14px;padding-top:max(env(safe-area-inset-top),16px)}
 .hdr-top{display:flex;align-items:center;justify-content:space-between}
-.hdr h1{font-size:17px;font-weight:500;color:#EEEDFE}
-.hdr p{font-size:11px;color:#AFA9EC;margin-top:2px}
-.hdr-date{background:rgba(255,255,255,0.18);border-radius:20px;padding:3px 11px;font-size:12px;color:#EEEDFE}
-.prg-row{display:flex;gap:10px;padding:10px 16px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
-.pi{flex:1}.pi-lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
-.pi-bar{height:4px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden}
-.pi-fill{height:100%;border-radius:4px}
-.pi-val{font-size:11px;font-weight:500;margin-top:2px}
-.nav{display:flex;overflow-x:auto;border-bottom:0.5px solid var(--color-border-tertiary);scrollbar-width:none;background:var(--color-background-primary)}
-.nav::-webkit-scrollbar{display:none}
-.nb{flex-shrink:0;padding:10px 13px;font-size:12px;border:none;background:none;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;white-space:nowrap}
-.nb.on{color:#7F77DD;border-bottom-color:#7F77DD;font-weight:500}
-.pg{display:none;padding:14px 14px 20px}
+.hdr h1{font-size:20px;font-weight:700;color:#EEEDFE;letter-spacing:-0.3px}
+.hdr p{font-size:12px;color:#C8C3F5;margin-top:2px}
+.hdr-date{background:rgba(255,255,255,0.22);border-radius:20px;padding:5px 13px;font-size:13px;color:#EEEDFE;font-weight:500;white-space:nowrap}
+
+/* PROGRESS ROW */
+.prg-row{display:flex;gap:0;padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.pi{flex:1;padding:0 4px}
+.pi-lbl{font-size:10px;color:var(--color-text-secondary);margin-bottom:3px;white-space:nowrap}
+.pi-bar{height:5px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden}
+.pi-fill{height:100%;border-radius:4px;transition:width 0.3s ease}
+.pi-val{font-size:11px;font-weight:600;margin-top:2px}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);padding-bottom:env(safe-area-inset-bottom,0);z-index:100;overflow-x:auto;scrollbar-width:none}
+.bottom-nav::-webkit-scrollbar{display:none}
+.nb{flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;font-size:9px;border:none;background:none;cursor:pointer;color:var(--color-text-secondary);gap:3px;transition:color 0.2s;white-space:nowrap}
+.nb-icon{font-size:20px;line-height:1}
+.nb.on{color:#7F77DD}
+.nb.on .nb-icon{transform:scale(1.1)}
+
+/* PAGES */
+.pg{display:none;padding:14px 14px 90px;flex:1;min-height:calc(100vh - 200px)}
 .pg.on{display:block}
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.sec-ttl{font-size:13px;font-weight:500;color:var(--color-text-primary)}
-.btn-sm{font-size:11px;background:#EEEDFE;color:#534AB7;border:none;padding:4px 10px;border-radius:20px;cursor:pointer}
-.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:11px 13px;margin-bottom:8px}
+
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-ttl{font-size:16px;font-weight:600;color:var(--color-text-primary)}
+.btn-sm{font-size:13px;background:#EEEDFE;color:#534AB7;border:none;padding:8px 14px;border-radius:20px;cursor:pointer;font-weight:500;min-height:36px}
+
+/* CARDS */
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:13px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
 .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.nm{font-size:13px;font-weight:500;color:var(--color-text-primary)}
-.sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.bdg{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.nm{font-size:15px;font-weight:600;color:var(--color-text-primary)}
+.sub{font-size:12px;color:var(--color-text-secondary);margin-top:3px;line-height:1.4}
+
+/* BADGES */
+.bdg{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;white-space:nowrap}
 .bg{background:#EAF3DE;color:#27500A}.by{background:#FAEEDA;color:#633806}.br{background:#FCEBEB;color:#791F1F}.bp{background:#FBEAF0;color:#72243E}.bpu{background:#EEEDFE;color:#3C3489}.bgr{background:#F1EFE8;color:#444441}
-.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+
+/* AVATAR */
+.av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .avpu{background:#EEEDFE;color:#534AB7}.avt{background:#E1F5EE;color:#0F6E56}.avpk{background:#FBEAF0;color:#993556}.ava{background:#FAEEDA;color:#854F0B}.avc{background:#E6F1FB;color:#185FA5}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
-.sc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center}
-.sc-n{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.sc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 6px;text-align:center}
+.sc-n{font-size:22px;font-weight:700;color:var(--color-text-primary)}
 .sc-l{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
-.ci{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer}
+
+/* CHECKLIST */
+.ci{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer;min-height:48px}
 .ci:last-child{border-bottom:none}
-.cb{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:10px}
+.cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:12px;transition:all 0.2s}
 .cb.ck{background:#7F77DD;border-color:#7F77DD;color:#fff}
-.ct{font-size:12px;color:var(--color-text-primary)}.ct.ck{text-decoration:line-through;color:var(--color-text-secondary)}
-.cd{font-size:10px;color:var(--color-text-secondary);margin-top:1px}
-.fr{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ct{font-size:14px;color:var(--color-text-primary);line-height:1.4}.ct.ck{text-decoration:line-through;color:var(--color-text-secondary)}
+.cd{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+
+/* FINANCE */
+.fr{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary);gap:8px}
 .fr:last-child{border-bottom:none}
-.fl{font-size:12px;color:var(--color-text-primary)}
-.fe{font-size:11px;color:var(--color-text-secondary)}
-.fv{font-size:12px;font-weight:500}
+.fl{font-size:14px;color:var(--color-text-primary);font-weight:500}
+.fe{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.fv{font-size:14px;font-weight:600}
 .fv.ok{color:#27500A}.fv.ov{color:#791F1F}.fv.pd{color:#633806}
-.tot{background:#EEEDFE;border-radius:var(--border-radius-md);padding:11px 13px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
-.tot-l{font-size:12px;color:#534AB7}.tot-v{font-size:17px;font-weight:500;color:#3C3489}
-.spb{height:3px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden;margin-top:7px}
+.tot{background:linear-gradient(135deg,#EEEDFE,#E8E6FF);border-radius:var(--border-radius-md);padding:14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.tot-l{font-size:13px;color:#534AB7;font-weight:500}.tot-v{font-size:20px;font-weight:700;color:#3C3489}
+.spb{height:4px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden;margin-top:8px}
 .spf{height:100%;border-radius:4px;background:#7F77DD}
-.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.mi{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px;text-align:center}
-.mn{font-size:12px;font-weight:500}.msub{font-size:10px;color:var(--color-text-secondary);margin-top:1px}
-.spots{display:flex;gap:2px;justify-content:center;margin-top:5px;flex-wrap:wrap}
-.sp{width:7px;height:7px;border-radius:50%}
+
+/* TABLES GRID */
+.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mi{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
+.mn{font-size:13px;font-weight:600}.msub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.spots{display:flex;gap:3px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.sp{width:9px;height:9px;border-radius:50%}
 .sp.tk{background:#7F77DD}.sp.fr{background:var(--color-border-tertiary)}
-.inp{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:12px;margin-bottom:8px}
-.sel{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:12px;margin-bottom:8px}
-.btn-add{width:100%;padding:9px;background:#7F77DD;color:#EEEDFE;border:none;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;margin-top:4px}
-.btn-del{background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:14px;padding:2px 6px;border-radius:4px}
-.btn-del:hover{color:#E24B4A}
-.modal-bg{display:none;background:rgba(0,0,0,0.35);border-radius:var(--border-radius-md);padding:16px;margin-bottom:12px}
-.modal-bg.on{display:block}
-.modal{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:14px}
-.modal-ttl{font-size:13px;font-weight:500;margin-bottom:12px;color:var(--color-text-primary)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
-.gift-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+
+/* GIFTS */
+.gift-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary);min-height:52px}
 .gift-row:last-child{border-bottom:none}
-.gift-nm{font-size:12px;color:var(--color-text-primary);flex:1}
-.gift-pr{font-size:12px;font-weight:500;color:#534AB7}
-.gb{width:16px;height:16px;border-radius:3px;border:1.5px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px}
+.gift-nm{font-size:14px;color:var(--color-text-primary);flex:1;font-weight:500}
+.gift-pr{font-size:13px;font-weight:600;color:#534AB7}
+.gb{width:22px;height:22px;border-radius:5px;border:2px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;transition:all 0.2s}
 .gb.ck{background:#1D9E75;border-color:#1D9E75;color:#fff}
-.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.mood-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
-.mood-icon{font-size:24px;margin-bottom:6px}
-.mood-nm{font-size:12px;font-weight:500;color:var(--color-text-primary)}
-.mood-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.tag{display:inline-block;background:#EEEDFE;color:#3C3489;font-size:10px;padding:2px 7px;border-radius:20px;margin:2px}
+
+/* MOOD GRID */
+.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mood-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px;text-align:center}
+.mood-icon{font-size:28px;margin-bottom:7px}
+.mood-nm{font-size:13px;font-weight:600;color:var(--color-text-primary)}
+.mood-sub{font-size:11px;color:var(--color-text-secondary);margin-top:3px;line-height:1.4}
+.tag{display:inline-block;background:#EEEDFE;color:#3C3489;font-size:11px;padding:3px 8px;border-radius:20px;margin:2px}
+
+/* INPUTS */
+.inp{width:100%;padding:12px 13px;border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:15px;margin-bottom:10px;transition:border-color 0.2s;-webkit-appearance:none}
+.inp:focus{outline:none;border-color:#7F77DD}
+.sel{width:100%;padding:12px 13px;border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:15px;margin-bottom:10px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center}
+.sel:focus{outline:none;border-color:#7F77DD}
+.btn-add{width:100%;padding:14px;background:linear-gradient(135deg,#7F77DD,#9B54A0);color:#fff;border:none;border-radius:var(--border-radius-md);font-size:15px;cursor:pointer;margin-top:6px;font-weight:600;letter-spacing:0.2px}
+.btn-del{background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:18px;padding:6px 8px;border-radius:6px;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-del:active{color:#E24B4A;background:rgba(226,75,74,0.1)}
+
+/* MODAL - full bottom sheet on mobile */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal{background:var(--color-background-primary);border-radius:20px 20px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 20px);width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:slideUp 0.25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--color-border-secondary);border-radius:2px;margin:0 auto 16px;display:block}
+.modal-ttl{font-size:17px;font-weight:700;margin-bottom:16px;color:var(--color-text-primary)}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--color-background-secondary);border:none;width:32px;height:32px;border-radius:50%;font-size:16px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lbl{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500}
+
+/* Supplier progress */
+.spb{height:5px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden;margin-top:10px}
+.spf{height:100%;border-radius:4px;background:#7F77DD}
+
+/* Dance floor banner */
+.dance-banner{background:linear-gradient(135deg,#EEEDFE,#F0EEFF);border-radius:var(--border-radius-md);padding:10px 14px;text-align:center;margin-bottom:14px;font-size:12px;color:#534AB7;font-weight:500}
+
+/* Save confirmation */
+#esp-saved{margin-top:12px;padding:12px;background:#E1F5EE;border-radius:var(--border-radius-md);font-size:13px;color:#085041;text-align:center;font-weight:500}
+
+/* Refs */
+.ref-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ref-row:last-child{border-bottom:none}
+.ref-link{font-size:13px;color:#7F77DD;flex:1;word-break:break-all}
+
+/* Refs input row */
+.ref-input-row{display:flex;gap:8px;margin-top:10px;align-items:flex-end}
+.ref-input-row .inp{margin:0;flex:1}
+.ref-input-row .btn-sm{flex-shrink:0;align-self:stretch;padding:0 16px;border-radius:12px;font-size:14px;height:48px}
 </style>
-
-<h2 class="sr-only">App completo de organização do casamento de Willians e Poliana</h2>
-
+</head>
+<body>
 <div class="app">
+  <!-- HEADER -->
   <div class="hdr">
     <div class="hdr-top">
-      <div><h1>Willians &amp; Poliana</h1><p>App de organização do casamento</p></div>
+      <div><h1>💍 Willians &amp; Poliana</h1><p>App de organização do casamento</p></div>
       <div class="hdr-date" id="hdr-date">14 dez 2025</div>
     </div>
   </div>
+
+  <!-- PROGRESS -->
   <div class="prg-row">
     <div class="pi"><div class="pi-lbl">Tarefas</div><div class="pi-bar"><div class="pi-fill" id="task-bar" style="background:#7F77DD"></div></div><div class="pi-val" id="task-pct" style="color:#534AB7"></div></div>
     <div class="pi"><div class="pi-lbl">Orçamento</div><div class="pi-bar"><div class="pi-fill" id="fin-bar" style="background:#1D9E75"></div></div><div class="pi-val" id="fin-pct" style="color:#0F6E56"></div></div>
     <div class="pi"><div class="pi-lbl">RSVPs</div><div class="pi-bar"><div class="pi-fill" id="rsvp-bar" style="background:#D4537E"></div></div><div class="pi-val" id="rsvp-pct" style="color:#993556"></div></div>
     <div class="pi"><div class="pi-lbl">Presentes</div><div class="pi-bar"><div class="pi-fill" id="gift-bar" style="background:#BA7517"></div></div><div class="pi-val" id="gift-pct" style="color:#633806"></div></div>
   </div>
-  <div class="nav" id="nav">
-    <button class="nb on" onclick="show('convidados',this)">Convidados</button>
-    <button class="nb" onclick="show('checklist',this)">Checklist</button>
-    <button class="nb" onclick="show('financeiro',this)">Financeiro</button>
-    <button class="nb" onclick="show('fornecedores',this)">Fornecedores</button>
-    <button class="nb" onclick="show('mesas',this)">Mesas</button>
-    <button class="nb" onclick="show('presentes',this)">Presentes</button>
-    <button class="nb" onclick="show('inspiracoes',this)">Fotos/Estilo</button>
-    <button class="nb" onclick="show('espaco',this)">Espaço</button>
-  </div>
 
+  <!-- PAGES -->
   <div id="pg-convidados" class="pg on">
     <div class="stats" id="guest-stats"></div>
-    <div class="sec-hdr"><span class="sec-ttl">Lista de convidados</span><button class="btn-sm" onclick="toggleModal('gm')">+ Adicionar</button></div>
-    <div class="modal-bg" id="gm">
-      <div class="modal">
-        <div class="modal-ttl">Novo convidado</div>
-        <div class="lbl">Nome completo</div><input class="inp" id="g-nome" placeholder="Nome do convidado">
-        <div class="row2">
-          <div><div class="lbl">Categoria</div><select class="sel" id="g-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
-          <div><div class="lbl">RSVP</div><select class="sel" id="g-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
-        </div>
-        <div class="row2">
-          <div><div class="lbl">Mesa nº</div><input class="inp" id="g-mesa" placeholder="ex: 3"></div>
-          <div><div class="lbl">Restrição alimentar</div><input class="inp" id="g-rest" placeholder="ex: Vegetariano"></div>
-        </div>
-        <button class="btn-add" onclick="addGuest()">Salvar convidado</button>
-      </div>
-    </div>
+    <div class="sec-hdr"><span class="sec-ttl">Convidados</span><button class="btn-sm" onclick="openModal('gm')">+ Adicionar</button></div>
     <div id="guest-list"></div>
   </div>
 
   <div id="pg-checklist" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Checklist de tarefas</span><button class="btn-sm" onclick="toggleModal('tm')">+ Tarefa</button></div>
-    <div class="modal-bg" id="tm">
-      <div class="modal">
-        <div class="modal-ttl">Nova tarefa</div>
-        <div class="lbl">Descrição</div><input class="inp" id="t-desc" placeholder="Ex: Confirmar fotógrafo">
-        <div class="row2">
-          <div><div class="lbl">Data limite</div><input class="inp" id="t-data" type="date"></div>
-          <div><div class="lbl">Categoria</div><select class="sel" id="t-cat"><option>Geral</option><option>Traje</option><option>Fornecedor</option><option>Convidados</option><option>Espaço</option><option>Financeiro</option></select></div>
-        </div>
-        <button class="btn-add" onclick="addTask()">Salvar tarefa</button>
-      </div>
-    </div>
-    <div class="card" id="task-list" style="padding:11px 13px"></div>
+    <div class="sec-hdr"><span class="sec-ttl">Checklist</span><button class="btn-sm" onclick="openModal('tm')">+ Tarefa</button></div>
+    <div class="card" id="task-list" style="padding:6px 14px"></div>
   </div>
 
   <div id="pg-financeiro" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Controle financeiro</span><button class="btn-sm" onclick="toggleModal('fm')">+ Item</button></div>
-    <div class="modal-bg" id="fm">
-      <div class="modal">
-        <div class="modal-ttl">Novo item financeiro</div>
-        <div class="lbl">Descrição</div><input class="inp" id="f-desc" placeholder="Ex: Floricultura">
-        <div class="row2">
-          <div><div class="lbl">Valor estimado (R$)</div><input class="inp" id="f-est" type="number" placeholder="0"></div>
-          <div><div class="lbl">Valor real (R$)</div><input class="inp" id="f-real" type="number" placeholder="0"></div>
-        </div>
-        <div class="row2">
-          <div><div class="lbl">Vencimento</div><input class="inp" id="f-venc" type="date"></div>
-          <div><div class="lbl">Status</div><select class="sel" id="f-status"><option>Pendente</option><option>Pago parcial</option><option>Quitado</option></select></div>
-        </div>
-        <button class="btn-add" onclick="addFin()">Salvar item</button>
-      </div>
-    </div>
-    <div class="card" id="fin-list" style="padding:11px 13px"></div>
-    <div class="tot"><div><div class="tot-l">Total estimado</div><div id="fin-real-tot" style="font-size:11px;color:#7F77DD"></div></div><div class="tot-v" id="fin-est-tot"></div></div>
+    <div class="sec-hdr"><span class="sec-ttl">Financeiro</span><button class="btn-sm" onclick="openModal('fm')">+ Item</button></div>
+    <div class="card" id="fin-list" style="padding:6px 14px"></div>
+    <div class="tot"><div><div class="tot-l">Total estimado</div><div id="fin-real-tot" style="font-size:12px;color:#7F77DD;margin-top:2px"></div></div><div class="tot-v" id="fin-est-tot"></div></div>
   </div>
 
   <div id="pg-fornecedores" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Fornecedores</span><button class="btn-sm" onclick="toggleModal('sm')">+ Fornecedor</button></div>
-    <div class="modal-bg" id="sm">
-      <div class="modal">
-        <div class="modal-ttl">Novo fornecedor</div>
-        <div class="lbl">Nome da empresa</div><input class="inp" id="s-nome" placeholder="Ex: Buffet Bella Cozinha">
-        <div class="row2">
-          <div><div class="lbl">Categoria</div><select class="sel" id="s-cat"><option>Buffet</option><option>Foto/Vídeo</option><option>Decoração</option><option>DJ/Música</option><option>Floricultura</option><option>Cerimonial</option><option>Outro</option></select></div>
-          <div><div class="lbl">Status</div><select class="sel" id="s-status"><option>Proposta</option><option>Contratado</option><option>Pago parcial</option><option>Quitado</option></select></div>
-        </div>
-        <div class="row2">
-          <div><div class="lbl">Valor total (R$)</div><input class="inp" id="s-total" type="number" placeholder="0"></div>
-          <div><div class="lbl">Valor pago (R$)</div><input class="inp" id="s-pago" type="number" placeholder="0"></div>
-        </div>
-        <div class="lbl">Link do contrato</div><input class="inp" id="s-link" placeholder="https://...">
-        <button class="btn-add" onclick="addSupplier()">Salvar fornecedor</button>
-      </div>
-    </div>
+    <div class="sec-hdr"><span class="sec-ttl">Fornecedores</span><button class="btn-sm" onclick="openModal('sm')">+ Novo</button></div>
     <div id="sup-list"></div>
   </div>
 
   <div id="pg-mesas" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Mapa de mesas</span><button class="btn-sm" onclick="toggleModal('mm')">+ Mesa</button></div>
-    <div style="background:#EEEDFE;border-radius:var(--border-radius-md);padding:8px;text-align:center;margin-bottom:12px;font-size:11px;color:#534AB7">Pista de dança — Mesa dos noivos ao centro</div>
-    <div class="modal-bg" id="mm">
-      <div class="modal">
-        <div class="modal-ttl">Nova mesa</div>
-        <div class="row2">
-          <div><div class="lbl">Nome/número</div><input class="inp" id="m-nome" placeholder="Ex: Mesa 6"></div>
-          <div><div class="lbl">Capacidade</div><input class="inp" id="m-cap" type="number" placeholder="10"></div>
-        </div>
-        <div class="lbl">Grupo / Descrição</div><input class="inp" id="m-grupo" placeholder="Ex: Amigos da faculdade">
-        <button class="btn-add" onclick="addTable()">Salvar mesa</button>
-      </div>
-    </div>
+    <div class="sec-hdr"><span class="sec-ttl">Mesas</span><button class="btn-sm" onclick="openModal('mm')">+ Mesa</button></div>
+    <div class="dance-banner">💃 Pista de dança — Mesa dos noivos ao centro</div>
     <div class="mgrid" id="mesa-grid"></div>
   </div>
 
   <div id="pg-presentes" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Lista de presentes</span><button class="btn-sm" onclick="toggleModal('pm')">+ Presente</button></div>
-    <div class="modal-bg" id="pm">
-      <div class="modal">
-        <div class="modal-ttl">Novo presente</div>
-        <div class="lbl">Item</div><input class="inp" id="p-nome" placeholder="Ex: Jogo de panelas">
-        <div class="row2">
-          <div><div class="lbl">Preço estimado (R$)</div><input class="inp" id="p-preco" type="number" placeholder="0"></div>
-          <div><div class="lbl">Categoria</div><select class="sel" id="p-cat"><option>Cozinha</option><option>Quarto</option><option>Sala</option><option>Banheiro</option><option>Eletrônicos</option><option>Viagem</option><option>Outro</option></select></div>
-        </div>
-        <button class="btn-add" onclick="addGift()">Salvar presente</button>
-      </div>
-    </div>
-    <div class="card" id="gift-list" style="padding:11px 13px"></div>
+    <div class="sec-hdr"><span class="sec-ttl">Presentes</span><button class="btn-sm" onclick="openModal('pm')">+ Presente</button></div>
+    <div class="card" id="gift-list" style="padding:6px 14px"></div>
   </div>
 
   <div id="pg-inspiracoes" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Estilo &amp; inspirações</span></div>
+    <div class="sec-hdr"><span class="sec-ttl">Estilo &amp; Inspirações</span></div>
     <div class="mood-grid">
-      <div class="mood-card"><div class="mood-icon" style="font-size:24px">&#127800;</div><div class="mood-nm">Decoração floral</div><div class="mood-sub">Rosas brancas e bouvardia</div></div>
-      <div class="mood-card"><div class="mood-icon" style="font-size:24px">&#127774;</div><div class="mood-nm">Paleta de cores</div><div style="margin-top:6px;display:flex;gap:4px;justify-content:center"><div style="width:16px;height:16px;border-radius:50%;background:#7F77DD"></div><div style="width:16px;height:16px;border-radius:50%;background:#D4537E"></div><div style="width:16px;height:16px;border-radius:50%;background:#F4C0D1"></div><div style="width:16px;height:16px;border-radius:50%;background:#EEEDFE"></div></div><div class="mood-sub" style="margin-top:4px">Lilás, rosa e off-white</div></div>
-      <div class="mood-card"><div class="mood-icon" style="font-size:24px">&#128248;</div><div class="mood-nm">Vestido</div><div class="mood-sub">Modelo princesa, renda e cauda</div><div style="margin-top:6px"><span class="tag">Prova 1: Ok</span><span class="tag">Prova 2: Ago</span></div></div>
-      <div class="mood-card"><div class="mood-icon" style="font-size:24px">&#128081;</div><div class="mood-nm">Terno e sapatos</div><div class="mood-sub">Terno grafite, gravata lilás</div><div style="margin-top:6px"><span class="tag">Aluguel</span><span class="tag">Oxford preto</span></div></div>
-      <div class="mood-card"><div class="mood-icon" style="font-size:24px">&#127925;</div><div class="mood-nm">Música e clima</div><div class="mood-sub">Pop romântico + samba</div><div style="margin-top:6px"><span class="tag">DJ</span><span class="tag">Playlist criada</span></div></div>
-      <div class="mood-card"><div class="mood-icon" style="font-size:24px">&#127828;</div><div class="mood-nm">Cardápio</div><div class="mood-sub">Buffet jantar + open bar</div><div style="margin-top:6px"><span class="tag">Vegetariano</span><span class="tag">Sem glúten</span></div></div>
+      <div class="mood-card"><div class="mood-icon">🌸</div><div class="mood-nm">Decoração floral</div><div class="mood-sub">Rosas brancas e bouvardia</div></div>
+      <div class="mood-card"><div class="mood-icon">🌈</div><div class="mood-nm">Paleta de cores</div><div style="margin-top:8px;display:flex;gap:5px;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:#7F77DD"></div><div style="width:18px;height:18px;border-radius:50%;background:#D4537E"></div><div style="width:18px;height:18px;border-radius:50%;background:#F4C0D1"></div><div style="width:18px;height:18px;border-radius:50%;background:#EEEDFE"></div></div><div class="mood-sub" style="margin-top:5px">Lilás, rosa e off-white</div></div>
+      <div class="mood-card"><div class="mood-icon">👗</div><div class="mood-nm">Vestido</div><div class="mood-sub">Modelo princesa, renda e cauda</div><div style="margin-top:7px"><span class="tag">Prova 1: Ok</span><span class="tag">Prova 2: Ago</span></div></div>
+      <div class="mood-card"><div class="mood-icon">👔</div><div class="mood-nm">Terno e sapatos</div><div class="mood-sub">Terno grafite, gravata lilás</div><div style="margin-top:7px"><span class="tag">Aluguel</span><span class="tag">Oxford preto</span></div></div>
+      <div class="mood-card"><div class="mood-icon">🎵</div><div class="mood-nm">Música e clima</div><div class="mood-sub">Pop romântico + samba</div><div style="margin-top:7px"><span class="tag">DJ</span><span class="tag">Playlist criada</span></div></div>
+      <div class="mood-card"><div class="mood-icon">🍔</div><div class="mood-nm">Cardápio</div><div class="mood-sub">Buffet jantar + open bar</div><div style="margin-top:7px"><span class="tag">Vegetariano</span><span class="tag">Sem glúten</span></div></div>
     </div>
-    <div style="margin-top:14px">
-      <div class="sec-ttl" style="margin-bottom:8px">Referências salvas</div>
+    <div style="margin-top:16px">
+      <div class="sec-ttl" style="margin-bottom:10px;font-size:15px">Referências salvas</div>
       <div id="ref-list"></div>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <input class="inp" id="ref-inp" placeholder="Colar link de referência (Pinterest, Instagram...)" style="margin:0;flex:1">
-        <button class="btn-sm" style="flex-shrink:0" onclick="addRef()">Salvar</button>
+      <div class="ref-input-row">
+        <input class="inp" id="ref-inp" placeholder="Colar link (Pinterest, Instagram...)">
+        <button class="btn-sm" onclick="addRef()">Salvar</button>
       </div>
     </div>
   </div>
 
   <div id="pg-espaco" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Salão &amp; espaço</span></div>
+    <div class="sec-hdr"><span class="sec-ttl">Salão &amp; Espaço</span></div>
     <div class="card">
       <div class="lbl">Nome do espaço</div><input class="inp" id="esp-nome" placeholder="Ex: Espaço Villa Verde">
       <div class="lbl">Endereço completo</div><input class="inp" id="esp-end" placeholder="Rua, número, bairro, cidade">
       <div class="row2">
-        <div><div class="lbl">Capacidade (pessoas)</div><input class="inp" id="esp-cap" type="number" placeholder="150"></div>
-        <div><div class="lbl">Horário do evento</div><input class="inp" id="esp-hora" placeholder="Ex: 19h às 02h"></div>
+        <div><div class="lbl">Capacidade</div><input class="inp" id="esp-cap" type="number" placeholder="150"></div>
+        <div><div class="lbl">Horário</div><input class="inp" id="esp-hora" placeholder="19h às 02h"></div>
       </div>
       <div class="lbl">Status do contrato</div>
       <select class="sel" id="esp-contrato"><option>Em negociação</option><option>Assinado</option><option>Pago parcial</option><option>Quitado</option></select>
-      <div class="lbl">Observações / link do contrato</div><input class="inp" id="esp-obs" placeholder="Link ou anotações importantes">
-      <button class="btn-add" onclick="saveEspaco()">Salvar informações do espaço</button>
-      <div id="esp-saved" style="display:none;margin-top:10px;padding:10px;background:#E1F5EE;border-radius:var(--border-radius-md);font-size:12px;color:#085041">Informações salvas!</div>
+      <div class="lbl">Obs / link do contrato</div><input class="inp" id="esp-obs" placeholder="Link ou anotações">
+      <button class="btn-add" onclick="saveEspaco()">💾 Salvar informações do espaço</button>
+      <div id="esp-saved" style="display:none">✅ Informações salvas!</div>
     </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="nav">
+    <button class="nb on" onclick="show('convidados',this)"><span class="nb-icon">👥</span>Convidados</button>
+    <button class="nb" onclick="show('checklist',this)"><span class="nb-icon">✅</span>Checklist</button>
+    <button class="nb" onclick="show('financeiro',this)"><span class="nb-icon">💰</span>Financeiro</button>
+    <button class="nb" onclick="show('fornecedores',this)"><span class="nb-icon">🏢</span>Fornecedores</button>
+    <button class="nb" onclick="show('mesas',this)"><span class="nb-icon">🪑</span>Mesas</button>
+    <button class="nb" onclick="show('presentes',this)"><span class="nb-icon">🎁</span>Presentes</button>
+    <button class="nb" onclick="show('inspiracoes',this)"><span class="nb-icon">✨</span>Estilo</button>
+    <button class="nb" onclick="show('espaco',this)"><span class="nb-icon">🏛️</span>Espaço</button>
+  </nav>
+</div>
+
+<!-- MODALS (bottom sheets) -->
+<div class="modal-overlay" id="gm" onclick="closeModal('gm',event)">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <div class="modal-ttl">👤 Novo convidado</div>
+    <div class="lbl">Nome completo</div><input class="inp" id="g-nome" placeholder="Nome do convidado">
+    <div class="row2">
+      <div><div class="lbl">Categoria</div><select class="sel" id="g-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
+      <div><div class="lbl">RSVP</div><select class="sel" id="g-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
+    </div>
+    <div class="row2">
+      <div><div class="lbl">Mesa nº</div><input class="inp" id="g-mesa" placeholder="ex: 3"></div>
+      <div><div class="lbl">Restrição alimentar</div><input class="inp" id="g-rest" placeholder="Vegetariano..."></div>
+    </div>
+    <button class="btn-add" onclick="addGuest()">Salvar convidado</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="tm" onclick="closeModal('tm',event)">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <div class="modal-ttl">✅ Nova tarefa</div>
+    <div class="lbl">Descrição</div><input class="inp" id="t-desc" placeholder="Ex: Confirmar fotógrafo">
+    <div class="row2">
+      <div><div class="lbl">Data limite</div><input class="inp" id="t-data" type="date"></div>
+      <div><div class="lbl">Categoria</div><select class="sel" id="t-cat"><option>Geral</option><option>Traje</option><option>Fornecedor</option><option>Convidados</option><option>Espaço</option><option>Financeiro</option></select></div>
+    </div>
+    <button class="btn-add" onclick="addTask()">Salvar tarefa</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="fm" onclick="closeModal('fm',event)">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <div class="modal-ttl">💰 Novo item financeiro</div>
+    <div class="lbl">Descrição</div><input class="inp" id="f-desc" placeholder="Ex: Floricultura">
+    <div class="row2">
+      <div><div class="lbl">Valor estimado (R$)</div><input class="inp" id="f-est" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><div class="lbl">Valor real (R$)</div><input class="inp" id="f-real" type="number" inputmode="numeric" placeholder="0"></div>
+    </div>
+    <div class="row2">
+      <div><div class="lbl">Vencimento</div><input class="inp" id="f-venc" type="date"></div>
+      <div><div class="lbl">Status</div><select class="sel" id="f-status"><option>Pendente</option><option>Pago parcial</option><option>Quitado</option></select></div>
+    </div>
+    <button class="btn-add" onclick="addFin()">Salvar item</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="sm" onclick="closeModal('sm',event)">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <div class="modal-ttl">🏢 Novo fornecedor</div>
+    <div class="lbl">Nome da empresa</div><input class="inp" id="s-nome" placeholder="Ex: Buffet Bella Cozinha">
+    <div class="row2">
+      <div><div class="lbl">Categoria</div><select class="sel" id="s-cat"><option>Buffet</option><option>Foto/Vídeo</option><option>Decoração</option><option>DJ/Música</option><option>Floricultura</option><option>Cerimonial</option><option>Outro</option></select></div>
+      <div><div class="lbl">Status</div><select class="sel" id="s-status"><option>Proposta</option><option>Contratado</option><option>Pago parcial</option><option>Quitado</option></select></div>
+    </div>
+    <div class="row2">
+      <div><div class="lbl">Valor total (R$)</div><input class="inp" id="s-total" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><div class="lbl">Valor pago (R$)</div><input class="inp" id="s-pago" type="number" inputmode="numeric" placeholder="0"></div>
+    </div>
+    <div class="lbl">Link do contrato</div><input class="inp" id="s-link" placeholder="https://...">
+    <button class="btn-add" onclick="addSupplier()">Salvar fornecedor</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="mm" onclick="closeModal('mm',event)">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <div class="modal-ttl">🪑 Nova mesa</div>
+    <div class="row2">
+      <div><div class="lbl">Nome/número</div><input class="inp" id="m-nome" placeholder="Ex: Mesa 6"></div>
+      <div><div class="lbl">Capacidade</div><input class="inp" id="m-cap" type="number" inputmode="numeric" placeholder="10"></div>
+    </div>
+    <div class="lbl">Grupo / Descrição</div><input class="inp" id="m-grupo" placeholder="Ex: Amigos da faculdade">
+    <button class="btn-add" onclick="addTable()">Salvar mesa</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="pm" onclick="closeModal('pm',event)">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <div class="modal-ttl">🎁 Novo presente</div>
+    <div class="lbl">Item</div><input class="inp" id="p-nome" placeholder="Ex: Jogo de panelas">
+    <div class="row2">
+      <div><div class="lbl">Preço est. (R$)</div><input class="inp" id="p-preco" type="number" inputmode="numeric" placeholder="0"></div>
+      <div><div class="lbl">Categoria</div><select class="sel" id="p-cat"><option>Cozinha</option><option>Quarto</option><option>Sala</option><option>Banheiro</option><option>Eletrônicos</option><option>Viagem</option><option>Outro</option></select></div>
+    </div>
+    <button class="btn-add" onclick="addGift()">Salvar presente</button>
   </div>
 </div>
 
 <script>
-var state = {
+var state={
   guests:[
     {nome:"Maria Aparecida",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:""},
     {nome:"Roberto Silva",cat:"Amigos",rsvp:"Confirmado",mesa:"4",rest:"Vegetariano"},
@@ -312,7 +423,7 @@ var state = {
     {nome:"Airfryer 5L",preco:350,cat:"Eletrônicos",dado:false},
     {nome:"Jogo de toalhas de banho",preco:180,cat:"Banheiro",dado:true},
     {nome:"Processador de alimentos",preco:290,cat:"Cozinha",dado:false},
-    {nome:"Smart TV 50\"",preco:2200,cat:"Eletrônicos",dado:false},
+    {nome:'Smart TV 50"',preco:2200,cat:"Eletrônicos",dado:false},
     {nome:"Jogo de talheres (48 peças)",preco:320,cat:"Cozinha",dado:false},
     {nome:"Lua de mel contribuição",preco:500,cat:"Viagem",dado:false}
   ],
@@ -322,26 +433,49 @@ var state = {
 function rsvpColor(r){return r==="Confirmado"?"bg":r==="Recusou"?"br":"by"}
 function statusColor(s){return s==="Quitado"?"bg":s==="Pago parcial"?"by":s==="Contratado"?"bpu":"br"}
 
+function openModal(id){
+  document.getElementById(id).classList.add("on");
+  document.body.style.overflow="hidden";
+}
+function closeModal(id,e){
+  if(!e||e.target===document.getElementById(id)){
+    document.getElementById(id).classList.remove("on");
+    document.body.style.overflow="";
+  }
+}
+function toggleModal(id){
+  var el=document.getElementById(id);
+  if(el.classList.contains("on")) closeModal(id);
+  else openModal(id);
+}
+
+function show(id,btn){
+  document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on")});
+  document.getElementById("pg-"+id).classList.add("on");
+  document.querySelectorAll(".nb").forEach(function(b){b.classList.remove("on")});
+  btn.classList.add("on");
+  window.scrollTo(0,0);
+}
+
 function renderGuests(){
   var c=state.guests.length,conf=state.guests.filter(g=>g.rsvp==="Confirmado").length,agt=state.guests.filter(g=>g.rsvp==="Aguardando").length,rec=state.guests.filter(g=>g.rsvp==="Recusou").length;
   document.getElementById("guest-stats").innerHTML='<div class="sc"><div class="sc-n">'+c+'</div><div class="sc-l">Total</div></div><div class="sc"><div class="sc-n">'+conf+'</div><div class="sc-l">Confirmados</div></div><div class="sc"><div class="sc-n">'+agt+'</div><div class="sc-l">Aguardando</div></div><div class="sc"><div class="sc-n">'+rec+'</div><div class="sc-l">Recusaram</div></div>';
   var colors=["avpu","avt","avpk","ava","avc","avpu","avt","avpk","ava"];
   var html=state.guests.map(function(g,i){
     var init=g.nome.split(" ").slice(0,2).map(function(w){return w[0]}).join("").toUpperCase();
-    return '<div class="card"><div class="row"><div style="display:flex;align-items:center;gap:9px"><div class="av '+colors[i%colors.length]+'">'+init+'</div><div><div class="nm">'+g.nome+'</div><div class="sub">'+g.cat+(g.mesa?" · Mesa "+g.mesa:"")+(g.rest?" · "+g.rest:"")+'</div></div></div><div style="display:flex;align-items:center;gap:6px"><span class="bdg '+rsvpColor(g.rsvp)+'">'+g.rsvp+'</span><button class="btn-del" onclick="delGuest('+i+')">×</button></div></div></div>';
+    return '<div class="card"><div class="row"><div style="display:flex;align-items:center;gap:11px"><div class="av '+colors[i%colors.length]+'">'+init+'</div><div><div class="nm">'+g.nome+'</div><div class="sub">'+g.cat+(g.mesa?" · Mesa "+g.mesa:"")+(g.rest?" · "+g.rest:"")+'</div></div></div><div style="display:flex;align-items:center;gap:4px"><span class="bdg '+rsvpColor(g.rsvp)+'">'+g.rsvp+'</span><button class="btn-del" onclick="delGuest('+i+')">×</button></div></div></div>';
   }).join("");
   document.getElementById("guest-list").innerHTML=html;
   var rsvpPct=Math.round(conf/Math.max(c,1)*100);
   document.getElementById("rsvp-bar").style.width=rsvpPct+"%";
   document.getElementById("rsvp-pct").textContent=rsvpPct+"%";
 }
-
 function addGuest(){
   var n=document.getElementById("g-nome").value.trim();
   if(!n)return;
   state.guests.push({nome:n,cat:document.getElementById("g-cat").value,rsvp:document.getElementById("g-rsvp").value,mesa:document.getElementById("g-mesa").value,rest:document.getElementById("g-rest").value});
   document.getElementById("g-nome").value="";document.getElementById("g-mesa").value="";document.getElementById("g-rest").value="";
-  toggleModal("gm");renderGuests();
+  closeModal("gm");renderGuests();
 }
 function delGuest(i){state.guests.splice(i,1);renderGuests()}
 
@@ -362,7 +496,7 @@ function addTask(){
   if(!d)return;
   state.tasks.push({desc:d,data:document.getElementById("t-data").value,cat:document.getElementById("t-cat").value,done:false});
   document.getElementById("t-desc").value="";document.getElementById("t-data").value="";
-  toggleModal("tm");renderTasks();
+  closeModal("tm");renderTasks();
 }
 function formatDate(s){if(!s)return"";var p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0]}
 
@@ -372,7 +506,7 @@ function renderFin(){
     est+=f.est;real+=f.real;
     var cls=f.real>f.est?"ov":f.status==="Quitado"?"ok":"pd";
     var stcls=f.status==="Quitado"?"bg":f.status==="Pago parcial"?"by":"br";
-    return '<div class="fr"><div><div class="fl">'+f.desc+'</div><div class="fe">Est: R$'+f.est.toLocaleString("pt-BR")+(f.venc?" · Vence: "+formatDate(f.venc):"")+'</div></div><div style="text-align:right"><div class="fv '+cls+'">R$'+f.real.toLocaleString("pt-BR")+'</div><span class="bdg '+stcls+'">'+f.status+'</span><button class="btn-del" onclick="delFin('+i+')">×</button></div></div>';
+    return '<div class="fr"><div style="flex:1"><div class="fl">'+f.desc+'</div><div class="fe">Est: R$'+f.est.toLocaleString("pt-BR")+(f.venc?" · Vence: "+formatDate(f.venc):"")+'</div><span class="bdg '+stcls+'" style="margin-top:4px;display:inline-block">'+f.status+'</span></div><div style="text-align:right;flex-shrink:0"><div class="fv '+cls+'">R$'+f.real.toLocaleString("pt-BR")+'</div><button class="btn-del" onclick="delFin('+i+')">×</button></div></div>';
   }).join("");
   document.getElementById("fin-list").innerHTML=html;
   document.getElementById("fin-est-tot").textContent="R$"+est.toLocaleString("pt-BR");
@@ -386,7 +520,7 @@ function addFin(){
   if(!d)return;
   state.fin.push({desc:d,est:parseFloat(document.getElementById("f-est").value)||0,real:parseFloat(document.getElementById("f-real").value)||0,venc:document.getElementById("f-venc").value,status:document.getElementById("f-status").value});
   document.getElementById("f-desc").value="";document.getElementById("f-est").value="";document.getElementById("f-real").value="";
-  toggleModal("fm");renderFin();
+  closeModal("fm");renderFin();
 }
 function delFin(i){state.fin.splice(i,1);renderFin()}
 
@@ -394,7 +528,7 @@ function renderSuppliers(){
   var html=state.suppliers.map(function(s,i){
     var pct=Math.round(s.pago/Math.max(s.total,1)*100);
     var stcls=statusColor(s.status);
-    return '<div class="card"><div class="row"><div><div class="nm">'+s.nome+'</div><div class="sub">'+s.cat+'</div></div><div style="display:flex;align-items:center;gap:6px"><span class="bdg '+stcls+'">'+s.status+'</span><button class="btn-del" onclick="delSupplier('+i+')">×</button></div></div><div class="spb"><div class="spf" style="width:'+pct+'%"></div></div><div style="font-size:10px;color:var(--color-text-secondary);margin-top:3px">R$'+s.pago.toLocaleString("pt-BR")+' de R$'+s.total.toLocaleString("pt-BR")+(s.link?' · <a href="'+s.link+'" style="color:#7F77DD">contrato</a>':"")+'</div></div>';
+    return '<div class="card"><div class="row"><div><div class="nm">'+s.nome+'</div><div class="sub">'+s.cat+'</div></div><div style="display:flex;align-items:center;gap:6px"><span class="bdg '+stcls+'">'+s.status+'</span><button class="btn-del" onclick="delSupplier('+i+')">×</button></div></div><div class="spb"><div class="spf" style="width:'+pct+'%"></div></div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:5px">R$'+s.pago.toLocaleString("pt-BR")+' de R$'+s.total.toLocaleString("pt-BR")+(s.link?' · <a href="'+s.link+'" style="color:#7F77DD">contrato</a>':"")+'</div></div>';
   }).join("");
   document.getElementById("sup-list").innerHTML=html;
 }
@@ -403,7 +537,7 @@ function addSupplier(){
   if(!n)return;
   state.suppliers.push({nome:n,cat:document.getElementById("s-cat").value,status:document.getElementById("s-status").value,total:parseFloat(document.getElementById("s-total").value)||0,pago:parseFloat(document.getElementById("s-pago").value)||0,link:document.getElementById("s-link").value});
   document.getElementById("s-nome").value="";document.getElementById("s-total").value="";document.getElementById("s-pago").value="";document.getElementById("s-link").value="";
-  toggleModal("sm");renderSuppliers();
+  closeModal("sm");renderSuppliers();
 }
 function delSupplier(i){state.suppliers.splice(i,1);renderSuppliers()}
 
@@ -411,12 +545,12 @@ function renderTables(){
   var html=state.tables.map(function(t,i){
     var spots="";for(var j=0;j<t.cap;j++)spots+='<div class="sp '+(j<t.ocupados?"tk":"fr")+'"></div>';
     var isNoivos=t.nome==="Noivos";
-    return '<div class="mi"'+(isNoivos?' style="border:1.5px solid #AFA9EC"':'')+'>'+
+    return '<div class="mi"'+(isNoivos?' style="border:2px solid #AFA9EC"':'')+'>'+
       '<div class="mn"'+(isNoivos?' style="color:#534AB7"':'')+'>'+t.nome+'</div>'+
       '<div class="msub">'+t.grupo+'</div>'+
       '<div class="spots">'+spots+'</div>'+
-      '<div style="font-size:10px;color:var(--color-text-secondary);margin-top:3px">'+t.ocupados+'/'+t.cap+'</div>'+
-      '<button class="btn-del" onclick="delTable('+i+')" style="font-size:10px;margin-top:4px">remover</button>'+
+      '<div style="font-size:11px;color:var(--color-text-secondary);margin-top:4px">'+t.ocupados+'/'+t.cap+'</div>'+
+      '<button class="btn-del" onclick="delTable('+i+')" style="font-size:11px;margin-top:6px;width:100%;color:var(--color-text-secondary)">remover</button>'+
     '</div>';
   }).join("");
   document.getElementById("mesa-grid").innerHTML=html;
@@ -426,14 +560,14 @@ function addTable(){
   if(!n)return;
   state.tables.push({nome:n,cap:parseInt(document.getElementById("m-cap").value)||10,ocupados:0,grupo:document.getElementById("m-grupo").value});
   document.getElementById("m-nome").value="";document.getElementById("m-cap").value="";document.getElementById("m-grupo").value="";
-  toggleModal("mm");renderTables();
+  closeModal("mm");renderTables();
 }
 function delTable(i){state.tables.splice(i,1);renderTables()}
 
 function renderGifts(){
   var total=state.gifts.length,dado=state.gifts.filter(g=>g.dado).length;
   var html=state.gifts.map(function(g,i){
-    return '<div class="gift-row"><div class="gb'+(g.dado?" ck":"") + '" onclick="toggleGift('+i+')">'+(g.dado?"✓":"")+'</div><div class="gift-nm">'+g.nome+'<br><span style="font-size:10px;color:var(--color-text-secondary)">'+g.cat+'</span></div><div style="text-align:right"><div class="gift-pr">R$'+g.preco.toLocaleString("pt-BR")+'</div><button class="btn-del" onclick="delGift('+i+')">×</button></div></div>';
+    return '<div class="gift-row"><div class="gb'+(g.dado?" ck":"") + '" onclick="toggleGift('+i+')">'+(g.dado?"✓":"")+'</div><div class="gift-nm">'+g.nome+'<br><span style="font-size:11px;color:var(--color-text-secondary)">'+g.cat+'</span></div><div style="text-align:right;flex-shrink:0"><div class="gift-pr">R$'+g.preco.toLocaleString("pt-BR")+'</div><button class="btn-del" onclick="delGift('+i+')">×</button></div></div>';
   }).join("");
   document.getElementById("gift-list").innerHTML=html;
   var pct=Math.round(dado/Math.max(total,1)*100);
@@ -447,7 +581,7 @@ function addGift(){
   if(!n)return;
   state.gifts.push({nome:n,preco:parseFloat(document.getElementById("p-preco").value)||0,cat:document.getElementById("p-cat").value,dado:false});
   document.getElementById("p-nome").value="";document.getElementById("p-preco").value="";
-  toggleModal("pm");renderGifts();
+  closeModal("pm");renderGifts();
 }
 
 function addRef(){
@@ -459,28 +593,19 @@ function addRef(){
 }
 function renderRefs(){
   var html=state.refs.map(function(r,i){
-    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary)"><a href="'+r+'" style="font-size:12px;color:#7F77DD;flex:1;word-break:break-all">'+r+'</a><button class="btn-del" onclick="delRef('+i+')">×</button></div>';
+    return '<div class="ref-row"><a class="ref-link" href="'+r+'" target="_blank">'+r+'</a><button class="btn-del" onclick="delRef('+i+')">×</button></div>';
   }).join("");
-  document.getElementById("ref-list").innerHTML=html||'<div style="font-size:12px;color:var(--color-text-secondary)">Nenhuma referência salva ainda.</div>';
+  document.getElementById("ref-list").innerHTML=html||'<div style="font-size:13px;color:var(--color-text-secondary);padding:10px 0">Nenhuma referência salva ainda.</div>';
 }
 function delRef(i){state.refs.splice(i,1);renderRefs()}
 
 function saveEspaco(){
-  document.getElementById("esp-saved").style.display="block";
-  setTimeout(function(){document.getElementById("esp-saved").style.display="none"},2500);
-}
-
-function toggleModal(id){
-  var el=document.getElementById(id);
-  el.classList.toggle("on");
-}
-
-function show(id,btn){
-  document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on")});
-  document.getElementById("pg-"+id).classList.add("on");
-  document.querySelectorAll(".nb").forEach(function(b){b.classList.remove("on")});
-  btn.classList.add("on");
+  var el=document.getElementById("esp-saved");
+  el.style.display="block";
+  setTimeout(function(){el.style.display="none"},2500);
 }
 
 renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();
 </script>
+</body>
+</html>
