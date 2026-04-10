@@ -291,6 +291,8 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
 /* ─── SPACE PAGE ─── */
 .space-save-msg{display:none;margin-top:10px;padding:10px;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.2);border-radius:var(--radius-sm);font-size:12px;color:#4ecba0}
+/* ─── DROP ZONE ACTIVE ─── */
+.drop-active{border-color:var(--purple)!important;background:rgba(127,119,221,.08)!important}
 </style>
 </head>
 <body>
@@ -525,7 +527,78 @@ input:focus,select:focus{border-color:var(--purple)!important}
       <div class="card" id="log-list" style="padding:4px 12px"><div class="empty">📭 Nenhuma ação registrada.</div></div>
     </div>
 
-  </div><!-- /.scroll-area -->
+    <!-- CONFIGURAÇÕES / BACKUP -->
+    <div class="pg" id="pg-config">
+
+      <!-- CONVIDADOS PADRÃO -->
+      <div class="sec-hdr" style="margin-bottom:8px"><span class="sec-ttl">👥 Convidados padrão</span><button class="btn-sm" onclick="openPanel('fp-defguest','novo')">+ Adicionar</button></div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Estes convidados aparecem quando o app é reiniciado do zero. Edite os nomes para corresponder à sua família.</div>
+      <div class="form-panel" id="fp-defguest">
+        <div class="form-panel-ttl"><span id="fp-defguest-ttl">Novo convidado padrão</span><button onclick="closePanel('fp-defguest')">×</button></div>
+        <input type="hidden" id="fdg-idx" value="-1">
+        <div class="f-lbl">Nome</div><input class="f-inp" id="fdg-nome" placeholder="Ex: Madrinha da noiva">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fdg-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
+          <div><div class="f-lbl">RSVP inicial</div><select class="f-sel" id="fdg-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
+        </div>
+        <button class="btn-save" onclick="saveDefGuest()">Salvar</button>
+      </div>
+      <div id="defguest-list"></div>
+
+      <div class="divider" style="margin:16px 0"></div>
+
+      <!-- BACKUP -->
+      <div class="sec-ttl" style="margin-bottom:10px">📦 Backup de dados</div>
+
+      <div class="card" style="margin-bottom:10px">
+        <div class="nm" style="margin-bottom:4px">Exportar backup</div>
+        <div class="sub" style="margin-bottom:10px">Baixa um arquivo .json com todos os dados do app.</div>
+        <button class="btn-save" onclick="exportBackup()">⬇️ Baixar backup .json</button>
+      </div>
+
+      <div class="card" style="margin-bottom:10px" id="drop-zone">
+        <div class="nm" style="margin-bottom:4px">Importar backup</div>
+        <div class="sub" style="margin-bottom:10px">Restaura dados de um arquivo .json exportado anteriormente. Arraste o arquivo aqui ou clique para selecionar.</div>
+        <div id="drop-area" style="border:2px dashed rgba(127,119,221,.3);border-radius:var(--radius-sm);padding:18px;text-align:center;color:var(--txt2);font-size:12px;margin-bottom:10px;transition:all .2s;cursor:pointer" onclick="document.getElementById('import-file').click()">
+          <div style="font-size:24px;margin-bottom:6px">📂</div>
+          Arraste o arquivo .json aqui<br>ou clique para selecionar
+        </div>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)">
+        <div id="import-msg" style="display:none;padding:8px 10px;border-radius:var(--radius-sm);font-size:12px;margin-top:6px"></div>
+      </div>
+
+      <!-- COMPARTILHAR RESUMO -->
+      <div class="card" style="margin-bottom:10px">
+        <div class="nm" style="margin-bottom:4px">📤 Compartilhar resumo</div>
+        <div class="sub" style="margin-bottom:10px">Escolha o que compartilhar e envie por WhatsApp ou E-mail.</div>
+        <div class="f-lbl">Selecionar seção</div>
+        <select class="f-sel" id="share-section" onchange="updateSharePreview()">
+          <option value="all">Tudo</option>
+          <option value="guests">Convidados</option>
+          <option value="tasks">Checklist</option>
+          <option value="fin">Financeiro</option>
+          <option value="suppliers">Fornecedores</option>
+          <option value="gifts">Presentes</option>
+        </select>
+        <div class="f-lbl">Pré-visualização</div>
+        <textarea id="share-preview" class="f-inp" rows="6" style="resize:none;font-size:11px;line-height:1.5;font-family:monospace" readonly></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <button class="btn-save" style="background:#25D366;margin-top:0" onclick="shareWhatsApp()">💬 WhatsApp</button>
+          <button class="btn-save" style="background:#4A90D9;margin-top:0" onclick="shareEmail()">📧 E-mail</button>
+        </div>
+      </div>
+
+      <div class="divider" style="margin:16px 0"></div>
+
+      <!-- ZONA DE PERIGO -->
+      <div class="sec-ttl" style="margin-bottom:10px;color:#f87171">⚠️ Zona de perigo</div>
+      <div class="card" style="border-color:rgba(248,113,113,.2)">
+        <div class="nm" style="margin-bottom:4px">Resetar todos os dados</div>
+        <div class="sub" style="margin-bottom:10px">Apaga todos os dados e restaura o estado inicial. Esta ação não pode ser desfeita.</div>
+        <button onclick="resetApp()" style="width:100%;padding:10px;background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.3);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer">🗑️ Resetar app</button>
+      </div>
+
+    </div><!-- /#pg-config -->
 
   <!-- BOTTOM NAV -->
   <nav class="bot-nav">
@@ -538,6 +611,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
     <button class="bn" id="bn-estilo" onclick="gotoPage('estilo',this)"><span class="bn-icon">✨</span><span class="bn-label">Estilo</span></button>
     <button class="bn" id="bn-espaco" onclick="gotoPage('espaco',this)"><span class="bn-icon">🏛</span><span class="bn-label">Espaço</span></button>
     <button class="bn" id="bn-historico" onclick="gotoPage('historico',this)"><span class="bn-icon">📋</span><span class="bn-label">Histórico</span></button>
+    <button class="bn" id="bn-config" onclick="gotoPage('config',this)"><span class="bn-icon">⚙️</span><span class="bn-label">Config</span></button>
   </nav>
 
 </div><!-- /#main-app -->
@@ -581,9 +655,21 @@ var LS_USERS = 'wp_users';
 var LS_STATE = 'wp_state';
 var LS_LOGS  = 'wp_logs';
 var LS_CU    = 'wp_current_user_email';
+var LS_DEF_GUESTS = 'wp_default_guests';
 
-function lsGet(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
-function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function lsGet(k){
+  try{
+    var raw=localStorage.getItem(k);
+    if(raw===null||raw===undefined||raw==='null'||raw==='undefined') return null;
+    return JSON.parse(raw);
+  }catch(e){return null}
+}
+function lsSet(k,v){
+  try{
+    if(v===null||v===undefined) localStorage.removeItem(k);
+    else localStorage.setItem(k,JSON.stringify(v));
+  }catch(e){}
+}
 
 // ─── USERS ───
 function getUsers(){return lsGet(LS_USERS)||[]}
@@ -595,27 +681,40 @@ function updateUser(email,data){var users=getUsers();var i=users.findIndex(funct
 
 // ─── CURRENT USER ───
 var currentUser = null;
-function saveCU(){lsSet(LS_CU,currentUser?currentUser.email:null)}
+var LS_CU_OBJ = 'wp_current_user_obj';
+function saveCU(){
+  if(!currentUser) return;
+  lsSet(LS_CU_OBJ, currentUser);
+  lsSet(LS_CU, currentUser.email||'__guest__');
+}
 function restoreCU(){
-  var email=lsGet(LS_CU);
-  if(email){var u=findUserByEmail(email);if(u){currentUser=u;return true}}
+  var marker = lsGet(LS_CU);
+  if(!marker) return false;
+  if(marker==='__guest__'){
+    var obj = lsGet(LS_CU_OBJ);
+    currentUser = obj || {nome:'Visitante',email:'',senha:'',role:'Visitante'};
+    return true;
+  }
+  var u=findUserByEmail(marker);
+  if(u){currentUser=u;return true}
+  var saved=lsGet(LS_CU_OBJ);
+  if(saved){currentUser=saved;return true}
   return false;
 }
 
 // ═══════════════════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════════════════
+var DEFAULT_GUESTS = [
+    {nome:"Mãe da noiva",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:""},
+    {nome:"Pai da noiva",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:""},
+    {nome:"Mãe do noivo",cat:"Família",rsvp:"Confirmado",mesa:"2",rest:""},
+    {nome:"Pai do noivo",cat:"Família",rsvp:"Confirmado",mesa:"2",rest:""},
+    {nome:"Irmã da noiva",cat:"Família",rsvp:"Aguardando",mesa:"",rest:""},
+    {nome:"Irmã do noivo",cat:"Família",rsvp:"Aguardando",mesa:"",rest:""}
+  ];
 var defaultState = {
-  guests:[
-    {nome:"Maria Aparecida",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:""},
-    {nome:"Roberto Silva",cat:"Amigos",rsvp:"Confirmado",mesa:"4",rest:"Vegetariano"},
-    {nome:"Juliana Ferreira",cat:"Trabalho",rsvp:"Aguardando",mesa:"",rest:""},
-    {nome:"Carlos Andrade",cat:"Família",rsvp:"Confirmado",mesa:"2",rest:""},
-    {nome:"Larissa Moura",cat:"Amigos",rsvp:"Aguardando",mesa:"",rest:""},
-    {nome:"Paulo Rocha",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:"Sem glúten"},
-    {nome:"Ana Beatriz Lima",cat:"Amigos",rsvp:"Confirmado",mesa:"3",rest:""},
-    {nome:"Marcos Vinicius",cat:"Trabalho",rsvp:"Recusou",mesa:"",rest:""}
-  ],
+  guests: JSON.parse(JSON.stringify(DEFAULT_GUESTS)),
   tasks:[
     {desc:"Reservar salão de festas",data:"2025-03-10",cat:"Espaço",done:true},
     {desc:"Escolher e reservar buffet",data:"2025-04-01",cat:"Fornecedor",done:true},
@@ -671,7 +770,24 @@ var logs = [];
 function saveState(){lsSet(LS_STATE,{state:state,logs:logs})}
 function loadState(){
   var d=lsGet(LS_STATE);
-  if(d&&d.state){state=d.state;logs=d.logs||[]}
+  if(d && d.state){
+    // Merge: keep defaultState fields as fallback for any missing keys
+    var saved = d.state;
+    state = {
+      guests:    Array.isArray(saved.guests)    ? saved.guests    : JSON.parse(JSON.stringify(DEFAULT_GUESTS)),
+      tasks:     Array.isArray(saved.tasks)     ? saved.tasks     : defaultState.tasks,
+      fin:       Array.isArray(saved.fin)       ? saved.fin       : defaultState.fin,
+      suppliers: Array.isArray(saved.suppliers) ? saved.suppliers : defaultState.suppliers,
+      tables:    Array.isArray(saved.tables)    ? saved.tables    : defaultState.tables,
+      gifts:     Array.isArray(saved.gifts)     ? saved.gifts     : defaultState.gifts,
+      refs:      Array.isArray(saved.refs)      ? saved.refs      : []
+    };
+    logs = Array.isArray(d.logs) ? d.logs : [];
+  } else {
+    // First run: use custom default guests if already configured
+    var dg = lsGet(LS_DEF_GUESTS);
+    if(dg && Array.isArray(dg)) state.guests = JSON.parse(JSON.stringify(dg));
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -718,7 +834,8 @@ function doReg(){
 
 function doLogout(){
   closeProfile();
-  lsSet(LS_CU,null);
+  lsSet(LS_CU, null);
+  lsSet(LS_CU_OBJ, null);
   currentUser=null;
   document.getElementById('main-app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
@@ -729,6 +846,7 @@ function doLogout(){
 }
 
 function enterApp(){
+  loadState(); // always reload fresh from localStorage
   document.getElementById('login-screen').style.display='none';
   document.getElementById('main-app').style.display='flex';
   document.getElementById('main-app').style.flexDirection='column';
@@ -805,6 +923,7 @@ function gotoPage(id,btn){
   btn.classList.add('on');
   btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
   if(id==='historico') renderLogs();
+  if(id==='config'){ renderDefGuests(); updateSharePreview(); }
 }
 
 // ═══════════════════════════════════════════════════
@@ -856,7 +975,15 @@ function avClass(i){return avCls[i%avCls.length]}
 function fmtDate(s){if(!s)return'';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
 function rsvpBadge(r){return r==='Confirmado'?'bdg-green':r==='Recusou'?'bdg-red':'bdg-amber'}
 function statusBadge(s){return s==='Quitado'?'bdg-green':s==='Pago parcial'?'bdg-amber':s==='Contratado'?'bdg-purple':'bdg-red'}
-function setVal(id,val){document.getElementById(id).value=val||''}
+function setVal(id,val){
+  var el=document.getElementById(id);if(!el)return;
+  var v2=(val===undefined||val===null)?'':String(val);
+  el.value=v2;
+  // For selects, if the value didn't match any option, try setting by text
+  if(el.tagName==='SELECT'&&el.value!==v2){
+    for(var i=0;i<el.options.length;i++){if(el.options[i].text===v2){el.selectedIndex=i;break}}
+  }
+}
 
 // ═══════════════════════════════════════════════════
 //  CONVIDADOS
@@ -1151,6 +1278,241 @@ function saveEspaco(){
 function renderAll(){
   renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();
 }
+
+// ═══════════════════════════════════════════════════
+//  CONVIDADOS PADRÃO (gerenciados em localStorage separado)
+// ═══════════════════════════════════════════════════
+
+function getDefGuests(){
+  var saved = lsGet(LS_DEF_GUESTS);
+  return saved || JSON.parse(JSON.stringify(DEFAULT_GUESTS));
+}
+function saveDefGuests(arr){ lsSet(LS_DEF_GUESTS, arr); }
+
+function renderDefGuests(){
+  var list = getDefGuests();
+  document.getElementById('defguest-list').innerHTML = list.map(function(g,i){
+    var ini = g.nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase();
+    return '<div class="card" style="margin-bottom:6px"><div class="card-row">'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+      '<div class="av av'+(i%5)+'">'+ini+'</div>'+
+      '<div><div class="nm">'+g.nome+'</div><div class="sub">'+g.cat+' · '+g.rsvp+'</div></div></div>'+
+      '<div class="act-group">'+
+      '<button class="btn-act edit" onclick="editDefGuest('+i+')" title="Editar">✏️</button>'+
+      '<button class="btn-act del" onclick="delDefGuest('+i+')" title="Excluir">×</button>'+
+      '</div></div></div>';
+  }).join('') || '<div class="empty">Nenhum convidado padrão.</div>';
+}
+
+function editDefGuest(i){
+  var list = getDefGuests();
+  var g = list[i];
+  setVal('fdg-idx', i);
+  setVal('fdg-nome', g.nome);
+  setVal('fdg-cat', g.cat);
+  setVal('fdg-rsvp', g.rsvp);
+  document.getElementById('fp-defguest-ttl').textContent = 'Editar convidado padrão';
+  openPanel('fp-defguest','edit');
+  document.getElementById('fp-defguest').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function saveDefGuest(){
+  var idx = parseInt(document.getElementById('fdg-idx').value);
+  var nome = document.getElementById('fdg-nome').value.trim();
+  if(!nome) return;
+  var list = getDefGuests();
+  var obj = {
+    nome: nome,
+    cat: document.getElementById('fdg-cat').value,
+    rsvp: document.getElementById('fdg-rsvp').value,
+    mesa: '',
+    rest: ''
+  };
+  if(idx >= 0){ list[idx] = obj; }
+  else { list.push(obj); }
+  saveDefGuests(list);
+  setVal('fdg-idx',-1); setVal('fdg-nome','');
+  document.getElementById('fp-defguest-ttl').textContent = 'Novo convidado padrão';
+  closePanel('fp-defguest');
+  renderDefGuests();
+}
+
+function delDefGuest(i){
+  if(!confirm('Remover este convidado padrão?')) return;
+  var list = getDefGuests();
+  list.splice(i,1);
+  saveDefGuests(list);
+  renderDefGuests();
+}
+
+// ═══════════════════════════════════════════════════
+//  BACKUP — EXPORTAR
+// ═══════════════════════════════════════════════════
+function exportBackup(){
+  var data = {
+    version: 5,
+    exportedAt: new Date().toISOString(),
+    state: state,
+    logs: logs,
+    defaultGuests: getDefGuests()
+  };
+  var json = JSON.stringify(data, null, 2);
+  var blob = new Blob([json], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  var now = new Date();
+  var stamp = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  a.href = url;
+  a.download = 'willians-poliana-backup-'+stamp+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  addLog('edit','Backup exportado','arquivo .json gerado');
+}
+
+// ═══════════════════════════════════════════════════
+//  BACKUP — IMPORTAR
+// ═══════════════════════════════════════════════════
+function importBackup(input){
+  var file = input.files[0];
+  if(!file) return;
+  processBackupFile(file);
+  input.value='';
+}
+
+function processBackupFile(file){
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      var data = JSON.parse(e.target.result);
+      if(!data.state) throw new Error('Arquivo inválido');
+      if(!confirm('Isso substituirá TODOS os dados atuais pelo backup. Continuar?')) return;
+      state = data.state;
+      logs = data.logs || [];
+      if(data.defaultGuests) saveDefGuests(data.defaultGuests);
+      saveState();
+      renderAll();
+      renderDefGuests();
+      showImportMsg('✓ Backup restaurado com sucesso!', true);
+      addLog('edit','Backup importado','dados restaurados de '+file.name);
+    } catch(err){
+      showImportMsg('✗ Arquivo inválido ou corrompido.', false);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showImportMsg(msg, ok){
+  var el = document.getElementById('import-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = ok ? 'rgba(29,158,117,.12)' : 'rgba(248,113,113,.12)';
+  el.style.color = ok ? '#4ecba0' : '#f87171';
+  el.style.border = '1px solid '+(ok ? 'rgba(29,158,117,.2)' : 'rgba(248,113,113,.2)');
+  setTimeout(function(){ el.style.display='none'; }, 4000);
+}
+
+// ─── Drag & Drop ───
+(function setupDrop(){
+  document.addEventListener('DOMContentLoaded', function(){
+    var area = document.getElementById('drop-area');
+    if(!area) return;
+    area.addEventListener('dragover', function(e){ e.preventDefault(); area.classList.add('drop-active'); });
+    area.addEventListener('dragleave', function(){ area.classList.remove('drop-active'); });
+    area.addEventListener('drop', function(e){
+      e.preventDefault();
+      area.classList.remove('drop-active');
+      var file = e.dataTransfer.files[0];
+      if(file && file.name.endsWith('.json')) processBackupFile(file);
+      else showImportMsg('✗ Apenas arquivos .json são aceitos.', false);
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════════
+//  COMPARTILHAR RESUMO
+// ═══════════════════════════════════════════════════
+function buildShareText(section){
+  var lines = ['💍 Casamento Willians & Poliana', ''];
+  if(section==='all' || section==='guests'){
+    lines.push('👥 CONVIDADOS');
+    var conf=state.guests.filter(function(g){return g.rsvp==='Confirmado'}).length;
+    var agt=state.guests.filter(function(g){return g.rsvp==='Aguardando'}).length;
+    lines.push('Total: '+state.guests.length+' | Confirmados: '+conf+' | Aguardando: '+agt);
+    lines.push('');
+  }
+  if(section==='all' || section==='tasks'){
+    lines.push('✅ CHECKLIST');
+    var done=state.tasks.filter(function(t){return t.done}).length;
+    lines.push('Concluídas: '+done+'/'+state.tasks.length);
+    state.tasks.forEach(function(t){
+      lines.push((t.done?'[x] ':'[ ] ')+t.desc+(t.data?' ('+fmtDate(t.data)+')':''));
+    });
+    lines.push('');
+  }
+  if(section==='all' || section==='fin'){
+    lines.push('💰 FINANCEIRO');
+    var est=0,real=0;
+    state.fin.forEach(function(f){ est+=f.est; real+=f.real; });
+    lines.push('Estimado: R$'+est.toLocaleString('pt-BR')+' | Realizado: R$'+real.toLocaleString('pt-BR'));
+    state.fin.forEach(function(f){
+      lines.push('• '+f.desc+': R$'+f.real.toLocaleString('pt-BR')+' ('+f.status+')');
+    });
+    lines.push('');
+  }
+  if(section==='all' || section==='suppliers'){
+    lines.push('🤝 FORNECEDORES');
+    state.suppliers.forEach(function(s){
+      lines.push('• '+s.nome+' ('+s.cat+'): R$'+s.pago.toLocaleString('pt-BR')+'/R$'+s.total.toLocaleString('pt-BR')+' — '+s.status);
+    });
+    lines.push('');
+  }
+  if(section==='all' || section==='gifts'){
+    lines.push('🎁 PRESENTES');
+    var dado=state.gifts.filter(function(g){return g.dado}).length;
+    lines.push('Recebidos: '+dado+'/'+state.gifts.length);
+    state.gifts.forEach(function(g){
+      lines.push((g.dado?'[✓] ':'[ ] ')+g.nome+' — R$'+g.preco.toLocaleString('pt-BR'));
+    });
+  }
+  return lines.join('\n');
+}
+
+function updateSharePreview(){
+  var section = document.getElementById('share-section').value;
+  document.getElementById('share-preview').value = buildShareText(section);
+}
+
+function shareWhatsApp(){
+  var text = document.getElementById('share-preview').value || buildShareText('all');
+  var url = 'https://wa.me/?text='+encodeURIComponent(text);
+  window.open(url,'_blank');
+}
+
+function shareEmail(){
+  var text = document.getElementById('share-preview').value || buildShareText('all');
+  var subject = encodeURIComponent('Resumo — Casamento Willians & Poliana');
+  var body = encodeURIComponent(text);
+  window.location.href = 'mailto:?subject='+subject+'&body='+body;
+}
+
+// ═══════════════════════════════════════════════════
+//  RESET APP
+// ═══════════════════════════════════════════════════
+function resetApp(){
+  if(!confirm('Tem certeza? Isso apagará TODOS os dados do app.')) return;
+  if(!confirm('Segunda confirmação: apagar tudo e voltar ao estado inicial?')) return;
+  var defGuests = getDefGuests();
+  state = JSON.parse(JSON.stringify(defaultState));
+  // Use the custom default guests if configured
+  state.guests = JSON.parse(JSON.stringify(defGuests));
+  logs = [];
+  saveState();
+  renderAll();
+  renderDefGuests();
+  addLog('edit','App resetado','dados restaurados ao estado inicial');
+  alert('App resetado com sucesso!');
+}
+
 </script>
 </body>
 </html>
