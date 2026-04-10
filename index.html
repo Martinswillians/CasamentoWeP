@@ -112,7 +112,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 .pi-val{font-size:10px;font-weight:600;margin-top:2px}
 
 /* ─── SCROLL AREA ─── */
-.scroll-area{flex:1;overflow-y:auto;padding-bottom:72px}
+.scroll-area{flex:1;overflow-y:auto;padding-bottom:80px}
 .scroll-area::-webkit-scrollbar{width:3px}
 .scroll-area::-webkit-scrollbar-track{background:transparent}
 .scroll-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
@@ -229,6 +229,14 @@ input:focus,select:focus{border-color:var(--purple)!important}
 .form-panel-ttl{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
 .form-panel-ttl button{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:18px;line-height:1}
 
+/* ─── DRAG & DROP ─── */
+.card.draggable{cursor:grab;touch-action:none}
+.card.draggable:active{cursor:grabbing}
+.card.drag-over{border-color:var(--purple)!important;background:rgba(127,119,221,.08)!important}
+.card.dragging{opacity:.4;transform:scale(.98)}
+.drag-handle{color:var(--txt3);font-size:14px;padding:0 4px;flex-shrink:0;cursor:grab;user-select:none}
+.guest-default-badge{font-size:9px;color:var(--purple);background:rgba(127,119,221,.12);border:1px solid rgba(127,119,221,.2);border-radius:10px;padding:1px 6px;margin-left:4px;vertical-align:middle}
+
 /* ─── BOTTOM NAV ─── */
 .bot-nav{
   position:fixed;
@@ -237,14 +245,20 @@ input:focus,select:focus{border-color:var(--purple)!important}
   background:var(--bg2);
   border-top:1px solid var(--border);
   display:flex;
+  overflow-x:auto;
+  overflow-y:hidden;
   z-index:100;
   padding-bottom:env(safe-area-inset-bottom,0);
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  scroll-snap-type:x proximity;
 }
-.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;background:none;border:none;cursor:pointer;color:var(--txt3);font-size:10px;gap:3px;transition:color .15s;position:relative}
+.bot-nav::-webkit-scrollbar{display:none}
+.bn{flex:0 0 auto;min-width:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;background:none;border:none;cursor:pointer;color:var(--txt3);font-size:10px;gap:3px;transition:color .15s;position:relative;scroll-snap-align:center}
 .bn-icon{font-size:18px;line-height:1}
 .bn.on{color:var(--purple)}
 .bn.on::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:2px;background:var(--purple);border-radius:0 0 3px 3px}
-.bn-label{font-size:9px;font-weight:500}
+.bn-label{font-size:9px;font-weight:500;white-space:nowrap}
 
 /* ─── OVERLAY MODAL ─── */
 .ov-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:20px}
@@ -640,6 +654,15 @@ input:focus,select:focus{border-color:var(--purple)!important}
     <div class="f-lbl">Nome completo</div><input class="f-inp" id="ep-nome" placeholder="Seu nome">
     <div class="f-lbl">E-mail</div><input class="f-inp" id="ep-email" type="email" placeholder="seu@email.com">
     <div class="f-lbl">Função</div><select class="f-sel" id="ep-role"><option>Noivo(a)</option><option>Familiar</option><option>Cerimonialista</option><option>Colaborador</option><option>Visitante</option></select>
+    <div class="divider" style="margin:14px 0 10px"></div>
+    <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">🔒 Alterar senha — deixe em branco para manter a atual</div>
+    <div class="f-lbl">Senha atual</div>
+    <div class="pw-wrap" style="margin-bottom:10px"><input class="f-inp" id="ep-senha-atual" type="password" placeholder="••••••••" style="margin:0;padding-right:38px"><button class="pw-eye" onclick="tpw('ep-senha-atual')">👁</button></div>
+    <div class="f-lbl">Nova senha</div>
+    <div class="pw-wrap" style="margin-bottom:10px"><input class="f-inp" id="ep-senha-nova" type="password" placeholder="Mín. 6 caracteres" style="margin:0;padding-right:38px"><button class="pw-eye" onclick="tpw('ep-senha-nova')">👁</button></div>
+    <div class="f-lbl">Confirmar nova senha</div>
+    <div class="pw-wrap" style="margin-bottom:10px"><input class="f-inp" id="ep-senha-conf" type="password" placeholder="Repita a nova senha" style="margin:0;padding-right:38px"><button class="pw-eye" onclick="tpw('ep-senha-conf')">👁</button></div>
+    <div id="ep-err" style="font-size:12px;color:#f87171;margin-bottom:8px;display:none"></div>
     <button class="btn-save" onclick="saveProfile()">Salvar perfil</button>
     <button class="btn-cancel2" onclick="closeOv('edit-profile-modal')">Cancelar</button>
   </div>
@@ -762,7 +785,8 @@ var defaultState = {
     {nome:"Jogo de talheres (48 peças)",preco:320,cat:"Cozinha",dado:false},
     {nome:"Lua de mel contribuição",preco:500,cat:"Viagem",dado:false}
   ],
-  refs:[]
+  refs:[],
+  espaco:{nome:'',end:'',cap:'',hora:'',contrato:'Em negociação',obs:''}
 };
 var state = JSON.parse(JSON.stringify(defaultState));
 var logs = [];
@@ -780,7 +804,8 @@ function loadState(){
       suppliers: Array.isArray(saved.suppliers) ? saved.suppliers : defaultState.suppliers,
       tables:    Array.isArray(saved.tables)    ? saved.tables    : defaultState.tables,
       gifts:     Array.isArray(saved.gifts)     ? saved.gifts     : defaultState.gifts,
-      refs:      Array.isArray(saved.refs)      ? saved.refs      : []
+      refs:      Array.isArray(saved.refs)      ? saved.refs      : [],
+      espaco:    (saved.espaco && typeof saved.espaco==='object') ? saved.espaco : {nome:'',end:'',cap:'',hora:'',contrato:'Em negociação',obs:''}
     };
     logs = Array.isArray(d.logs) ? d.logs : [];
   } else {
@@ -793,14 +818,19 @@ function loadState(){
 // ═══════════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════════
-(function init(){
+function _bootApp(){
   loadState();
   if(restoreCU()){
     enterApp();
   } else {
     document.getElementById('login-screen').style.display='flex';
   }
-})();
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', _bootApp);
+} else {
+  _bootApp();
+}
 
 // ═══════════════════════════════════════════════════
 //  AUTH
@@ -848,11 +878,18 @@ function doLogout(){
 function enterApp(){
   loadState(); // always reload fresh from localStorage
   document.getElementById('login-screen').style.display='none';
-  document.getElementById('main-app').style.display='flex';
-  document.getElementById('main-app').style.flexDirection='column';
-  document.getElementById('main-app').style.minHeight='100vh';
+  var mainApp = document.getElementById('main-app');
+  mainApp.style.display='flex';
+  mainApp.style.flexDirection='column';
+  mainApp.style.minHeight='100vh';
   updateHeader();
-  renderAll();
+  // Use requestAnimationFrame to ensure DOM is painted before rendering lists
+  requestAnimationFrame(function(){
+    renderAll();
+    // scroll active nav button into view
+    var activeBtn = document.querySelector('.bn.on');
+    if(activeBtn) activeBtn.scrollIntoView({behavior:'instant',block:'nearest',inline:'center'});
+  });
 }
 
 function show_err(id,msg){var e=document.getElementById(id);e.textContent=msg;e.style.display='block'}
@@ -899,14 +936,36 @@ function openEditProfile(){
     document.getElementById('ep-email').value=currentUser.email||'';
     document.getElementById('ep-role').value=currentUser.role||'Visitante';
   }
+  // clear password fields
+  document.getElementById('ep-senha-atual').value='';
+  document.getElementById('ep-senha-nova').value='';
+  document.getElementById('ep-senha-conf').value='';
+  document.getElementById('ep-err').style.display='none';
   openOv('edit-profile-modal');
 }
 function saveProfile(){
   var nome=v('ep-nome').trim(),email=v('ep-email').trim(),role=v('ep-role');
+  var senhaAtual=v('ep-senha-atual'),senhaNova=v('ep-senha-nova'),senhaConf=v('ep-senha-conf');
+  var errEl=document.getElementById('ep-err');
+  errEl.style.display='none';
   if(!nome)return;
+  // Password change requested?
+  if(senhaNova||senhaAtual||senhaConf){
+    if(currentUser&&currentUser.email){
+      // Registered user: validate current password
+      if(senhaAtual!==currentUser.senha){
+        errEl.textContent='Senha atual incorreta.';errEl.style.display='block';return;
+      }
+    }
+    if(senhaNova.length<6){errEl.textContent='A nova senha deve ter ao menos 6 caracteres.';errEl.style.display='block';return;}
+    if(senhaNova!==senhaConf){errEl.textContent='As senhas não coincidem.';errEl.style.display='block';return;}
+  }
+  var updates={nome:nome,email:email,role:role};
+  if(senhaNova) updates.senha=senhaNova;
   if(currentUser&&currentUser.email){
-    updateUser(currentUser.email,{nome:nome,email:email,role:role});
+    updateUser(currentUser.email,updates);
     currentUser.nome=nome;currentUser.email=email;currentUser.role=role;
+    if(senhaNova) currentUser.senha=senhaNova;
     saveCU();
   }
   updateHeader();
@@ -940,8 +999,10 @@ function openOv(id){document.getElementById(id).classList.add('on')}
 function closeOv(id){document.getElementById(id).classList.remove('on')}
 
 // Close overlay on bg click
-document.querySelectorAll('.ov-modal').forEach(function(el){
-  el.addEventListener('click',function(e){if(e.target===el) el.classList.remove('on')});
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.ov-modal').forEach(function(el){
+    el.addEventListener('click',function(e){if(e.target===el) el.classList.remove('on')});
+  });
 });
 
 // ═══════════════════════════════════════════════════
@@ -986,7 +1047,38 @@ function setVal(id,val){
 }
 
 // ═══════════════════════════════════════════════════
-//  CONVIDADOS
+//  CONVIDADOS — helpers de padrão e ordenação
+// ═══════════════════════════════════════════════════
+function isDefGuest(nome){
+  return getDefGuests().some(function(dg){ return dg.nome===nome; });
+}
+
+// Retorna a lista de convidados com padrão sempre no topo (na ordem da lista padrão),
+// seguidos dos demais na ordem que estão em state.guests.
+function sortedGuests(){
+  var defList = getDefGuests();
+  var defNames = defList.map(function(dg){ return dg.nome; });
+  var pinned = [];
+  defNames.forEach(function(nm){
+    var found = state.guests.find(function(g){ return g.nome===nm; });
+    if(found) pinned.push(found);
+  });
+  var others = state.guests.filter(function(g){
+    return defNames.indexOf(g.nome) === -1;
+  });
+  return pinned.concat(others);
+}
+
+// Reordena state.guests para refletir a ordem visual atual
+function applyGuestOrder(ordered){
+  state.guests = ordered;
+}
+
+// ─── Drag & Drop state ───
+var _dragSrcIdx = null; // índice REAL em state.guests (só convidados não-padrão)
+
+// ═══════════════════════════════════════════════════
+//  CONVIDADOS — render
 // ═══════════════════════════════════════════════════
 function renderGuests(){
   var c=state.guests.length,
@@ -998,22 +1090,123 @@ function renderGuests(){
     '<div class="sc"><div class="sc-n">'+conf+'</div><div class="sc-l">Confirmados</div></div>'+
     '<div class="sc"><div class="sc-n">'+agt+'</div><div class="sc-l">Aguardando</div></div>'+
     '<div class="sc"><div class="sc-n">'+rec+'</div><div class="sc-l">Recusaram</div></div>';
-  document.getElementById('guest-list').innerHTML=state.guests.map(function(g,i){
-    var ini=g.nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase();
-    return '<div class="card"><div class="card-row">'+
-      '<div style="display:flex;align-items:center;gap:10px">'+
-      '<div class="av '+avClass(i)+'">'+ini+'</div>'+
-      '<div><div class="nm">'+g.nome+'</div>'+
-      '<div class="sub">'+g.cat+(g.mesa?' · Mesa '+g.mesa:'')+(g.rest?' · '+g.rest:'')+'</div></div></div>'+
-      '<div class="act-group"><span class="bdg '+rsvpBadge(g.rsvp)+'">'+g.rsvp+'</span>'+
-      '<button class="btn-act edit" onclick="editGuest('+i+')" title="Editar">✏️</button>'+
-      '<button class="btn-act del" onclick="delGuest('+i+')" title="Excluir">×</button>'+
-      '</div></div></div>';
-  }).join('')||'<div class="empty">Nenhum convidado cadastrado.</div>';
+
+  var sorted = sortedGuests();
+  var defNames = getDefGuests().map(function(dg){ return dg.nome; });
+
+  if(!sorted.length){
+    document.getElementById('guest-list').innerHTML='<div class="empty">Nenhum convidado cadastrado.</div>';
+  } else {
+    document.getElementById('guest-list').innerHTML=sorted.map(function(g,visIdx){
+      var realIdx = state.guests.indexOf(g);
+      var isPinned = defNames.indexOf(g.nome) !== -1;
+      var ini=g.nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase();
+      var handle = isPinned
+        ? '<span style="width:18px;flex-shrink:0"></span>'
+        : '<span class="drag-handle" title="Arrastar para reordenar">⠿</span>';
+      var pinnedStyle = isPinned ? 'border-left:2px solid rgba(127,119,221,.4);' : '';
+      return '<div class="card'+(isPinned?'':' draggable')+'" data-vis="'+visIdx+'" data-real="'+realIdx+'" data-pinned="'+(isPinned?'1':'0')+'" style="'+pinnedStyle+'">'+
+        '<div class="card-row">'+
+        handle+
+        '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">'+
+        '<div class="av '+avClass(visIdx)+'">'+ini+'</div>'+
+        '<div style="min-width:0"><div class="nm" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">'+g.nome+
+        (isPinned?'<span class="guest-default-badge">padrão</span>':'')+'</div>'+
+        '<div class="sub">'+g.cat+(g.mesa?' · Mesa '+g.mesa:'')+(g.rest?' · '+g.rest:'')+'</div></div></div>'+
+        '<div class="act-group"><span class="bdg '+rsvpBadge(g.rsvp)+'">'+g.rsvp+'</span>'+
+        '<button class="btn-act edit" onclick="editGuest('+realIdx+')" title="Editar">✏️</button>'+
+        '<button class="btn-act del" onclick="delGuest('+realIdx+')" title="Excluir">×</button>'+
+        '</div></div></div>';
+    }).join('');
+    setupGuestDrag();
+  }
+
   var pct=Math.round(conf/Math.max(c,1)*100);
   document.getElementById('bar-rsvp').style.width=pct+'%';
   document.getElementById('pct-rsvp').textContent=pct+'%';
 }
+
+// ─── Drag & Drop setup ───
+function setupGuestDrag(){
+  var list = document.getElementById('guest-list');
+  var cards = list.querySelectorAll('.card.draggable');
+  var dragEl = null;
+
+  cards.forEach(function(card){
+    // Touch
+    card.addEventListener('touchstart', function(e){
+      dragEl = card;
+      card.classList.add('dragging');
+    }, {passive:true});
+
+    card.addEventListener('touchmove', function(e){
+      e.preventDefault();
+      var touch = e.touches[0];
+      var target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if(!target) return;
+      var targetCard = target.closest('.card');
+      if(!targetCard || targetCard===dragEl) return;
+      list.querySelectorAll('.card').forEach(function(c){ c.classList.remove('drag-over'); });
+      targetCard.classList.add('drag-over');
+    }, {passive:false});
+
+    card.addEventListener('touchend', function(e){
+      card.classList.remove('dragging');
+      var overCard = list.querySelector('.card.drag-over');
+      if(overCard && overCard !== dragEl){
+        overCard.classList.remove('drag-over');
+        commitDrop(dragEl, overCard);
+      }
+      dragEl = null;
+    });
+
+    // Mouse
+    card.setAttribute('draggable','true');
+    card.addEventListener('dragstart', function(e){
+      dragEl = card;
+      setTimeout(function(){ card.classList.add('dragging'); }, 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', function(){
+      card.classList.remove('dragging');
+      list.querySelectorAll('.card').forEach(function(c){ c.classList.remove('drag-over'); });
+      dragEl = null;
+    });
+  });
+
+  list.querySelectorAll('.card').forEach(function(card){
+    card.addEventListener('dragover', function(e){
+      e.preventDefault();
+      if(card === dragEl) return;
+      if(card.dataset.pinned === '1') return; // não permite drop em cima de padrão
+      list.querySelectorAll('.card').forEach(function(c){ c.classList.remove('drag-over'); });
+      card.classList.add('drag-over');
+    });
+    card.addEventListener('drop', function(e){
+      e.preventDefault();
+      if(dragEl && card !== dragEl && card.dataset.pinned !== '1'){
+        card.classList.remove('drag-over');
+        commitDrop(dragEl, card);
+      }
+    });
+  });
+}
+
+function commitDrop(fromCard, toCard){
+  // Trabalha sobre state.guests usando os índices reais
+  var fromReal = parseInt(fromCard.dataset.real);
+  var toReal   = parseInt(toCard.dataset.real);
+  if(isNaN(fromReal)||isNaN(toReal)||fromReal===toReal) return;
+  var arr = state.guests;
+  var item = arr.splice(fromReal, 1)[0];
+  // Recalcula toReal após splice
+  var newTo = parseInt(toCard.dataset.real);
+  if(fromReal < newTo) newTo--;
+  arr.splice(newTo, 0, item);
+  saveState();
+  renderGuests();
+}
+
 function editGuest(i){
   var g=state.guests[i];
   setVal('fg-idx',i);setVal('fg-nome',g.nome);setVal('fg-cat',g.cat);setVal('fg-rsvp',g.rsvp);setVal('fg-mesa',g.mesa);setVal('fg-rest',g.rest);
@@ -1265,18 +1458,48 @@ function delRef(i){state.refs.splice(i,1);saveState();renderRefs()}
 //  ESPAÇO
 // ═══════════════════════════════════════════════════
 function saveEspaco(){
+  state.espaco = {
+    nome: v('esp-nome'),
+    end:  v('esp-end'),
+    cap:  v('esp-cap'),
+    hora: v('esp-hora'),
+    contrato: v('esp-contrato'),
+    obs:  v('esp-obs')
+  };
   addLog('edit','Informações do espaço atualizadas','—');
   saveState();
   var el=document.getElementById('esp-saved');
   el.style.display='block';
   setTimeout(function(){el.style.display='none'},2500);
 }
+function loadEspaco(){
+  if(!state.espaco) return;
+  var e=state.espaco;
+  setVal('esp-nome', e.nome||'');
+  setVal('esp-end',  e.end||'');
+  setVal('esp-cap',  e.cap||'');
+  setVal('esp-hora', e.hora||'');
+  setVal('esp-contrato', e.contrato||'Em negociação');
+  setVal('esp-obs',  e.obs||'');
+}
+
+// ═══════════════════════════════════════════════════
+//  SYNC CONVIDADOS PADRÃO → LISTA REAL
+// ═══════════════════════════════════════════════════
+function syncDefGuests(){
+  var list = getDefGuests();
+  list.forEach(function(dg){
+    var exists = state.guests.some(function(g){ return g.nome === dg.nome; });
+    if(!exists){ state.guests.push(JSON.parse(JSON.stringify(dg))); }
+  });
+}
 
 // ═══════════════════════════════════════════════════
 //  RENDER ALL
 // ═══════════════════════════════════════════════════
 function renderAll(){
-  renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();
+  syncDefGuests();
+  renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();loadEspaco();
 }
 
 // ═══════════════════════════════════════════════════
@@ -1328,21 +1551,47 @@ function saveDefGuest(){
     mesa: '',
     rest: ''
   };
-  if(idx >= 0){ list[idx] = obj; }
-  else { list.push(obj); }
+  if(idx >= 0){
+    var oldNome = list[idx].nome;
+    list[idx] = obj;
+    // Atualiza na lista real de convidados pelo nome antigo
+    var gi = state.guests.findIndex(function(g){ return g.nome === oldNome; });
+    if(gi >= 0){
+      // Preserva mesa e restrição já preenchidas
+      state.guests[gi] = Object.assign({}, state.guests[gi], {nome: obj.nome, cat: obj.cat, rsvp: obj.rsvp});
+    } else {
+      state.guests.push(JSON.parse(JSON.stringify(obj)));
+    }
+    addLog('edit','Convidado padrão editado', oldNome + ' → ' + nome);
+  } else {
+    list.push(obj);
+    // Adiciona na lista real de convidados se ainda não existe
+    var exists = state.guests.some(function(g){ return g.nome === obj.nome; });
+    if(!exists){ state.guests.push(JSON.parse(JSON.stringify(obj))); }
+    addLog('add','Convidado padrão adicionado', nome);
+  }
   saveDefGuests(list);
+  saveState();
   setVal('fdg-idx',-1); setVal('fdg-nome','');
   document.getElementById('fp-defguest-ttl').textContent = 'Novo convidado padrão';
   closePanel('fp-defguest');
   renderDefGuests();
+  renderGuests();
 }
 
 function delDefGuest(i){
   if(!confirm('Remover este convidado padrão?')) return;
   var list = getDefGuests();
+  var removedNome = list[i].nome;
   list.splice(i,1);
   saveDefGuests(list);
+  // Remove também da lista real de convidados
+  var gi = state.guests.findIndex(function(g){ return g.nome === removedNome; });
+  if(gi >= 0){ state.guests.splice(gi,1); }
+  addLog('del','Convidado padrão removido', removedNome);
+  saveState();
   renderDefGuests();
+  renderGuests();
 }
 
 // ═══════════════════════════════════════════════════
