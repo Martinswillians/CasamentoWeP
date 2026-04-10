@@ -2,374 +2,610 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Willians &amp; Poliana 💍</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Willians & Poliana 💍</title>
 <style>
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — Dark Theme
+═══════════════════════════════════════════ */
 :root{
-  --color-background-primary:#1A1A2E;
-  --color-background-secondary:#16213E;
-  --color-text-primary:#E8E6F8;
-  --color-text-secondary:#A09DB8;
-  --color-border-tertiary:rgba(255,255,255,0.08);
-  --color-border-secondary:rgba(255,255,255,0.15);
-  --border-radius-lg:16px;
-  --border-radius-md:12px;
-  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --bg:        #0f0e1a;
+  --bg2:       #1a1830;
+  --bg3:       #23213a;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.14);
+  --txt:       #e8e6f4;
+  --txt2:      #9b97bc;
+  --txt3:      #6b6890;
+  --purple:    #7f77dd;
+  --purple2:   #534ab7;
+  --purple-l:  #EEEDFE;
+  --purple-d:  #3c3489;
+  --green:     #1d9e75;
+  --green-l:   #e1f5ee;
+  --green-d:   #0f6e56;
+  --pink:      #d4537e;
+  --pink-l:    #fbeaf0;
+  --pink-d:    #993556;
+  --amber:     #ba7517;
+  --amber-l:   #faeeda;
+  --amber-d:   #633806;
+  --red-l:     #fcebeb;
+  --red-d:     #791f1f;
+  --radius:    12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
 }
-@media(prefers-color-scheme:light){
-  :root{
-    --color-background-primary:#FFFFFF;
-    --color-background-secondary:#F5F4FD;
-    --color-text-primary:#1A1730;
-    --color-text-secondary:#6B6887;
-    --color-border-tertiary:rgba(0,0,0,0.08);
-    --color-border-secondary:rgba(0,0,0,0.15);
-  }
-}
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow-x:hidden}
-body{font-family:var(--font-sans);font-size:15px;color:var(--color-text-primary);background:var(--color-background-secondary);min-height:100vh}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px}
+input,select,button{font-family:inherit;font-size:inherit;outline:none}
+input:focus,select:focus{border-color:var(--purple)!important}
 
-/* APP SHELL */
-.app{display:flex;flex-direction:column;min-height:100vh;max-width:480px;margin:0 auto;background:var(--color-background-primary);position:relative}
+/* ─── APP SHELL ─── */
+#app{
+  max-width:430px;
+  margin:0 auto;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background:var(--bg);
+  position:relative;
+}
 
-/* HEADER */
-.hdr{background:linear-gradient(135deg,#7F77DD 0%,#9B54A0 100%);padding:env(safe-area-inset-top,16px) 20px 14px;padding-top:max(env(safe-area-inset-top),16px)}
-.hdr-top{display:flex;align-items:center;justify-content:space-between}
-.hdr h1{font-size:20px;font-weight:700;color:#EEEDFE;letter-spacing:-0.3px}
-.hdr p{font-size:12px;color:#C8C3F5;margin-top:2px}
-.hdr-date{background:rgba(255,255,255,0.22);border-radius:20px;padding:5px 13px;font-size:13px;color:#EEEDFE;font-weight:500;white-space:nowrap}
+/* ═══════════════════════════════════════════
+   LOGIN SCREEN
+═══════════════════════════════════════════ */
+#login-screen{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:32px 24px;
+  background:linear-gradient(160deg,#1a1040 0%,#0f0e1a 60%);
+}
+.login-icon{font-size:48px;margin-bottom:12px;filter:drop-shadow(0 0 16px rgba(127,119,221,.5))}
+.login-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--txt2);margin-bottom:32px}
+.login-card{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:20px}
+.l-ttl{font-size:15px;font-weight:600;margin-bottom:16px;color:var(--txt)}
+.l-lbl{font-size:11px;color:var(--txt2);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
+.l-inp{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg3);color:var(--txt);font-size:13px;margin-bottom:12px}
+.l-inp::placeholder{color:var(--txt3)}
+.pw-wrap{position:relative;margin-bottom:12px}
+.pw-wrap .l-inp{margin-bottom:0;padding-right:38px}
+.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--txt3);font-size:15px;padding:0}
+.btn-primary{width:100%;padding:12px;background:var(--purple);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:4px}
+.btn-primary:hover{background:var(--purple2)}
+.btn-secondary{width:100%;padding:11px;background:transparent;color:var(--purple);border:1.5px solid var(--purple);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;margin-top:10px;transition:all .2s}
+.btn-secondary:hover{background:rgba(127,119,221,.1)}
+.login-switch{text-align:center;font-size:12px;color:var(--txt2);margin-top:14px;cursor:pointer}
+.login-switch span{color:var(--purple);font-weight:600}
+.l-err{font-size:12px;color:#f87171;text-align:center;margin-top:8px;display:none}
 
-/* PROGRESS ROW */
-.prg-row{display:flex;gap:0;padding:10px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
-.pi{flex:1;padding:0 4px}
-.pi-lbl{font-size:10px;color:var(--color-text-secondary);margin-bottom:3px;white-space:nowrap}
-.pi-bar{height:5px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden}
-.pi-fill{height:100%;border-radius:4px;transition:width 0.3s ease}
-.pi-val{font-size:11px;font-weight:600;margin-top:2px}
+/* ═══════════════════════════════════════════
+   MAIN APP
+═══════════════════════════════════════════ */
+#main-app{display:none;flex-direction:column;flex:1;min-height:100vh}
 
-/* BOTTOM NAV */
-.bottom-nav{display:flex;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);padding-bottom:env(safe-area-inset-bottom,0);z-index:100;overflow-x:auto;scrollbar-width:none}
-.bottom-nav::-webkit-scrollbar{display:none}
-.nb{flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;font-size:9px;border:none;background:none;cursor:pointer;color:var(--color-text-secondary);gap:3px;transition:color 0.2s;white-space:nowrap}
-.nb-icon{font-size:20px;line-height:1}
-.nb.on{color:#7F77DD}
-.nb.on .nb-icon{transform:scale(1.1)}
+/* ─── HEADER ─── */
+.hdr{
+  background:linear-gradient(135deg,#6b63cc 0%,#9b7fd4 100%);
+  padding:14px 16px 10px;
+  flex-shrink:0;
+}
+.hdr-row1{display:flex;align-items:center;justify-content:space-between}
+.hdr-left{display:flex;align-items:center;gap:8px}
+.hdr-ring{font-size:18px}
+.hdr-title{font-size:16px;font-weight:700;color:#fff}
+.hdr-date{background:rgba(255,255,255,0.2);border-radius:20px;padding:3px 10px;font-size:11px;color:#fff;white-space:nowrap}
+.hdr-row2{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+.hdr-greeting{font-size:11px;color:rgba(255,255,255,0.8)}
+.hdr-avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.5);color:#fff;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-/* PAGES */
-.pg{display:none;padding:14px 14px 90px;flex:1;min-height:calc(100vh - 200px)}
+/* ─── PROGRESS BAR ROW ─── */
+.prg-row{display:flex;gap:10px;padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+.pi{flex:1}
+.pi-lbl{font-size:10px;color:var(--txt2);margin-bottom:3px}
+.pi-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden}
+.pi-fill{height:100%;border-radius:4px;transition:width .4s}
+.pi-val{font-size:10px;font-weight:600;margin-top:2px}
+
+/* ─── SCROLL AREA ─── */
+.scroll-area{flex:1;overflow-y:auto;padding-bottom:72px}
+.scroll-area::-webkit-scrollbar{width:3px}
+.scroll-area::-webkit-scrollbar-track{background:transparent}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ─── PAGES ─── */
+.pg{display:none;padding:14px}
 .pg.on{display:block}
 
-/* SECTION HEADER */
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.sec-ttl{font-size:16px;font-weight:600;color:var(--color-text-primary)}
-.btn-sm{font-size:13px;background:#EEEDFE;color:#534AB7;border:none;padding:8px 14px;border-radius:20px;cursor:pointer;font-weight:500;min-height:36px}
+/* ─── SECTION HEADER ─── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-ttl{font-size:13px;font-weight:600;color:var(--txt)}
+.btn-sm{font-size:11px;background:rgba(127,119,221,.18);color:var(--purple);border:1px solid rgba(127,119,221,.3);padding:5px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:background .2s}
+.btn-sm:hover{background:rgba(127,119,221,.28)}
 
-/* CARDS */
-.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:13px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.nm{font-size:15px;font-weight:600;color:var(--color-text-primary)}
-.sub{font-size:12px;color:var(--color-text-secondary);margin-top:3px;line-height:1.4}
+/* ─── STATS GRID ─── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;text-align:center}
+.sc-n{font-size:20px;font-weight:700;color:var(--txt)}
+.sc-l{font-size:10px;color:var(--txt2);margin-top:2px}
 
-/* BADGES */
-.bdg{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;white-space:nowrap}
-.bg{background:#EAF3DE;color:#27500A}.by{background:#FAEEDA;color:#633806}.br{background:#FCEBEB;color:#791F1F}.bp{background:#FBEAF0;color:#72243E}.bpu{background:#EEEDFE;color:#3C3489}.bgr{background:#F1EFE8;color:#444441}
+/* ─── CARD ─── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px}
+.card-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nm{font-size:13px;font-weight:600;color:var(--txt)}
+.sub{font-size:11px;color:var(--txt2);margin-top:2px}
 
-/* AVATAR */
-.av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
-.avpu{background:#EEEDFE;color:#534AB7}.avt{background:#E1F5EE;color:#0F6E56}.avpk{background:#FBEAF0;color:#993556}.ava{background:#FAEEDA;color:#854F0B}.avc{background:#E6F1FB;color:#185FA5}
+/* ─── AVATARS ─── */
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.av0{background:rgba(127,119,221,.2);color:#a5a0ef}
+.av1{background:rgba(29,158,117,.2);color:#4ecba0}
+.av2{background:rgba(212,83,126,.2);color:#e88aac}
+.av3{background:rgba(186,117,23,.2);color:#d4941c}
+.av4{background:rgba(100,150,220,.2);color:#7ab0e8}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-.sc{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 6px;text-align:center}
-.sc-n{font-size:22px;font-weight:700;color:var(--color-text-primary)}
-.sc-l{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+/* ─── BADGES ─── */
+.bdg{display:inline-block;font-size:10px;padding:3px 8px;border-radius:20px;white-space:nowrap;font-weight:500}
+.bdg-green{background:rgba(29,158,117,.15);color:#4ecba0;border:1px solid rgba(29,158,117,.25)}
+.bdg-amber{background:rgba(186,117,23,.15);color:#d4941c;border:1px solid rgba(186,117,23,.25)}
+.bdg-red  {background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+.bdg-purple{background:rgba(127,119,221,.15);color:#a5a0ef;border:1px solid rgba(127,119,221,.25)}
+.bdg-gray {background:rgba(255,255,255,.06);color:var(--txt2);border:1px solid var(--border2)}
 
-/* CHECKLIST */
-.ci{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer;min-height:48px}
+/* ─── ACTION BUTTONS ─── */
+.act-group{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.btn-act{background:none;border:none;cursor:pointer;padding:4px 5px;border-radius:6px;font-size:14px;line-height:1;color:var(--txt3);transition:all .15s}
+.btn-act:hover.edit{color:var(--purple);background:rgba(127,119,221,.12)}
+.btn-act:hover.del{color:#f87171;background:rgba(248,113,113,.1)}
+
+/* ─── CHECKLIST ─── */
+.ci{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .ci:last-child{border-bottom:none}
-.cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:12px;transition:all 0.2s}
-.cb.ck{background:#7F77DD;border-color:#7F77DD;color:#fff}
-.ct{font-size:14px;color:var(--color-text-primary);line-height:1.4}.ct.ck{text-decoration:line-through;color:var(--color-text-secondary)}
-.cd{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+.cb{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;font-size:10px;cursor:pointer;transition:all .15s}
+.cb.ck{background:var(--purple);border-color:var(--purple);color:#fff}
+.ct{font-size:12px;color:var(--txt);flex:1}
+.ct.ck{text-decoration:line-through;color:var(--txt3)}
+.cd{font-size:10px;color:var(--txt2);margin-top:2px}
 
-/* FINANCE */
-.fr{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary);gap:8px}
+/* ─── FINANCEIRO ─── */
+.fr{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
 .fr:last-child{border-bottom:none}
-.fl{font-size:14px;color:var(--color-text-primary);font-weight:500}
-.fe{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.fv{font-size:14px;font-weight:600}
-.fv.ok{color:#27500A}.fv.ov{color:#791F1F}.fv.pd{color:#633806}
-.tot{background:linear-gradient(135deg,#EEEDFE,#E8E6FF);border-radius:var(--border-radius-md);padding:14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
-.tot-l{font-size:13px;color:#534AB7;font-weight:500}.tot-v{font-size:20px;font-weight:700;color:#3C3489}
-.spb{height:4px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden;margin-top:8px}
-.spf{height:100%;border-radius:4px;background:#7F77DD}
+.fl{font-size:12px;color:var(--txt)}
+.fe{font-size:10px;color:var(--txt2);margin-top:2px}
+.fv{font-size:12px;font-weight:600}
+.fv-ok{color:#4ecba0}.fv-ov{color:#f87171}.fv-pd{color:#d4941c}
+.tot-box{background:rgba(127,119,221,.12);border:1px solid rgba(127,119,221,.2);border-radius:var(--radius-sm);padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.tot-l{font-size:12px;color:var(--purple)}
+.tot-v{font-size:18px;font-weight:700;color:#fff}
 
-/* TABLES GRID */
-.mgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.mi{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
-.mn{font-size:13px;font-weight:600}.msub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
-.spots{display:flex;gap:3px;justify-content:center;margin-top:6px;flex-wrap:wrap}
-.sp{width:9px;height:9px;border-radius:50%}
-.sp.tk{background:#7F77DD}.sp.fr{background:var(--color-border-tertiary)}
+/* ─── SUPPLIER PROG ─── */
+.spb{height:3px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:8px}
+.spf{height:100%;background:var(--purple);border-radius:4px}
 
-/* GIFTS */
-.gift-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary);min-height:52px}
+/* ─── MESAS ─── */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;text-align:center}
+.mn{font-size:12px;font-weight:600;color:var(--txt)}
+.msub{font-size:10px;color:var(--txt2);margin-top:2px}
+.spots{display:flex;gap:2px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.sp{width:7px;height:7px;border-radius:50%}
+.sp-tk{background:var(--purple)}.sp-fr{background:rgba(255,255,255,.1)}
+
+/* ─── GIFTS ─── */
+.gift-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .gift-row:last-child{border-bottom:none}
-.gift-nm{font-size:14px;color:var(--color-text-primary);flex:1;font-weight:500}
-.gift-pr{font-size:13px;font-weight:600;color:#534AB7}
-.gb{width:22px;height:22px;border-radius:5px;border:2px solid var(--color-border-secondary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;transition:all 0.2s}
-.gb.ck{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.gift-nm{font-size:12px;color:var(--txt);flex:1}
+.gift-pr{font-size:12px;font-weight:600;color:var(--purple)}
+.gchk{width:17px;height:17px;border-radius:4px;border:1.5px solid var(--border2);background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px;transition:all .15s}
+.gchk.ck{background:var(--green);border-color:var(--green);color:#fff}
 
-/* MOOD GRID */
-.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.mood-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px;text-align:center}
-.mood-icon{font-size:28px;margin-bottom:7px}
-.mood-nm{font-size:13px;font-weight:600;color:var(--color-text-primary)}
-.mood-sub{font-size:11px;color:var(--color-text-secondary);margin-top:3px;line-height:1.4}
-.tag{display:inline-block;background:#EEEDFE;color:#3C3489;font-size:11px;padding:3px 8px;border-radius:20px;margin:2px}
+/* ─── TAGS ─── */
+.tag{display:inline-block;background:rgba(127,119,221,.12);color:var(--purple);font-size:10px;padding:2px 8px;border-radius:20px;margin:2px;border:1px solid rgba(127,119,221,.2)}
 
-/* INPUTS */
-.inp{width:100%;padding:12px 13px;border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:15px;margin-bottom:10px;transition:border-color 0.2s;-webkit-appearance:none}
-.inp:focus{outline:none;border-color:#7F77DD}
-.sel{width:100%;padding:12px 13px;border:1.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:15px;margin-bottom:10px;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center}
-.sel:focus{outline:none;border-color:#7F77DD}
-.btn-add{width:100%;padding:14px;background:linear-gradient(135deg,#7F77DD,#9B54A0);color:#fff;border:none;border-radius:var(--border-radius-md);font-size:15px;cursor:pointer;margin-top:6px;font-weight:600;letter-spacing:0.2px}
-.btn-del{background:none;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:18px;padding:6px 8px;border-radius:6px;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.btn-del:active{color:#E24B4A;background:rgba(226,75,74,0.1)}
+/* ─── MOOD GRID ─── */
+.mood-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.mood-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.mood-icon{font-size:26px;margin-bottom:8px}
+.mood-nm{font-size:12px;font-weight:600;color:var(--txt)}
+.mood-sub{font-size:11px;color:var(--txt2);margin-top:3px}
 
-/* MODAL - full bottom sheet on mobile */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center}
-.modal-overlay.on{display:flex}
-.modal{background:var(--color-background-primary);border-radius:20px 20px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 20px);width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:slideUp 0.25s ease}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-handle{width:40px;height:4px;background:var(--color-border-secondary);border-radius:2px;margin:0 auto 16px;display:block}
-.modal-ttl{font-size:17px;font-weight:700;margin-bottom:16px;color:var(--color-text-primary)}
-.modal-close{position:absolute;top:16px;right:16px;background:var(--color-background-secondary);border:none;width:32px;height:32px;border-radius:50%;font-size:16px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* ─── FORM INPUTS ─── */
+.f-lbl{font-size:11px;color:var(--txt2);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+.f-inp{width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg3);color:var(--txt);font-size:12px;margin-bottom:10px;transition:border .15s}
+.f-inp::placeholder{color:var(--txt3)}
+.f-inp:focus{border-color:var(--purple)}
+.f-sel{width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg3);color:var(--txt);font-size:12px;margin-bottom:10px}
+.f-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-save{width:100%;padding:10px;background:var(--purple);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;margin-top:4px;transition:background .2s}
+.btn-save:hover{background:var(--purple2)}
+.btn-cancel2{width:100%;padding:10px;background:transparent;color:var(--txt2);border:1px solid var(--border2);border-radius:var(--radius-sm);font-size:13px;cursor:pointer;margin-top:8px}
 
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.lbl{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500}
+/* ─── INLINE FORM PANEL ─── */
+.form-panel{display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.form-panel.on{display:block}
+.form-panel-ttl{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.form-panel-ttl button{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:18px;line-height:1}
 
-/* Supplier progress */
-.spb{height:5px;background:var(--color-border-tertiary);border-radius:4px;overflow:hidden;margin-top:10px}
-.spf{height:100%;border-radius:4px;background:#7F77DD}
+/* ─── BOTTOM NAV ─── */
+.bot-nav{
+  position:fixed;
+  bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  display:flex;
+  z-index:100;
+  padding-bottom:env(safe-area-inset-bottom,0);
+}
+.bn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px 6px;background:none;border:none;cursor:pointer;color:var(--txt3);font-size:10px;gap:3px;transition:color .15s;position:relative}
+.bn-icon{font-size:18px;line-height:1}
+.bn.on{color:var(--purple)}
+.bn.on::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:2px;background:var(--purple);border-radius:0 0 3px 3px}
+.bn-label{font-size:9px;font-weight:500}
 
-/* Dance floor banner */
-.dance-banner{background:linear-gradient(135deg,#EEEDFE,#F0EEFF);border-radius:var(--border-radius-md);padding:10px 14px;text-align:center;margin-bottom:14px;font-size:12px;color:#534AB7;font-weight:500}
+/* ─── OVERLAY MODAL ─── */
+.ov-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:20px}
+.ov-modal.on{display:flex}
+.ov-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:18px;width:100%;max-width:390px;max-height:85vh;overflow-y:auto}
+.ov-box::-webkit-scrollbar{width:3px}
+.ov-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.ov-ttl{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.ov-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:20px;line-height:1}
 
-/* Save confirmation */
-#esp-saved{margin-top:12px;padding:12px;background:#E1F5EE;border-radius:var(--border-radius-md);font-size:13px;color:#085041;text-align:center;font-weight:500}
+/* ─── PROFILE POPUP ─── */
+.profile-popup{display:none;position:fixed;top:0;right:0;left:0;margin:auto;max-width:430px;z-index:300}
+.profile-popup.on{display:block}
+.pp-inner{background:var(--bg2);border:1px solid var(--border2);border-radius:0 0 var(--radius) var(--radius);padding:16px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.pp-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.pp-av{width:42px;height:42px;border-radius:50%;background:var(--purple2);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pp-nm{font-size:14px;font-weight:700;color:var(--txt)}
+.pp-email{font-size:11px;color:var(--txt2);margin-top:2px}
+.pp-role{display:inline-block;background:rgba(127,119,221,.15);color:var(--purple);font-size:10px;padding:2px 8px;border-radius:20px;margin-top:4px;border:1px solid rgba(127,119,221,.25)}
+.pp-btn{width:100%;padding:9px;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;margin-bottom:6px;transition:all .2s;text-align:left;display:block}
+.pp-edit{background:rgba(127,119,221,.1);color:var(--purple)}
+.pp-edit:hover{background:rgba(127,119,221,.2)}
+.pp-logout{background:rgba(248,113,113,.08);color:#f87171}
+.pp-logout:hover{background:rgba(248,113,113,.15)}
+.pp-close-area{position:fixed;inset:0;z-index:-1}
 
-/* Refs */
-.ref-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
-.ref-row:last-child{border-bottom:none}
-.ref-link{font-size:13px;color:#7F77DD;flex:1;word-break:break-all}
+/* ─── LOGS ─── */
+.log-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+.log-add{background:rgba(29,158,117,.15);color:#4ecba0}
+.log-edit{background:rgba(127,119,221,.15);color:#a5a0ef}
+.log-del{background:rgba(248,113,113,.1);color:#f87171}
+.log-txt{font-size:12px;color:var(--txt);line-height:1.4}
+.log-meta{font-size:10px;color:var(--txt2);margin-top:2px}
+.log-user{font-weight:600;color:var(--purple)}
 
-/* Refs input row */
-.ref-input-row{display:flex;gap:8px;margin-top:10px;align-items:flex-end}
-.ref-input-row .inp{margin:0;flex:1}
-.ref-input-row .btn-sm{flex-shrink:0;align-self:stretch;padding:0 16px;border-radius:12px;font-size:14px;height:48px}
+/* ─── MISC ─── */
+.divider{height:1px;background:var(--border);margin:10px 0}
+.empty{text-align:center;padding:28px 0;color:var(--txt3);font-size:12px}
+.ref-link{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.ref-link:last-child{border-bottom:none}
+.ref-link a{font-size:12px;color:var(--purple);flex:1;word-break:break-all}
+
+/* ─── SPACE PAGE ─── */
+.space-save-msg{display:none;margin-top:10px;padding:10px;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.2);border-radius:var(--radius-sm);font-size:12px;color:#4ecba0}
 </style>
 </head>
 <body>
-<div class="app">
+<div id="app">
+
+<!-- ════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-icon">💍</div>
+  <div class="login-title">Willians &amp; Poliana</div>
+  <div class="login-sub">App de organização do casamento</div>
+
+  <!-- LOGIN FORM -->
+  <div id="lf-login" class="login-card" style="width:100%">
+    <div class="l-ttl">Entrar na conta</div>
+    <div class="l-lbl">E-mail</div>
+    <input class="l-inp" id="li-email" type="email" placeholder="seu@email.com">
+    <div class="l-lbl">Senha</div>
+    <div class="pw-wrap"><input class="l-inp" id="li-senha" type="password" placeholder="••••••••"><button class="pw-eye" onclick="tpw('li-senha')">👁</button></div>
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <button class="btn-secondary" onclick="loginGuest()">Entrar como visitante</button>
+    <div id="li-err" class="l-err"></div>
+    <div class="login-switch" onclick="swReg()">Não tem conta? <span>Criar conta</span></div>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div id="lf-reg" class="login-card" style="width:100%;display:none">
+    <div class="login-switch" style="text-align:left;margin-bottom:14px" onclick="swLogin()">← Voltar ao login</div>
+    <div class="l-ttl">Criar conta</div>
+    <div class="l-lbl">Nome completo</div>
+    <input class="l-inp" id="ri-nome" placeholder="Ex: Willians Santos">
+    <div class="l-lbl">E-mail</div>
+    <input class="l-inp" id="ri-email" type="email" placeholder="seu@email.com">
+    <div class="l-lbl">Função</div>
+    <select class="l-inp" id="ri-role" style="margin-bottom:12px"><option>Noivo(a)</option><option>Familiar</option><option>Cerimonialista</option><option>Colaborador</option></select>
+    <div class="l-lbl">Senha</div>
+    <div class="pw-wrap"><input class="l-inp" id="ri-senha" type="password" placeholder="Mín. 6 caracteres"><button class="pw-eye" onclick="tpw('ri-senha')">👁</button></div>
+    <div class="l-lbl">Confirmar senha</div>
+    <div class="pw-wrap"><input class="l-inp" id="ri-senha2" type="password" placeholder="Repita a senha"><button class="pw-eye" onclick="tpw('ri-senha2')">👁</button></div>
+    <button class="btn-primary" onclick="doReg()">Criar conta</button>
+    <div id="ri-err" class="l-err"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MAIN APP
+════════════════════════════════════════ -->
+<div id="main-app">
+
   <!-- HEADER -->
   <div class="hdr">
-    <div class="hdr-top">
-      <div><h1>💍 Willians &amp; Poliana</h1><p>App de organização do casamento</p></div>
+    <div class="hdr-row1">
+      <div class="hdr-left">
+        <span class="hdr-ring">💍</span>
+        <span class="hdr-title">Willians &amp; Poliana</span>
+      </div>
       <div class="hdr-date" id="hdr-date">14 dez 2025</div>
+    </div>
+    <div class="hdr-row2">
+      <span class="hdr-greeting" id="hdr-greeting">Bem-vindo!</span>
+      <div class="hdr-avatar" id="hdr-avatar" onclick="toggleProfile()">?</div>
     </div>
   </div>
 
-  <!-- PROGRESS -->
+  <!-- PROGRESS ROW -->
   <div class="prg-row">
-    <div class="pi"><div class="pi-lbl">Tarefas</div><div class="pi-bar"><div class="pi-fill" id="task-bar" style="background:#7F77DD"></div></div><div class="pi-val" id="task-pct" style="color:#534AB7"></div></div>
-    <div class="pi"><div class="pi-lbl">Orçamento</div><div class="pi-bar"><div class="pi-fill" id="fin-bar" style="background:#1D9E75"></div></div><div class="pi-val" id="fin-pct" style="color:#0F6E56"></div></div>
-    <div class="pi"><div class="pi-lbl">RSVPs</div><div class="pi-bar"><div class="pi-fill" id="rsvp-bar" style="background:#D4537E"></div></div><div class="pi-val" id="rsvp-pct" style="color:#993556"></div></div>
-    <div class="pi"><div class="pi-lbl">Presentes</div><div class="pi-bar"><div class="pi-fill" id="gift-bar" style="background:#BA7517"></div></div><div class="pi-val" id="gift-pct" style="color:#633806"></div></div>
+    <div class="pi"><div class="pi-lbl">Tarefas</div><div class="pi-bar"><div class="pi-fill" id="bar-task" style="background:var(--purple)"></div></div><div class="pi-val" id="pct-task" style="color:var(--purple)"></div></div>
+    <div class="pi"><div class="pi-lbl">Orçamento</div><div class="pi-bar"><div class="pi-fill" id="bar-fin" style="background:var(--green)"></div></div><div class="pi-val" id="pct-fin" style="color:#4ecba0"></div></div>
+    <div class="pi"><div class="pi-lbl">RSVPs</div><div class="pi-bar"><div class="pi-fill" id="bar-rsvp" style="background:var(--pink)"></div></div><div class="pi-val" id="pct-rsvp" style="color:#e88aac"></div></div>
+    <div class="pi"><div class="pi-lbl">Presentes</div><div class="pi-bar"><div class="pi-fill" id="bar-gift" style="background:var(--amber)"></div></div><div class="pi-val" id="pct-gift" style="color:#d4941c"></div></div>
   </div>
 
   <!-- PAGES -->
-  <div id="pg-convidados" class="pg on">
-    <div class="stats" id="guest-stats"></div>
-    <div class="sec-hdr"><span class="sec-ttl">Convidados</span><button class="btn-sm" onclick="openModal('gm')">+ Adicionar</button></div>
-    <div id="guest-list"></div>
-  </div>
+  <div class="scroll-area">
 
-  <div id="pg-checklist" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Checklist</span><button class="btn-sm" onclick="openModal('tm')">+ Tarefa</button></div>
-    <div class="card" id="task-list" style="padding:6px 14px"></div>
-  </div>
-
-  <div id="pg-financeiro" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Financeiro</span><button class="btn-sm" onclick="openModal('fm')">+ Item</button></div>
-    <div class="card" id="fin-list" style="padding:6px 14px"></div>
-    <div class="tot"><div><div class="tot-l">Total estimado</div><div id="fin-real-tot" style="font-size:12px;color:#7F77DD;margin-top:2px"></div></div><div class="tot-v" id="fin-est-tot"></div></div>
-  </div>
-
-  <div id="pg-fornecedores" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Fornecedores</span><button class="btn-sm" onclick="openModal('sm')">+ Novo</button></div>
-    <div id="sup-list"></div>
-  </div>
-
-  <div id="pg-mesas" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Mesas</span><button class="btn-sm" onclick="openModal('mm')">+ Mesa</button></div>
-    <div class="dance-banner">💃 Pista de dança — Mesa dos noivos ao centro</div>
-    <div class="mgrid" id="mesa-grid"></div>
-  </div>
-
-  <div id="pg-presentes" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Presentes</span><button class="btn-sm" onclick="openModal('pm')">+ Presente</button></div>
-    <div class="card" id="gift-list" style="padding:6px 14px"></div>
-  </div>
-
-  <div id="pg-inspiracoes" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Estilo &amp; Inspirações</span></div>
-    <div class="mood-grid">
-      <div class="mood-card"><div class="mood-icon">🌸</div><div class="mood-nm">Decoração floral</div><div class="mood-sub">Rosas brancas e bouvardia</div></div>
-      <div class="mood-card"><div class="mood-icon">🌈</div><div class="mood-nm">Paleta de cores</div><div style="margin-top:8px;display:flex;gap:5px;justify-content:center"><div style="width:18px;height:18px;border-radius:50%;background:#7F77DD"></div><div style="width:18px;height:18px;border-radius:50%;background:#D4537E"></div><div style="width:18px;height:18px;border-radius:50%;background:#F4C0D1"></div><div style="width:18px;height:18px;border-radius:50%;background:#EEEDFE"></div></div><div class="mood-sub" style="margin-top:5px">Lilás, rosa e off-white</div></div>
-      <div class="mood-card"><div class="mood-icon">👗</div><div class="mood-nm">Vestido</div><div class="mood-sub">Modelo princesa, renda e cauda</div><div style="margin-top:7px"><span class="tag">Prova 1: Ok</span><span class="tag">Prova 2: Ago</span></div></div>
-      <div class="mood-card"><div class="mood-icon">👔</div><div class="mood-nm">Terno e sapatos</div><div class="mood-sub">Terno grafite, gravata lilás</div><div style="margin-top:7px"><span class="tag">Aluguel</span><span class="tag">Oxford preto</span></div></div>
-      <div class="mood-card"><div class="mood-icon">🎵</div><div class="mood-nm">Música e clima</div><div class="mood-sub">Pop romântico + samba</div><div style="margin-top:7px"><span class="tag">DJ</span><span class="tag">Playlist criada</span></div></div>
-      <div class="mood-card"><div class="mood-icon">🍔</div><div class="mood-nm">Cardápio</div><div class="mood-sub">Buffet jantar + open bar</div><div style="margin-top:7px"><span class="tag">Vegetariano</span><span class="tag">Sem glúten</span></div></div>
+    <!-- CONVIDADOS -->
+    <div class="pg on" id="pg-convidados">
+      <div class="stats" id="guest-stats"></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div>
+      <div class="form-panel" id="fp-guest">
+        <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
+        <input type="hidden" id="fg-idx" value="-1">
+        <div class="f-lbl">Nome completo</div><input class="f-inp" id="fg-nome" placeholder="Nome do convidado">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fg-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
+          <div><div class="f-lbl">RSVP</div><select class="f-sel" id="fg-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
+        </div>
+        <div class="f-grid2">
+          <div><div class="f-lbl">Mesa nº</div><input class="f-inp" id="fg-mesa" placeholder="ex: 3"></div>
+          <div><div class="f-lbl">Restrição alimentar</div><input class="f-inp" id="fg-rest" placeholder="ex: Vegetariano"></div>
+        </div>
+        <button class="btn-save" onclick="saveGuest()">Salvar convidado</button>
+      </div>
+      <div id="guest-list"></div>
     </div>
-    <div style="margin-top:16px">
-      <div class="sec-ttl" style="margin-bottom:10px;font-size:15px">Referências salvas</div>
-      <div id="ref-list"></div>
-      <div class="ref-input-row">
-        <input class="inp" id="ref-inp" placeholder="Colar link (Pinterest, Instagram...)">
-        <button class="btn-sm" onclick="addRef()">Salvar</button>
+
+    <!-- CHECKLIST -->
+    <div class="pg" id="pg-checklist">
+      <div class="sec-hdr"><span class="sec-ttl">Checklist de Tarefas</span><button class="btn-sm" onclick="openPanel('fp-task','novo')">+ Tarefa</button></div>
+      <div class="form-panel" id="fp-task">
+        <div class="form-panel-ttl"><span id="fp-task-ttl">Nova tarefa</span><button onclick="closePanel('fp-task')">×</button></div>
+        <input type="hidden" id="ft-idx" value="-1">
+        <div class="f-lbl">Descrição</div><input class="f-inp" id="ft-desc" placeholder="Ex: Confirmar fotógrafo">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Data limite</div><input class="f-inp" id="ft-data" type="date"></div>
+          <div><div class="f-lbl">Categoria</div><select class="f-sel" id="ft-cat"><option>Geral</option><option>Traje</option><option>Fornecedor</option><option>Convidados</option><option>Espaço</option><option>Financeiro</option></select></div>
+        </div>
+        <button class="btn-save" onclick="saveTask()">Salvar tarefa</button>
+      </div>
+      <div class="card" id="task-list" style="padding:4px 12px"></div>
+    </div>
+
+    <!-- FINANCEIRO -->
+    <div class="pg" id="pg-financeiro">
+      <div class="sec-hdr"><span class="sec-ttl">Controle Financeiro</span><button class="btn-sm" onclick="openPanel('fp-fin','novo')">+ Item</button></div>
+      <div class="form-panel" id="fp-fin">
+        <div class="form-panel-ttl"><span id="fp-fin-ttl">Novo item financeiro</span><button onclick="closePanel('fp-fin')">×</button></div>
+        <input type="hidden" id="ff-idx" value="-1">
+        <div class="f-lbl">Descrição</div><input class="f-inp" id="ff-desc" placeholder="Ex: Floricultura">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Valor estimado (R$)</div><input class="f-inp" id="ff-est" type="number" placeholder="0"></div>
+          <div><div class="f-lbl">Valor real (R$)</div><input class="f-inp" id="ff-real" type="number" placeholder="0"></div>
+        </div>
+        <div class="f-grid2">
+          <div><div class="f-lbl">Vencimento</div><input class="f-inp" id="ff-venc" type="date"></div>
+          <div><div class="f-lbl">Status</div><select class="f-sel" id="ff-status"><option>Pendente</option><option>Pago parcial</option><option>Quitado</option></select></div>
+        </div>
+        <button class="btn-save" onclick="saveFin()">Salvar item</button>
+      </div>
+      <div class="card" id="fin-list" style="padding:4px 12px"></div>
+      <div class="tot-box"><div><div class="tot-l">Total estimado</div><div id="fin-real-sub" style="font-size:11px;color:var(--purple);margin-top:2px"></div></div><div class="tot-v" id="fin-est-val"></div></div>
+    </div>
+
+    <!-- FORNECEDORES -->
+    <div class="pg" id="pg-fornecedores">
+      <div class="sec-hdr"><span class="sec-ttl">Fornecedores</span><button class="btn-sm" onclick="openPanel('fp-sup','novo')">+ Fornecedor</button></div>
+      <div class="form-panel" id="fp-sup">
+        <div class="form-panel-ttl"><span id="fp-sup-ttl">Novo fornecedor</span><button onclick="closePanel('fp-sup')">×</button></div>
+        <input type="hidden" id="fs-idx" value="-1">
+        <div class="f-lbl">Nome da empresa</div><input class="f-inp" id="fs-nome" placeholder="Ex: Buffet Bella Cozinha">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fs-cat"><option>Buffet</option><option>Foto/Vídeo</option><option>Decoração</option><option>DJ/Música</option><option>Floricultura</option><option>Cerimonial</option><option>Outro</option></select></div>
+          <div><div class="f-lbl">Status</div><select class="f-sel" id="fs-status"><option>Proposta</option><option>Contratado</option><option>Pago parcial</option><option>Quitado</option></select></div>
+        </div>
+        <div class="f-grid2">
+          <div><div class="f-lbl">Valor total (R$)</div><input class="f-inp" id="fs-total" type="number" placeholder="0"></div>
+          <div><div class="f-lbl">Valor pago (R$)</div><input class="f-inp" id="fs-pago" type="number" placeholder="0"></div>
+        </div>
+        <div class="f-lbl">Link do contrato</div><input class="f-inp" id="fs-link" placeholder="https://...">
+        <button class="btn-save" onclick="saveSupplier()">Salvar fornecedor</button>
+      </div>
+      <div id="sup-list"></div>
+    </div>
+
+    <!-- MESAS -->
+    <div class="pg" id="pg-mesas">
+      <div class="sec-hdr"><span class="sec-ttl">Mapa de Mesas</span><button class="btn-sm" onclick="openPanel('fp-mesa','novo')">+ Mesa</button></div>
+      <div style="background:rgba(127,119,221,.1);border:1px solid rgba(127,119,221,.2);border-radius:var(--radius-sm);padding:8px;text-align:center;margin-bottom:12px;font-size:11px;color:var(--purple)">Pista de dança — Mesa dos noivos ao centro</div>
+      <div class="form-panel" id="fp-mesa">
+        <div class="form-panel-ttl"><span id="fp-mesa-ttl">Nova mesa</span><button onclick="closePanel('fp-mesa')">×</button></div>
+        <input type="hidden" id="fm-idx" value="-1">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Nome/número</div><input class="f-inp" id="fm-nome" placeholder="Ex: Mesa 6"></div>
+          <div><div class="f-lbl">Capacidade</div><input class="f-inp" id="fm-cap" type="number" placeholder="10"></div>
+        </div>
+        <div class="f-lbl">Grupo / Descrição</div><input class="f-inp" id="fm-grupo" placeholder="Ex: Amigos da faculdade">
+        <div class="f-lbl">Lugares ocupados</div><input class="f-inp" id="fm-ocup" type="number" placeholder="0">
+        <button class="btn-save" onclick="saveMesa()">Salvar mesa</button>
+      </div>
+      <div class="mgrid" id="mesa-grid"></div>
+    </div>
+
+    <!-- PRESENTES -->
+    <div class="pg" id="pg-presentes">
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Presentes</span><button class="btn-sm" onclick="openPanel('fp-gift','novo')">+ Presente</button></div>
+      <div class="form-panel" id="fp-gift">
+        <div class="form-panel-ttl"><span id="fp-gift-ttl">Novo presente</span><button onclick="closePanel('fp-gift')">×</button></div>
+        <input type="hidden" id="fg2-idx" value="-1">
+        <div class="f-lbl">Item</div><input class="f-inp" id="fg2-nome" placeholder="Ex: Jogo de panelas">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Preço estimado (R$)</div><input class="f-inp" id="fg2-preco" type="number" placeholder="0"></div>
+          <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fg2-cat"><option>Cozinha</option><option>Quarto</option><option>Sala</option><option>Banheiro</option><option>Eletrônicos</option><option>Viagem</option><option>Outro</option></select></div>
+        </div>
+        <button class="btn-save" onclick="saveGift()">Salvar presente</button>
+      </div>
+      <div class="card" id="gift-list" style="padding:4px 12px"></div>
+    </div>
+
+    <!-- ESTILO / INSPIRAÇÕES -->
+    <div class="pg" id="pg-estilo">
+      <div class="sec-hdr"><span class="sec-ttl">Estilo &amp; Inspirações</span></div>
+      <div class="mood-grid">
+        <div class="mood-card"><div class="mood-icon">🌸</div><div class="mood-nm">Decoração floral</div><div class="mood-sub">Rosas brancas e bouvardia</div></div>
+        <div class="mood-card"><div class="mood-icon">🌅</div><div class="mood-nm">Paleta de cores</div><div style="margin-top:8px;display:flex;gap:4px;justify-content:center"><div style="width:14px;height:14px;border-radius:50%;background:#7F77DD"></div><div style="width:14px;height:14px;border-radius:50%;background:#D4537E"></div><div style="width:14px;height:14px;border-radius:50%;background:#F4C0D1"></div><div style="width:14px;height:14px;border-radius:50%;background:#EEEDFE"></div></div><div class="mood-sub" style="margin-top:5px">Lilás, rosa e off-white</div></div>
+        <div class="mood-card"><div class="mood-icon">📸</div><div class="mood-nm">Vestido</div><div class="mood-sub">Modelo princesa, renda e cauda</div><div style="margin-top:6px"><span class="tag">Prova 1: ✓</span><span class="tag">Prova 2: Ago</span></div></div>
+        <div class="mood-card"><div class="mood-icon">👑</div><div class="mood-nm">Terno e sapatos</div><div class="mood-sub">Terno grafite, gravata lilás</div><div style="margin-top:6px"><span class="tag">Aluguel</span><span class="tag">Oxford preto</span></div></div>
+        <div class="mood-card"><div class="mood-icon">🎵</div><div class="mood-nm">Música e clima</div><div class="mood-sub">Pop romântico + samba</div><div style="margin-top:6px"><span class="tag">DJ</span><span class="tag">Playlist criada</span></div></div>
+        <div class="mood-card"><div class="mood-icon">🍽️</div><div class="mood-nm">Cardápio</div><div class="mood-sub">Buffet jantar + open bar</div><div style="margin-top:6px"><span class="tag">Vegetariano</span><span class="tag">Sem glúten</span></div></div>
+      </div>
+      <div style="margin-top:14px">
+        <div class="sec-ttl" style="margin-bottom:10px">Referências salvas</div>
+        <div id="ref-list"></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input class="f-inp" id="ref-inp" placeholder="Colar link (Pinterest, Instagram...)" style="margin:0;flex:1">
+          <button class="btn-sm" onclick="addRef()">Salvar</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div id="pg-espaco" class="pg">
-    <div class="sec-hdr"><span class="sec-ttl">Salão &amp; Espaço</span></div>
-    <div class="card">
-      <div class="lbl">Nome do espaço</div><input class="inp" id="esp-nome" placeholder="Ex: Espaço Villa Verde">
-      <div class="lbl">Endereço completo</div><input class="inp" id="esp-end" placeholder="Rua, número, bairro, cidade">
-      <div class="row2">
-        <div><div class="lbl">Capacidade</div><input class="inp" id="esp-cap" type="number" placeholder="150"></div>
-        <div><div class="lbl">Horário</div><input class="inp" id="esp-hora" placeholder="19h às 02h"></div>
+    <!-- ESPAÇO -->
+    <div class="pg" id="pg-espaco">
+      <div class="sec-hdr"><span class="sec-ttl">Salão &amp; Espaço</span></div>
+      <div class="card">
+        <div class="f-lbl">Nome do espaço</div><input class="f-inp" id="esp-nome" placeholder="Ex: Espaço Villa Verde">
+        <div class="f-lbl">Endereço completo</div><input class="f-inp" id="esp-end" placeholder="Rua, número, bairro, cidade">
+        <div class="f-grid2">
+          <div><div class="f-lbl">Capacidade (pessoas)</div><input class="f-inp" id="esp-cap" type="number" placeholder="150"></div>
+          <div><div class="f-lbl">Horário do evento</div><input class="f-inp" id="esp-hora" placeholder="Ex: 19h às 02h"></div>
+        </div>
+        <div class="f-lbl">Status do contrato</div>
+        <select class="f-sel" id="esp-contrato"><option>Em negociação</option><option>Assinado</option><option>Pago parcial</option><option>Quitado</option></select>
+        <div class="f-lbl">Observações / link do contrato</div><input class="f-inp" id="esp-obs" placeholder="Link ou anotações importantes">
+        <button class="btn-save" onclick="saveEspaco()">Salvar informações do espaço</button>
+        <div class="space-save-msg" id="esp-saved">✓ Informações salvas com sucesso!</div>
       </div>
-      <div class="lbl">Status do contrato</div>
-      <select class="sel" id="esp-contrato"><option>Em negociação</option><option>Assinado</option><option>Pago parcial</option><option>Quitado</option></select>
-      <div class="lbl">Obs / link do contrato</div><input class="inp" id="esp-obs" placeholder="Link ou anotações">
-      <button class="btn-add" onclick="saveEspaco()">💾 Salvar informações do espaço</button>
-      <div id="esp-saved" style="display:none">✅ Informações salvas!</div>
     </div>
-  </div>
+
+    <!-- HISTÓRICO -->
+    <div class="pg" id="pg-historico">
+      <div class="sec-hdr"><span class="sec-ttl">Histórico de Ações</span><button class="btn-sm" onclick="clearLogs()" style="background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.2)">Limpar</button></div>
+      <div class="card" id="log-list" style="padding:4px 12px"><div class="empty">📭 Nenhuma ação registrada.</div></div>
+    </div>
+
+  </div><!-- /.scroll-area -->
 
   <!-- BOTTOM NAV -->
-  <nav class="bottom-nav" id="nav">
-    <button class="nb on" onclick="show('convidados',this)"><span class="nb-icon">👥</span>Convidados</button>
-    <button class="nb" onclick="show('checklist',this)"><span class="nb-icon">✅</span>Checklist</button>
-    <button class="nb" onclick="show('financeiro',this)"><span class="nb-icon">💰</span>Financeiro</button>
-    <button class="nb" onclick="show('fornecedores',this)"><span class="nb-icon">🏢</span>Fornecedores</button>
-    <button class="nb" onclick="show('mesas',this)"><span class="nb-icon">🪑</span>Mesas</button>
-    <button class="nb" onclick="show('presentes',this)"><span class="nb-icon">🎁</span>Presentes</button>
-    <button class="nb" onclick="show('inspiracoes',this)"><span class="nb-icon">✨</span>Estilo</button>
-    <button class="nb" onclick="show('espaco',this)"><span class="nb-icon">🏛️</span>Espaço</button>
+  <nav class="bot-nav">
+    <button class="bn on" id="bn-convidados" onclick="gotoPage('convidados',this)"><span class="bn-icon">👥</span><span class="bn-label">Convidados</span></button>
+    <button class="bn" id="bn-checklist" onclick="gotoPage('checklist',this)"><span class="bn-icon">✅</span><span class="bn-label">Checklist</span></button>
+    <button class="bn" id="bn-financeiro" onclick="gotoPage('financeiro',this)"><span class="bn-icon">💰</span><span class="bn-label">Financeiro</span></button>
+    <button class="bn" id="bn-fornecedores" onclick="gotoPage('fornecedores',this)"><span class="bn-icon">🤝</span><span class="bn-label">Fornecedor</span></button>
+    <button class="bn" id="bn-mesas" onclick="gotoPage('mesas',this)"><span class="bn-icon">🪑</span><span class="bn-label">Mesas</span></button>
+    <button class="bn" id="bn-presentes" onclick="gotoPage('presentes',this)"><span class="bn-icon">🎁</span><span class="bn-label">Presentes</span></button>
+    <button class="bn" id="bn-estilo" onclick="gotoPage('estilo',this)"><span class="bn-icon">✨</span><span class="bn-label">Estilo</span></button>
+    <button class="bn" id="bn-espaco" onclick="gotoPage('espaco',this)"><span class="bn-icon">🏛</span><span class="bn-label">Espaço</span></button>
+    <button class="bn" id="bn-historico" onclick="gotoPage('historico',this)"><span class="bn-icon">📋</span><span class="bn-label">Histórico</span></button>
   </nav>
-</div>
 
-<!-- MODALS (bottom sheets) -->
-<div class="modal-overlay" id="gm" onclick="closeModal('gm',event)">
-  <div class="modal">
-    <span class="modal-handle"></span>
-    <div class="modal-ttl">👤 Novo convidado</div>
-    <div class="lbl">Nome completo</div><input class="inp" id="g-nome" placeholder="Nome do convidado">
-    <div class="row2">
-      <div><div class="lbl">Categoria</div><select class="sel" id="g-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
-      <div><div class="lbl">RSVP</div><select class="sel" id="g-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
+</div><!-- /#main-app -->
+
+<!-- PROFILE POPUP -->
+<div class="profile-popup" id="profile-popup">
+  <div class="pp-inner">
+    <div class="pp-close-area" onclick="closeProfile()"></div>
+    <div class="pp-head">
+      <div class="pp-av" id="pp-av">?</div>
+      <div>
+        <div class="pp-nm" id="pp-nm">—</div>
+        <div class="pp-email" id="pp-email">—</div>
+        <div class="pp-role" id="pp-role">Visitante</div>
+      </div>
     </div>
-    <div class="row2">
-      <div><div class="lbl">Mesa nº</div><input class="inp" id="g-mesa" placeholder="ex: 3"></div>
-      <div><div class="lbl">Restrição alimentar</div><input class="inp" id="g-rest" placeholder="Vegetariano..."></div>
-    </div>
-    <button class="btn-add" onclick="addGuest()">Salvar convidado</button>
+    <button class="pp-btn pp-edit" onclick="openEditProfile()">✏️ Editar perfil</button>
+    <button class="pp-btn pp-logout" onclick="doLogout()">🚪 Sair da conta</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="tm" onclick="closeModal('tm',event)">
-  <div class="modal">
-    <span class="modal-handle"></span>
-    <div class="modal-ttl">✅ Nova tarefa</div>
-    <div class="lbl">Descrição</div><input class="inp" id="t-desc" placeholder="Ex: Confirmar fotógrafo">
-    <div class="row2">
-      <div><div class="lbl">Data limite</div><input class="inp" id="t-data" type="date"></div>
-      <div><div class="lbl">Categoria</div><select class="sel" id="t-cat"><option>Geral</option><option>Traje</option><option>Fornecedor</option><option>Convidados</option><option>Espaço</option><option>Financeiro</option></select></div>
-    </div>
-    <button class="btn-add" onclick="addTask()">Salvar tarefa</button>
+<!-- EDIT PROFILE MODAL -->
+<div class="ov-modal" id="edit-profile-modal">
+  <div class="ov-box">
+    <div class="ov-ttl">✏️ Editar perfil <button class="ov-close" onclick="closeOv('edit-profile-modal')">×</button></div>
+    <div class="f-lbl">Nome completo</div><input class="f-inp" id="ep-nome" placeholder="Seu nome">
+    <div class="f-lbl">E-mail</div><input class="f-inp" id="ep-email" type="email" placeholder="seu@email.com">
+    <div class="f-lbl">Função</div><select class="f-sel" id="ep-role"><option>Noivo(a)</option><option>Familiar</option><option>Cerimonialista</option><option>Colaborador</option><option>Visitante</option></select>
+    <button class="btn-save" onclick="saveProfile()">Salvar perfil</button>
+    <button class="btn-cancel2" onclick="closeOv('edit-profile-modal')">Cancelar</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="fm" onclick="closeModal('fm',event)">
-  <div class="modal">
-    <span class="modal-handle"></span>
-    <div class="modal-ttl">💰 Novo item financeiro</div>
-    <div class="lbl">Descrição</div><input class="inp" id="f-desc" placeholder="Ex: Floricultura">
-    <div class="row2">
-      <div><div class="lbl">Valor estimado (R$)</div><input class="inp" id="f-est" type="number" inputmode="numeric" placeholder="0"></div>
-      <div><div class="lbl">Valor real (R$)</div><input class="inp" id="f-real" type="number" inputmode="numeric" placeholder="0"></div>
-    </div>
-    <div class="row2">
-      <div><div class="lbl">Vencimento</div><input class="inp" id="f-venc" type="date"></div>
-      <div><div class="lbl">Status</div><select class="sel" id="f-status"><option>Pendente</option><option>Pago parcial</option><option>Quitado</option></select></div>
-    </div>
-    <button class="btn-add" onclick="addFin()">Salvar item</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="sm" onclick="closeModal('sm',event)">
-  <div class="modal">
-    <span class="modal-handle"></span>
-    <div class="modal-ttl">🏢 Novo fornecedor</div>
-    <div class="lbl">Nome da empresa</div><input class="inp" id="s-nome" placeholder="Ex: Buffet Bella Cozinha">
-    <div class="row2">
-      <div><div class="lbl">Categoria</div><select class="sel" id="s-cat"><option>Buffet</option><option>Foto/Vídeo</option><option>Decoração</option><option>DJ/Música</option><option>Floricultura</option><option>Cerimonial</option><option>Outro</option></select></div>
-      <div><div class="lbl">Status</div><select class="sel" id="s-status"><option>Proposta</option><option>Contratado</option><option>Pago parcial</option><option>Quitado</option></select></div>
-    </div>
-    <div class="row2">
-      <div><div class="lbl">Valor total (R$)</div><input class="inp" id="s-total" type="number" inputmode="numeric" placeholder="0"></div>
-      <div><div class="lbl">Valor pago (R$)</div><input class="inp" id="s-pago" type="number" inputmode="numeric" placeholder="0"></div>
-    </div>
-    <div class="lbl">Link do contrato</div><input class="inp" id="s-link" placeholder="https://...">
-    <button class="btn-add" onclick="addSupplier()">Salvar fornecedor</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="mm" onclick="closeModal('mm',event)">
-  <div class="modal">
-    <span class="modal-handle"></span>
-    <div class="modal-ttl">🪑 Nova mesa</div>
-    <div class="row2">
-      <div><div class="lbl">Nome/número</div><input class="inp" id="m-nome" placeholder="Ex: Mesa 6"></div>
-      <div><div class="lbl">Capacidade</div><input class="inp" id="m-cap" type="number" inputmode="numeric" placeholder="10"></div>
-    </div>
-    <div class="lbl">Grupo / Descrição</div><input class="inp" id="m-grupo" placeholder="Ex: Amigos da faculdade">
-    <button class="btn-add" onclick="addTable()">Salvar mesa</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="pm" onclick="closeModal('pm',event)">
-  <div class="modal">
-    <span class="modal-handle"></span>
-    <div class="modal-ttl">🎁 Novo presente</div>
-    <div class="lbl">Item</div><input class="inp" id="p-nome" placeholder="Ex: Jogo de panelas">
-    <div class="row2">
-      <div><div class="lbl">Preço est. (R$)</div><input class="inp" id="p-preco" type="number" inputmode="numeric" placeholder="0"></div>
-      <div><div class="lbl">Categoria</div><select class="sel" id="p-cat"><option>Cozinha</option><option>Quarto</option><option>Sala</option><option>Banheiro</option><option>Eletrônicos</option><option>Viagem</option><option>Outro</option></select></div>
-    </div>
-    <button class="btn-add" onclick="addGift()">Salvar presente</button>
-  </div>
-</div>
+</div><!-- /#app -->
 
 <script>
-var state={
+// ═══════════════════════════════════════════════════
+//  STORAGE HELPERS
+// ═══════════════════════════════════════════════════
+var LS_USERS = 'wp_users';
+var LS_STATE = 'wp_state';
+var LS_LOGS  = 'wp_logs';
+var LS_CU    = 'wp_current_user_email';
+
+function lsGet(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+// ─── USERS ───
+function getUsers(){return lsGet(LS_USERS)||[]}
+function saveUsers(u){lsSet(LS_USERS,u)}
+function findUser(email,senha){return getUsers().find(function(u){return u.email===email&&u.senha===senha})||null}
+function findUserByEmail(email){return getUsers().find(function(u){return u.email===email})||null}
+function addUser(u){var users=getUsers();users.push(u);saveUsers(users)}
+function updateUser(email,data){var users=getUsers();var i=users.findIndex(function(u){return u.email===email});if(i>-1){users[i]=Object.assign(users[i],data);saveUsers(users)}}
+
+// ─── CURRENT USER ───
+var currentUser = null;
+function saveCU(){lsSet(LS_CU,currentUser?currentUser.email:null)}
+function restoreCU(){
+  var email=lsGet(LS_CU);
+  if(email){var u=findUserByEmail(email);if(u){currentUser=u;return true}}
+  return false;
+}
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+var defaultState = {
   guests:[
     {nome:"Maria Aparecida",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:""},
     {nome:"Roberto Silva",cat:"Amigos",rsvp:"Confirmado",mesa:"4",rest:"Vegetariano"},
@@ -429,183 +665,492 @@ var state={
   ],
   refs:[]
 };
+var state = JSON.parse(JSON.stringify(defaultState));
+var logs = [];
 
-function rsvpColor(r){return r==="Confirmado"?"bg":r==="Recusou"?"br":"by"}
-function statusColor(s){return s==="Quitado"?"bg":s==="Pago parcial"?"by":s==="Contratado"?"bpu":"br"}
-
-function openModal(id){
-  document.getElementById(id).classList.add("on");
-  document.body.style.overflow="hidden";
+function saveState(){lsSet(LS_STATE,{state:state,logs:logs})}
+function loadState(){
+  var d=lsGet(LS_STATE);
+  if(d&&d.state){state=d.state;logs=d.logs||[]}
 }
-function closeModal(id,e){
-  if(!e||e.target===document.getElementById(id)){
-    document.getElementById(id).classList.remove("on");
-    document.body.style.overflow="";
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+(function init(){
+  loadState();
+  if(restoreCU()){
+    enterApp();
+  } else {
+    document.getElementById('login-screen').style.display='flex';
+  }
+})();
+
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+function tpw(id){var e=document.getElementById(id);e.type=e.type==='password'?'text':'password'}
+function swReg(){document.getElementById('lf-login').style.display='none';document.getElementById('lf-reg').style.display='block'}
+function swLogin(){document.getElementById('lf-reg').style.display='none';document.getElementById('lf-login').style.display='block'}
+
+function doLogin(){
+  var email=v('li-email').trim(),senha=v('li-senha');
+  var u=findUser(email,senha);
+  if(!u){show_err('li-err','E-mail ou senha incorretos.');return}
+  currentUser=u;saveCU();enterApp();
+}
+
+function loginGuest(){
+  currentUser={nome:'Visitante',email:'',senha:'',role:'Visitante'};
+  saveCU();enterApp();
+}
+
+function doReg(){
+  var nome=v('ri-nome').trim(),email=v('ri-email').trim(),role=v('ri-role'),
+      senha=v('ri-senha'),senha2=v('ri-senha2');
+  if(!nome||!email||!senha){show_err('ri-err','Preencha todos os campos.');return}
+  if(senha.length<6){show_err('ri-err','Senha deve ter ao menos 6 caracteres.');return}
+  if(senha!==senha2){show_err('ri-err','As senhas não coincidem.');return}
+  if(findUserByEmail(email)){show_err('ri-err','E-mail já cadastrado.');return}
+  var u={nome:nome,email:email,senha:senha,role:role};
+  addUser(u);currentUser=u;saveCU();enterApp();
+}
+
+function doLogout(){
+  closeProfile();
+  lsSet(LS_CU,null);
+  currentUser=null;
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('li-email').value='';
+  document.getElementById('li-senha').value='';
+  document.getElementById('li-err').style.display='none';
+  swLogin();
+}
+
+function enterApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='flex';
+  document.getElementById('main-app').style.flexDirection='column';
+  document.getElementById('main-app').style.minHeight='100vh';
+  updateHeader();
+  renderAll();
+}
+
+function show_err(id,msg){var e=document.getElementById(id);e.textContent=msg;e.style.display='block'}
+function v(id){return document.getElementById(id).value}
+
+// ═══════════════════════════════════════════════════
+//  HEADER / GREETING
+// ═══════════════════════════════════════════════════
+function greeting(){
+  var h=new Date().getHours();
+  return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite';
+}
+function initials(nome){
+  return nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase()||'?';
+}
+function updateHeader(){
+  var g=greeting();
+  if(currentUser&&currentUser.email){
+    var primeiro=currentUser.nome.split(' ')[0];
+    document.getElementById('hdr-greeting').textContent=g+', '+primeiro+'! · '+currentUser.role;
+    document.getElementById('hdr-avatar').textContent=initials(currentUser.nome);
+    // profile popup
+    document.getElementById('pp-av').textContent=initials(currentUser.nome);
+    document.getElementById('pp-nm').textContent=currentUser.nome;
+    document.getElementById('pp-email').textContent=currentUser.email;
+    document.getElementById('pp-role').textContent=currentUser.role;
+  } else {
+    document.getElementById('hdr-greeting').textContent=g+', visitante! 👋';
+    document.getElementById('hdr-avatar').textContent='?';
+    document.getElementById('pp-av').textContent='?';
+    document.getElementById('pp-nm').textContent='Visitante';
+    document.getElementById('pp-email').textContent='Sem conta';
+    document.getElementById('pp-role').textContent='Visitante';
   }
 }
-function toggleModal(id){
+
+function toggleProfile(){document.getElementById('profile-popup').classList.toggle('on')}
+function closeProfile(){document.getElementById('profile-popup').classList.remove('on')}
+
+function openEditProfile(){
+  closeProfile();
+  if(currentUser){
+    document.getElementById('ep-nome').value=currentUser.nome||'';
+    document.getElementById('ep-email').value=currentUser.email||'';
+    document.getElementById('ep-role').value=currentUser.role||'Visitante';
+  }
+  openOv('edit-profile-modal');
+}
+function saveProfile(){
+  var nome=v('ep-nome').trim(),email=v('ep-email').trim(),role=v('ep-role');
+  if(!nome)return;
+  if(currentUser&&currentUser.email){
+    updateUser(currentUser.email,{nome:nome,email:email,role:role});
+    currentUser.nome=nome;currentUser.email=email;currentUser.role=role;
+    saveCU();
+  }
+  updateHeader();
+  closeOv('edit-profile-modal');
+}
+
+// ═══════════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════════
+function gotoPage(id,btn){
+  document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('on')});
+  document.getElementById('pg-'+id).classList.add('on');
+  document.querySelectorAll('.bn').forEach(function(b){b.classList.remove('on')});
+  btn.classList.add('on');
+  btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  if(id==='historico') renderLogs();
+}
+
+// ═══════════════════════════════════════════════════
+//  PANEL HELPERS
+// ═══════════════════════════════════════════════════
+function openPanel(id,mode){
   var el=document.getElementById(id);
-  if(el.classList.contains("on")) closeModal(id);
-  else openModal(id);
+  if(mode==='novo') el.classList.add('on');
+  else el.classList.toggle('on');
 }
+function closePanel(id){document.getElementById(id).classList.remove('on')}
 
-function show(id,btn){
-  document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on")});
-  document.getElementById("pg-"+id).classList.add("on");
-  document.querySelectorAll(".nb").forEach(function(b){b.classList.remove("on")});
-  btn.classList.add("on");
-  window.scrollTo(0,0);
+function openOv(id){document.getElementById(id).classList.add('on')}
+function closeOv(id){document.getElementById(id).classList.remove('on')}
+
+// Close overlay on bg click
+document.querySelectorAll('.ov-modal').forEach(function(el){
+  el.addEventListener('click',function(e){if(e.target===el) el.classList.remove('on')});
+});
+
+// ═══════════════════════════════════════════════════
+//  AUDIT LOGS
+// ═══════════════════════════════════════════════════
+function addLog(action,entity,detail){
+  var who=currentUser?currentUser.nome:'Visitante';
+  var now=new Date();
+  var time=now.toLocaleDateString('pt-BR')+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  logs.unshift({action:action,entity:entity,detail:detail,who:who,time:time});
+  if(logs.length>300) logs=logs.slice(0,300);
+  saveState();
 }
+function renderLogs(){
+  if(!logs.length){document.getElementById('log-list').innerHTML='<div class="empty">📭 Nenhuma ação registrada.</div>';return}
+  var icons={add:'log-add',edit:'log-edit',del:'log-del'};
+  var emojis={add:'➕',edit:'✏️',del:'🗑️'};
+  document.getElementById('log-list').innerHTML=logs.map(function(l){
+    return '<div class="log-item"><div class="log-icon '+(icons[l.action]||'log-add')+'">'+(emojis[l.action]||'•')+'</div>'+
+      '<div><div class="log-txt">'+l.entity+': <strong>'+l.detail+'</strong></div>'+
+      '<div class="log-meta"><span class="log-user">'+l.who+'</span> · '+l.time+'</div></div></div>';
+  }).join('');
+}
+function clearLogs(){if(confirm('Limpar todo o histórico?')){logs=[];saveState();renderLogs()}}
 
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+var avCls=['av0','av1','av2','av3','av4'];
+function avClass(i){return avCls[i%avCls.length]}
+function fmtDate(s){if(!s)return'';var p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function rsvpBadge(r){return r==='Confirmado'?'bdg-green':r==='Recusou'?'bdg-red':'bdg-amber'}
+function statusBadge(s){return s==='Quitado'?'bdg-green':s==='Pago parcial'?'bdg-amber':s==='Contratado'?'bdg-purple':'bdg-red'}
+function setVal(id,val){document.getElementById(id).value=val||''}
+
+// ═══════════════════════════════════════════════════
+//  CONVIDADOS
+// ═══════════════════════════════════════════════════
 function renderGuests(){
-  var c=state.guests.length,conf=state.guests.filter(g=>g.rsvp==="Confirmado").length,agt=state.guests.filter(g=>g.rsvp==="Aguardando").length,rec=state.guests.filter(g=>g.rsvp==="Recusou").length;
-  document.getElementById("guest-stats").innerHTML='<div class="sc"><div class="sc-n">'+c+'</div><div class="sc-l">Total</div></div><div class="sc"><div class="sc-n">'+conf+'</div><div class="sc-l">Confirmados</div></div><div class="sc"><div class="sc-n">'+agt+'</div><div class="sc-l">Aguardando</div></div><div class="sc"><div class="sc-n">'+rec+'</div><div class="sc-l">Recusaram</div></div>';
-  var colors=["avpu","avt","avpk","ava","avc","avpu","avt","avpk","ava"];
-  var html=state.guests.map(function(g,i){
-    var init=g.nome.split(" ").slice(0,2).map(function(w){return w[0]}).join("").toUpperCase();
-    return '<div class="card"><div class="row"><div style="display:flex;align-items:center;gap:11px"><div class="av '+colors[i%colors.length]+'">'+init+'</div><div><div class="nm">'+g.nome+'</div><div class="sub">'+g.cat+(g.mesa?" · Mesa "+g.mesa:"")+(g.rest?" · "+g.rest:"")+'</div></div></div><div style="display:flex;align-items:center;gap:4px"><span class="bdg '+rsvpColor(g.rsvp)+'">'+g.rsvp+'</span><button class="btn-del" onclick="delGuest('+i+')">×</button></div></div></div>';
-  }).join("");
-  document.getElementById("guest-list").innerHTML=html;
-  var rsvpPct=Math.round(conf/Math.max(c,1)*100);
-  document.getElementById("rsvp-bar").style.width=rsvpPct+"%";
-  document.getElementById("rsvp-pct").textContent=rsvpPct+"%";
+  var c=state.guests.length,
+      conf=state.guests.filter(function(g){return g.rsvp==='Confirmado'}).length,
+      agt=state.guests.filter(function(g){return g.rsvp==='Aguardando'}).length,
+      rec=state.guests.filter(function(g){return g.rsvp==='Recusou'}).length;
+  document.getElementById('guest-stats').innerHTML=
+    '<div class="sc"><div class="sc-n">'+c+'</div><div class="sc-l">Total</div></div>'+
+    '<div class="sc"><div class="sc-n">'+conf+'</div><div class="sc-l">Confirmados</div></div>'+
+    '<div class="sc"><div class="sc-n">'+agt+'</div><div class="sc-l">Aguardando</div></div>'+
+    '<div class="sc"><div class="sc-n">'+rec+'</div><div class="sc-l">Recusaram</div></div>';
+  document.getElementById('guest-list').innerHTML=state.guests.map(function(g,i){
+    var ini=g.nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase();
+    return '<div class="card"><div class="card-row">'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+      '<div class="av '+avClass(i)+'">'+ini+'</div>'+
+      '<div><div class="nm">'+g.nome+'</div>'+
+      '<div class="sub">'+g.cat+(g.mesa?' · Mesa '+g.mesa:'')+(g.rest?' · '+g.rest:'')+'</div></div></div>'+
+      '<div class="act-group"><span class="bdg '+rsvpBadge(g.rsvp)+'">'+g.rsvp+'</span>'+
+      '<button class="btn-act edit" onclick="editGuest('+i+')" title="Editar">✏️</button>'+
+      '<button class="btn-act del" onclick="delGuest('+i+')" title="Excluir">×</button>'+
+      '</div></div></div>';
+  }).join('')||'<div class="empty">Nenhum convidado cadastrado.</div>';
+  var pct=Math.round(conf/Math.max(c,1)*100);
+  document.getElementById('bar-rsvp').style.width=pct+'%';
+  document.getElementById('pct-rsvp').textContent=pct+'%';
 }
-function addGuest(){
-  var n=document.getElementById("g-nome").value.trim();
-  if(!n)return;
-  state.guests.push({nome:n,cat:document.getElementById("g-cat").value,rsvp:document.getElementById("g-rsvp").value,mesa:document.getElementById("g-mesa").value,rest:document.getElementById("g-rest").value});
-  document.getElementById("g-nome").value="";document.getElementById("g-mesa").value="";document.getElementById("g-rest").value="";
-  closeModal("gm");renderGuests();
+function editGuest(i){
+  var g=state.guests[i];
+  setVal('fg-idx',i);setVal('fg-nome',g.nome);setVal('fg-cat',g.cat);setVal('fg-rsvp',g.rsvp);setVal('fg-mesa',g.mesa);setVal('fg-rest',g.rest);
+  document.getElementById('fp-guest-ttl').textContent='Editar convidado';
+  openPanel('fp-guest','edit');
+  document.getElementById('fp-guest').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function delGuest(i){state.guests.splice(i,1);renderGuests()}
+function saveGuest(){
+  var idx=parseInt(v('fg-idx'));
+  var nome=v('fg-nome').trim();if(!nome)return;
+  var obj={nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest')};
+  if(idx>=0){addLog('edit','Convidado editado',state.guests[idx].nome+' → '+nome);state.guests[idx]=obj;}
+  else{addLog('add','Convidado adicionado',nome);state.guests.push(obj);}
+  setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');
+  document.getElementById('fp-guest-ttl').textContent='Novo convidado';
+  closePanel('fp-guest');saveState();renderGuests();
+}
+function delGuest(i){
+  if(!confirm('Excluir o convidado '+state.guests[i].nome+'?'))return;
+  addLog('del','Convidado removido',state.guests[i].nome);
+  state.guests.splice(i,1);saveState();renderGuests();
+}
 
+// ═══════════════════════════════════════════════════
+//  CHECKLIST
+// ═══════════════════════════════════════════════════
 function renderTasks(){
-  var done=state.tasks.filter(t=>t.done).length,total=state.tasks.length;
-  var html=state.tasks.map(function(t,i){
-    return '<div class="ci" onclick="toggleTask('+i+')"><div class="cb'+(t.done?" ck":"")+'">'+( t.done?"✓":"")+'</div><div style="flex:1"><div class="ct'+(t.done?" ck":"")+'">'+t.desc+'</div><div class="cd">'+t.cat+(t.data?" · "+formatDate(t.data):"")+'</div></div><button class="btn-del" onclick="event.stopPropagation();delTask('+i+')">×</button></div>';
-  }).join("");
-  document.getElementById("task-list").innerHTML=html;
+  var done=state.tasks.filter(function(t){return t.done}).length,total=state.tasks.length;
+  document.getElementById('task-list').innerHTML=state.tasks.map(function(t,i){
+    return '<div class="ci">'+
+      '<div class="cb'+(t.done?' ck':'')+'" onclick="toggleTask('+i+')">'+(t.done?'✓':'')+'</div>'+
+      '<div style="flex:1" onclick="toggleTask('+i+')">'+
+      '<div class="ct'+(t.done?' ck':'')+'">'+t.desc+'</div>'+
+      '<div class="cd">'+t.cat+(t.data?' · '+fmtDate(t.data):'')+'</div></div>'+
+      '<div class="act-group">'+
+      '<button class="btn-act edit" onclick="editTask('+i+')" title="Editar">✏️</button>'+
+      '<button class="btn-act del" onclick="event.stopPropagation();delTask('+i+')" title="Excluir">×</button>'+
+      '</div></div>';
+  }).join('')||'<div class="empty">Nenhuma tarefa.</div>';
   var pct=Math.round(done/Math.max(total,1)*100);
-  document.getElementById("task-bar").style.width=pct+"%";
-  document.getElementById("task-pct").textContent=pct+"%";
+  document.getElementById('bar-task').style.width=pct+'%';
+  document.getElementById('pct-task').textContent=pct+'%';
 }
-function toggleTask(i){state.tasks[i].done=!state.tasks[i].done;renderTasks()}
-function delTask(i){state.tasks.splice(i,1);renderTasks()}
-function addTask(){
-  var d=document.getElementById("t-desc").value.trim();
-  if(!d)return;
-  state.tasks.push({desc:d,data:document.getElementById("t-data").value,cat:document.getElementById("t-cat").value,done:false});
-  document.getElementById("t-desc").value="";document.getElementById("t-data").value="";
-  closeModal("tm");renderTasks();
+function toggleTask(i){state.tasks[i].done=!state.tasks[i].done;saveState();renderTasks()}
+function editTask(i){
+  var t=state.tasks[i];
+  setVal('ft-idx',i);setVal('ft-desc',t.desc);setVal('ft-data',t.data);setVal('ft-cat',t.cat);
+  document.getElementById('fp-task-ttl').textContent='Editar tarefa';
+  openPanel('fp-task','edit');
+  document.getElementById('fp-task').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function formatDate(s){if(!s)return"";var p=s.split("-");return p[2]+"/"+p[1]+"/"+p[0]}
+function saveTask(){
+  var idx=parseInt(v('ft-idx'));
+  var desc=v('ft-desc').trim();if(!desc)return;
+  var obj={desc:desc,data:v('ft-data'),cat:v('ft-cat'),done:idx>=0?state.tasks[idx].done:false};
+  if(idx>=0){addLog('edit','Tarefa editada',state.tasks[idx].desc+' → '+desc);state.tasks[idx]=obj;}
+  else{addLog('add','Tarefa adicionada',desc);state.tasks.push(obj);}
+  setVal('ft-idx',-1);setVal('ft-desc','');setVal('ft-data','');
+  document.getElementById('fp-task-ttl').textContent='Nova tarefa';
+  closePanel('fp-task');saveState();renderTasks();
+}
+function delTask(i){
+  addLog('del','Tarefa removida',state.tasks[i].desc);
+  state.tasks.splice(i,1);saveState();renderTasks();
+}
 
+// ═══════════════════════════════════════════════════
+//  FINANCEIRO
+// ═══════════════════════════════════════════════════
 function renderFin(){
   var est=0,real=0;
-  var html=state.fin.map(function(f,i){
+  document.getElementById('fin-list').innerHTML=state.fin.map(function(f,i){
     est+=f.est;real+=f.real;
-    var cls=f.real>f.est?"ov":f.status==="Quitado"?"ok":"pd";
-    var stcls=f.status==="Quitado"?"bg":f.status==="Pago parcial"?"by":"br";
-    return '<div class="fr"><div style="flex:1"><div class="fl">'+f.desc+'</div><div class="fe">Est: R$'+f.est.toLocaleString("pt-BR")+(f.venc?" · Vence: "+formatDate(f.venc):"")+'</div><span class="bdg '+stcls+'" style="margin-top:4px;display:inline-block">'+f.status+'</span></div><div style="text-align:right;flex-shrink:0"><div class="fv '+cls+'">R$'+f.real.toLocaleString("pt-BR")+'</div><button class="btn-del" onclick="delFin('+i+')">×</button></div></div>';
-  }).join("");
-  document.getElementById("fin-list").innerHTML=html;
-  document.getElementById("fin-est-tot").textContent="R$"+est.toLocaleString("pt-BR");
-  document.getElementById("fin-real-tot").textContent="Real: R$"+real.toLocaleString("pt-BR");
+    var cls=f.real>f.est?'fv-ov':f.status==='Quitado'?'fv-ok':'fv-pd';
+    return '<div class="fr"><div><div class="fl">'+f.desc+'</div>'+
+      '<div class="fe">Est: R$'+f.est.toLocaleString('pt-BR')+(f.venc?' · Vence: '+fmtDate(f.venc):'')+'</div></div>'+
+      '<div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px">'+
+      '<div class="fv '+cls+'">R$'+f.real.toLocaleString('pt-BR')+'</div>'+
+      '<span class="bdg '+statusBadge(f.status)+'">'+f.status+'</span>'+
+      '<div class="act-group">'+
+      '<button class="btn-act edit" onclick="editFin('+i+')" title="Editar">✏️</button>'+
+      '<button class="btn-act del" onclick="delFin('+i+')" title="Excluir">×</button>'+
+      '</div></div></div>';
+  }).join('')||'<div class="empty">Nenhum item financeiro.</div>';
+  document.getElementById('fin-est-val').textContent='R$'+est.toLocaleString('pt-BR');
+  document.getElementById('fin-real-sub').textContent='Real: R$'+real.toLocaleString('pt-BR');
   var pct=Math.round(real/Math.max(est,1)*100);
-  document.getElementById("fin-bar").style.width=Math.min(pct,100)+"%";
-  document.getElementById("fin-pct").textContent=pct+"%";
+  document.getElementById('bar-fin').style.width=Math.min(pct,100)+'%';
+  document.getElementById('pct-fin').textContent=pct+'%';
 }
-function addFin(){
-  var d=document.getElementById("f-desc").value.trim();
-  if(!d)return;
-  state.fin.push({desc:d,est:parseFloat(document.getElementById("f-est").value)||0,real:parseFloat(document.getElementById("f-real").value)||0,venc:document.getElementById("f-venc").value,status:document.getElementById("f-status").value});
-  document.getElementById("f-desc").value="";document.getElementById("f-est").value="";document.getElementById("f-real").value="";
-  closeModal("fm");renderFin();
+function editFin(i){
+  var f=state.fin[i];
+  setVal('ff-idx',i);setVal('ff-desc',f.desc);setVal('ff-est',f.est);setVal('ff-real',f.real);setVal('ff-venc',f.venc);setVal('ff-status',f.status);
+  document.getElementById('fp-fin-ttl').textContent='Editar item financeiro';
+  openPanel('fp-fin','edit');
+  document.getElementById('fp-fin').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function delFin(i){state.fin.splice(i,1);renderFin()}
+function saveFin(){
+  var idx=parseInt(v('ff-idx'));
+  var desc=v('ff-desc').trim();if(!desc)return;
+  var obj={desc:desc,est:parseFloat(v('ff-est'))||0,real:parseFloat(v('ff-real'))||0,venc:v('ff-venc'),status:v('ff-status')};
+  if(idx>=0){addLog('edit','Item financeiro editado',state.fin[idx].desc+' → '+desc);state.fin[idx]=obj;}
+  else{addLog('add','Item financeiro adicionado',desc);state.fin.push(obj);}
+  setVal('ff-idx',-1);setVal('ff-desc','');setVal('ff-est','');setVal('ff-real','');setVal('ff-venc','');
+  document.getElementById('fp-fin-ttl').textContent='Novo item financeiro';
+  closePanel('fp-fin');saveState();renderFin();
+}
+function delFin(i){
+  addLog('del','Item financeiro removido',state.fin[i].desc);
+  state.fin.splice(i,1);saveState();renderFin();
+}
 
+// ═══════════════════════════════════════════════════
+//  FORNECEDORES
+// ═══════════════════════════════════════════════════
 function renderSuppliers(){
-  var html=state.suppliers.map(function(s,i){
+  document.getElementById('sup-list').innerHTML=state.suppliers.map(function(s,i){
     var pct=Math.round(s.pago/Math.max(s.total,1)*100);
-    var stcls=statusColor(s.status);
-    return '<div class="card"><div class="row"><div><div class="nm">'+s.nome+'</div><div class="sub">'+s.cat+'</div></div><div style="display:flex;align-items:center;gap:6px"><span class="bdg '+stcls+'">'+s.status+'</span><button class="btn-del" onclick="delSupplier('+i+')">×</button></div></div><div class="spb"><div class="spf" style="width:'+pct+'%"></div></div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:5px">R$'+s.pago.toLocaleString("pt-BR")+' de R$'+s.total.toLocaleString("pt-BR")+(s.link?' · <a href="'+s.link+'" style="color:#7F77DD">contrato</a>':"")+'</div></div>';
-  }).join("");
-  document.getElementById("sup-list").innerHTML=html;
+    return '<div class="card"><div class="card-row"><div><div class="nm">'+s.nome+'</div><div class="sub">'+s.cat+'</div></div>'+
+      '<div class="act-group"><span class="bdg '+statusBadge(s.status)+'">'+s.status+'</span>'+
+      '<button class="btn-act edit" onclick="editSupplier('+i+')" title="Editar">✏️</button>'+
+      '<button class="btn-act del" onclick="delSupplier('+i+')" title="Excluir">×</button>'+
+      '</div></div>'+
+      '<div class="spb"><div class="spf" style="width:'+pct+'%"></div></div>'+
+      '<div style="font-size:10px;color:var(--txt2);margin-top:4px">R$'+s.pago.toLocaleString('pt-BR')+' de R$'+s.total.toLocaleString('pt-BR')+
+      (s.link?' · <a href="'+s.link+'" style="color:var(--purple)">contrato</a>':'')+'</div></div>';
+  }).join('')||'<div class="empty">Nenhum fornecedor.</div>';
 }
-function addSupplier(){
-  var n=document.getElementById("s-nome").value.trim();
-  if(!n)return;
-  state.suppliers.push({nome:n,cat:document.getElementById("s-cat").value,status:document.getElementById("s-status").value,total:parseFloat(document.getElementById("s-total").value)||0,pago:parseFloat(document.getElementById("s-pago").value)||0,link:document.getElementById("s-link").value});
-  document.getElementById("s-nome").value="";document.getElementById("s-total").value="";document.getElementById("s-pago").value="";document.getElementById("s-link").value="";
-  closeModal("sm");renderSuppliers();
+function editSupplier(i){
+  var s=state.suppliers[i];
+  setVal('fs-idx',i);setVal('fs-nome',s.nome);setVal('fs-cat',s.cat);setVal('fs-status',s.status);setVal('fs-total',s.total);setVal('fs-pago',s.pago);setVal('fs-link',s.link);
+  document.getElementById('fp-sup-ttl').textContent='Editar fornecedor';
+  openPanel('fp-sup','edit');
+  document.getElementById('fp-sup').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function delSupplier(i){state.suppliers.splice(i,1);renderSuppliers()}
+function saveSupplier(){
+  var idx=parseInt(v('fs-idx'));
+  var nome=v('fs-nome').trim();if(!nome)return;
+  var obj={nome:nome,cat:v('fs-cat'),status:v('fs-status'),total:parseFloat(v('fs-total'))||0,pago:parseFloat(v('fs-pago'))||0,link:v('fs-link')};
+  if(idx>=0){addLog('edit','Fornecedor editado',state.suppliers[idx].nome+' → '+nome);state.suppliers[idx]=obj;}
+  else{addLog('add','Fornecedor adicionado',nome);state.suppliers.push(obj);}
+  setVal('fs-idx',-1);setVal('fs-nome','');setVal('fs-total','');setVal('fs-pago','');setVal('fs-link','');
+  document.getElementById('fp-sup-ttl').textContent='Novo fornecedor';
+  closePanel('fp-sup');saveState();renderSuppliers();
+}
+function delSupplier(i){
+  addLog('del','Fornecedor removido',state.suppliers[i].nome);
+  state.suppliers.splice(i,1);saveState();renderSuppliers();
+}
 
+// ═══════════════════════════════════════════════════
+//  MESAS
+// ═══════════════════════════════════════════════════
 function renderTables(){
-  var html=state.tables.map(function(t,i){
-    var spots="";for(var j=0;j<t.cap;j++)spots+='<div class="sp '+(j<t.ocupados?"tk":"fr")+'"></div>';
-    var isNoivos=t.nome==="Noivos";
-    return '<div class="mi"'+(isNoivos?' style="border:2px solid #AFA9EC"':'')+'>'+
-      '<div class="mn"'+(isNoivos?' style="color:#534AB7"':'')+'>'+t.nome+'</div>'+
+  document.getElementById('mesa-grid').innerHTML=state.tables.map(function(t,i){
+    var spots='';for(var j=0;j<t.cap;j++) spots+='<div class="sp '+(j<t.ocupados?'sp-tk':'sp-fr')+'"></div>';
+    var isN=t.nome==='Noivos';
+    return '<div class="mi"'+(isN?' style="border-color:rgba(127,119,221,.4)"':'')+'>'+
+      '<div class="mn"'+(isN?' style="color:var(--purple)"':'')+'>'+t.nome+'</div>'+
       '<div class="msub">'+t.grupo+'</div>'+
       '<div class="spots">'+spots+'</div>'+
-      '<div style="font-size:11px;color:var(--color-text-secondary);margin-top:4px">'+t.ocupados+'/'+t.cap+'</div>'+
-      '<button class="btn-del" onclick="delTable('+i+')" style="font-size:11px;margin-top:6px;width:100%;color:var(--color-text-secondary)">remover</button>'+
-    '</div>';
-  }).join("");
-  document.getElementById("mesa-grid").innerHTML=html;
+      '<div style="font-size:10px;color:var(--txt2);margin-top:4px">'+t.ocupados+'/'+t.cap+'</div>'+
+      '<div style="display:flex;gap:4px;justify-content:center;margin-top:6px">'+
+      '<button class="btn-act edit" onclick="editMesa('+i+')" style="font-size:11px">✏️</button>'+
+      '<button class="btn-act del" onclick="delMesa('+i+')" style="font-size:11px">×</button>'+
+      '</div></div>';
+  }).join('')||'<div class="empty" style="grid-column:1/-1">Nenhuma mesa.</div>';
 }
-function addTable(){
-  var n=document.getElementById("m-nome").value.trim();
-  if(!n)return;
-  state.tables.push({nome:n,cap:parseInt(document.getElementById("m-cap").value)||10,ocupados:0,grupo:document.getElementById("m-grupo").value});
-  document.getElementById("m-nome").value="";document.getElementById("m-cap").value="";document.getElementById("m-grupo").value="";
-  closeModal("mm");renderTables();
+function editMesa(i){
+  var t=state.tables[i];
+  setVal('fm-idx',i);setVal('fm-nome',t.nome);setVal('fm-cap',t.cap);setVal('fm-grupo',t.grupo);setVal('fm-ocup',t.ocupados);
+  document.getElementById('fp-mesa-ttl').textContent='Editar mesa';
+  openPanel('fp-mesa','edit');
+  document.getElementById('fp-mesa').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function delTable(i){state.tables.splice(i,1);renderTables()}
+function saveMesa(){
+  var idx=parseInt(v('fm-idx'));
+  var nome=v('fm-nome').trim();if(!nome)return;
+  var obj={nome:nome,cap:parseInt(v('fm-cap'))||10,grupo:v('fm-grupo'),ocupados:parseInt(v('fm-ocup'))||0};
+  if(idx>=0){addLog('edit','Mesa editada',state.tables[idx].nome+' → '+nome);state.tables[idx]=obj;}
+  else{addLog('add','Mesa adicionada',nome);state.tables.push(obj);}
+  setVal('fm-idx',-1);setVal('fm-nome','');setVal('fm-cap','');setVal('fm-grupo','');setVal('fm-ocup','');
+  document.getElementById('fp-mesa-ttl').textContent='Nova mesa';
+  closePanel('fp-mesa');saveState();renderTables();
+}
+function delMesa(i){
+  addLog('del','Mesa removida',state.tables[i].nome);
+  state.tables.splice(i,1);saveState();renderTables();
+}
 
+// ═══════════════════════════════════════════════════
+//  PRESENTES
+// ═══════════════════════════════════════════════════
 function renderGifts(){
-  var total=state.gifts.length,dado=state.gifts.filter(g=>g.dado).length;
-  var html=state.gifts.map(function(g,i){
-    return '<div class="gift-row"><div class="gb'+(g.dado?" ck":"") + '" onclick="toggleGift('+i+')">'+(g.dado?"✓":"")+'</div><div class="gift-nm">'+g.nome+'<br><span style="font-size:11px;color:var(--color-text-secondary)">'+g.cat+'</span></div><div style="text-align:right;flex-shrink:0"><div class="gift-pr">R$'+g.preco.toLocaleString("pt-BR")+'</div><button class="btn-del" onclick="delGift('+i+')">×</button></div></div>';
-  }).join("");
-  document.getElementById("gift-list").innerHTML=html;
+  var total=state.gifts.length,dado=state.gifts.filter(function(g){return g.dado}).length;
+  document.getElementById('gift-list').innerHTML=state.gifts.map(function(g,i){
+    return '<div class="gift-row">'+
+      '<div class="gchk'+(g.dado?' ck':'')+'" onclick="toggleGift('+i+')">'+(g.dado?'✓':'')+'</div>'+
+      '<div class="gift-nm">'+g.nome+'<br><span style="font-size:10px;color:var(--txt2)">'+g.cat+'</span></div>'+
+      '<div style="display:flex;align-items:center;gap:4px">'+
+      '<div class="gift-pr">R$'+g.preco.toLocaleString('pt-BR')+'</div>'+
+      '<button class="btn-act edit" onclick="editGift('+i+')" title="Editar">✏️</button>'+
+      '<button class="btn-act del" onclick="delGift('+i+')" title="Excluir">×</button>'+
+      '</div></div>';
+  }).join('')||'<div class="empty">Nenhum presente na lista.</div>';
   var pct=Math.round(dado/Math.max(total,1)*100);
-  document.getElementById("gift-bar").style.width=pct+"%";
-  document.getElementById("gift-pct").textContent=pct+"%";
+  document.getElementById('bar-gift').style.width=pct+'%';
+  document.getElementById('pct-gift').textContent=pct+'%';
 }
-function toggleGift(i){state.gifts[i].dado=!state.gifts[i].dado;renderGifts()}
-function delGift(i){state.gifts.splice(i,1);renderGifts()}
-function addGift(){
-  var n=document.getElementById("p-nome").value.trim();
-  if(!n)return;
-  state.gifts.push({nome:n,preco:parseFloat(document.getElementById("p-preco").value)||0,cat:document.getElementById("p-cat").value,dado:false});
-  document.getElementById("p-nome").value="";document.getElementById("p-preco").value="";
-  closeModal("pm");renderGifts();
+function toggleGift(i){state.gifts[i].dado=!state.gifts[i].dado;saveState();renderGifts()}
+function editGift(i){
+  var g=state.gifts[i];
+  setVal('fg2-idx',i);setVal('fg2-nome',g.nome);setVal('fg2-preco',g.preco);setVal('fg2-cat',g.cat);
+  document.getElementById('fp-gift-ttl').textContent='Editar presente';
+  openPanel('fp-gift','edit');
+  document.getElementById('fp-gift').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function saveGift(){
+  var idx=parseInt(v('fg2-idx'));
+  var nome=v('fg2-nome').trim();if(!nome)return;
+  var obj={nome:nome,preco:parseFloat(v('fg2-preco'))||0,cat:v('fg2-cat'),dado:idx>=0?state.gifts[idx].dado:false};
+  if(idx>=0){addLog('edit','Presente editado',state.gifts[idx].nome+' → '+nome);state.gifts[idx]=obj;}
+  else{addLog('add','Presente adicionado',nome);state.gifts.push(obj);}
+  setVal('fg2-idx',-1);setVal('fg2-nome','');setVal('fg2-preco','');
+  document.getElementById('fp-gift-ttl').textContent='Novo presente';
+  closePanel('fp-gift');saveState();renderGifts();
+}
+function delGift(i){
+  addLog('del','Presente removido',state.gifts[i].nome);
+  state.gifts.splice(i,1);saveState();renderGifts();
 }
 
+// ═══════════════════════════════════════════════════
+//  REFERÊNCIAS
+// ═══════════════════════════════════════════════════
 function addRef(){
-  var v=document.getElementById("ref-inp").value.trim();
-  if(!v)return;
-  state.refs.push(v);
-  document.getElementById("ref-inp").value="";
-  renderRefs();
+  var val=v('ref-inp').trim();if(!val)return;
+  state.refs.push(val);setVal('ref-inp','');saveState();renderRefs();
 }
 function renderRefs(){
-  var html=state.refs.map(function(r,i){
-    return '<div class="ref-row"><a class="ref-link" href="'+r+'" target="_blank">'+r+'</a><button class="btn-del" onclick="delRef('+i+')">×</button></div>';
-  }).join("");
-  document.getElementById("ref-list").innerHTML=html||'<div style="font-size:13px;color:var(--color-text-secondary);padding:10px 0">Nenhuma referência salva ainda.</div>';
+  document.getElementById('ref-list').innerHTML=state.refs.map(function(r,i){
+    return '<div class="ref-link"><a href="'+r+'" target="_blank">'+r+'</a>'+
+      '<button class="btn-act del" onclick="delRef('+i+')">×</button></div>';
+  }).join('')||'<div style="font-size:12px;color:var(--txt3)">Nenhuma referência salva.</div>';
 }
-function delRef(i){state.refs.splice(i,1);renderRefs()}
+function delRef(i){state.refs.splice(i,1);saveState();renderRefs()}
 
+// ═══════════════════════════════════════════════════
+//  ESPAÇO
+// ═══════════════════════════════════════════════════
 function saveEspaco(){
-  var el=document.getElementById("esp-saved");
-  el.style.display="block";
-  setTimeout(function(){el.style.display="none"},2500);
+  addLog('edit','Informações do espaço atualizadas','—');
+  saveState();
+  var el=document.getElementById('esp-saved');
+  el.style.display='block';
+  setTimeout(function(){el.style.display='none'},2500);
 }
 
-renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();
+// ═══════════════════════════════════════════════════
+//  RENDER ALL
+// ═══════════════════════════════════════════════════
+function renderAll(){
+  renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();
+}
 </script>
 </body>
 </html>
