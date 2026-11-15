@@ -82,6 +82,16 @@ input:focus,select:focus{border-color:var(--purple)!important}
 .login-switch{text-align:center;font-size:12px;color:var(--txt2);margin-top:14px;cursor:pointer}
 .login-switch span{color:var(--purple);font-weight:600}
 .l-err{font-size:12px;color:#f87171;text-align:center;margin-top:8px;display:none}
+.btn-primary:disabled,.btn-secondary:disabled,.btn-google:disabled{opacity:.55;cursor:wait}
+.login-or{display:flex;align-items:center;gap:10px;margin:14px 0 4px;color:var(--txt3);font-size:11px}
+.login-or::before,.login-or::after{content:'';flex:1;height:1px;background:var(--border2)}
+.btn-google{width:100%;padding:11px;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#3c4043;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer}
+.btn-google:hover{background:#f1f3f4}
+#boot-splash{flex:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;background:linear-gradient(160deg,#1a1040 0%,#0f0e1a 60%)}
+#boot-splash .login-icon{margin-bottom:0}
+#boot-msg{color:var(--txt2);font-size:13px;text-align:center;max-width:300px;line-height:1.5}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.sync-ind{font-size:10px;color:rgba(255,255,255,.85);white-space:nowrap}
 
 /* ═══════════════════════════════════════════
    MAIN APP
@@ -315,7 +325,13 @@ input:focus,select:focus{border-color:var(--purple)!important}
 <!-- ════════════════════════════════════════
      LOGIN SCREEN
 ════════════════════════════════════════ -->
-<div id="login-screen">
+<div id="boot-splash">
+  <div class="login-icon">💍</div>
+  <div id="boot-msg">Carregando…</div>
+  <button id="boot-logout" class="btn-secondary" style="display:none;max-width:200px" onclick="doLogout()">Sair</button>
+</div>
+
+<div id="login-screen" style="display:none">
   <div class="login-icon">💍</div>
   <div class="login-title">Willians &amp; Poliana</div>
   <div class="login-sub">App de organização do casamento</div>
@@ -328,8 +344,13 @@ input:focus,select:focus{border-color:var(--purple)!important}
     <div class="l-lbl">Senha</div>
     <div class="pw-wrap"><input class="l-inp" id="li-senha" type="password" placeholder="••••••••"><button class="pw-eye" onclick="tpw('li-senha')">👁</button></div>
     <button class="btn-primary" onclick="doLogin()">Entrar</button>
-    <button class="btn-secondary" onclick="loginGuest()">Entrar como visitante</button>
+    <div class="login-or"><span>ou</span></div>
+    <button class="btn-google" onclick="doGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+      Continuar com Google
+    </button>
     <div id="li-err" class="l-err"></div>
+    <div class="login-switch" onclick="doForgot()">Esqueci minha senha</div>
     <div class="login-switch" onclick="swReg()">Não tem conta? <span>Criar conta</span></div>
   </div>
 
@@ -368,7 +389,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
     </div>
     <div class="hdr-row2">
       <span class="hdr-greeting" id="hdr-greeting">Bem-vindo!</span>
-      <div class="hdr-avatar" id="hdr-avatar" onclick="toggleProfile()">?</div>
+      <div class="hdr-right"><span class="sync-ind" id="sync-ind"></span><div class="hdr-avatar" id="hdr-avatar" onclick="toggleProfile()">?</div></div>
     </div>
   </div>
 
@@ -604,6 +625,13 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
       <div class="divider" style="margin:16px 0"></div>
 
+      <!-- DADOS ANTIGOS DESTE APARELHO -->
+      <div class="card" id="legacy-card" style="display:none">
+        <div class="nm" style="margin-bottom:4px">📲 Dados antigos neste aparelho</div>
+        <div class="sub" style="margin-bottom:10px">Encontramos dados salvos por uma versão anterior do app neste aparelho. Envie-os para a nuvem para não perder nada.</div>
+        <button class="btn-save" onclick="importLegacy()">⬆️ Enviar dados antigos para a nuvem</button>
+      </div>
+
       <!-- ZONA DE PERIGO -->
       <div class="sec-ttl" style="margin-bottom:10px;color:#f87171">⚠️ Zona de perigo</div>
       <div class="card" style="border-color:rgba(248,113,113,.2)">
@@ -652,8 +680,9 @@ input:focus,select:focus{border-color:var(--purple)!important}
   <div class="ov-box">
     <div class="ov-ttl">✏️ Editar perfil <button class="ov-close" onclick="closeOv('edit-profile-modal')">×</button></div>
     <div class="f-lbl">Nome completo</div><input class="f-inp" id="ep-nome" placeholder="Seu nome">
-    <div class="f-lbl">E-mail</div><input class="f-inp" id="ep-email" type="email" placeholder="seu@email.com">
+    <div class="f-lbl">E-mail</div><input class="f-inp" id="ep-email" type="email" placeholder="seu@email.com" disabled style="opacity:.6">
     <div class="f-lbl">Função</div><select class="f-sel" id="ep-role"><option>Noivo(a)</option><option>Familiar</option><option>Cerimonialista</option><option>Colaborador</option><option>Visitante</option></select>
+    <div id="ep-pw-section">
     <div class="divider" style="margin:14px 0 10px"></div>
     <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">🔒 Alterar senha — deixe em branco para manter a atual</div>
     <div class="f-lbl">Senha atual</div>
@@ -662,6 +691,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
     <div class="pw-wrap" style="margin-bottom:10px"><input class="f-inp" id="ep-senha-nova" type="password" placeholder="Mín. 6 caracteres" style="margin:0;padding-right:38px"><button class="pw-eye" onclick="tpw('ep-senha-nova')">👁</button></div>
     <div class="f-lbl">Confirmar nova senha</div>
     <div class="pw-wrap" style="margin-bottom:10px"><input class="f-inp" id="ep-senha-conf" type="password" placeholder="Repita a nova senha" style="margin:0;padding-right:38px"><button class="pw-eye" onclick="tpw('ep-senha-conf')">👁</button></div>
+    </div><!-- /#ep-pw-section -->
     <div id="ep-err" style="font-size:12px;color:#f87171;margin-bottom:8px;display:none"></div>
     <button class="btn-save" onclick="saveProfile()">Salvar perfil</button>
     <button class="btn-cancel2" onclick="closeOv('edit-profile-modal')">Cancelar</button>
@@ -674,56 +704,8 @@ input:focus,select:focus{border-color:var(--purple)!important}
 // ═══════════════════════════════════════════════════
 //  STORAGE HELPERS
 // ═══════════════════════════════════════════════════
-var LS_USERS = 'wp_users';
-var LS_STATE = 'wp_state';
-var LS_LOGS  = 'wp_logs';
-var LS_CU    = 'wp_current_user_email';
-var LS_DEF_GUESTS = 'wp_default_guests';
-
-function lsGet(k){
-  try{
-    var raw=localStorage.getItem(k);
-    if(raw===null||raw===undefined||raw==='null'||raw==='undefined') return null;
-    return JSON.parse(raw);
-  }catch(e){return null}
-}
-function lsSet(k,v){
-  try{
-    if(v===null||v===undefined) localStorage.removeItem(k);
-    else localStorage.setItem(k,JSON.stringify(v));
-  }catch(e){}
-}
-
-// ─── USERS ───
-function getUsers(){return lsGet(LS_USERS)||[]}
-function saveUsers(u){lsSet(LS_USERS,u)}
-function findUser(email,senha){return getUsers().find(function(u){return u.email===email&&u.senha===senha})||null}
-function findUserByEmail(email){return getUsers().find(function(u){return u.email===email})||null}
-function addUser(u){var users=getUsers();users.push(u);saveUsers(users)}
-function updateUser(email,data){var users=getUsers();var i=users.findIndex(function(u){return u.email===email});if(i>-1){users[i]=Object.assign(users[i],data);saveUsers(users)}}
-
-// ─── CURRENT USER ───
+// Usuário logado (vem do Firebase Auth): {uid,nome,email,role,provider}
 var currentUser = null;
-var LS_CU_OBJ = 'wp_current_user_obj';
-function saveCU(){
-  if(!currentUser) return;
-  lsSet(LS_CU_OBJ, currentUser);
-  lsSet(LS_CU, currentUser.email||'__guest__');
-}
-function restoreCU(){
-  var marker = lsGet(LS_CU);
-  if(!marker) return false;
-  if(marker==='__guest__'){
-    var obj = lsGet(LS_CU_OBJ);
-    currentUser = obj || {nome:'Visitante',email:'',senha:'',role:'Visitante'};
-    return true;
-  }
-  var u=findUserByEmail(marker);
-  if(u){currentUser=u;return true}
-  var saved=lsGet(LS_CU_OBJ);
-  if(saved){currentUser=saved;return true}
-  return false;
-}
 
 // ═══════════════════════════════════════════════════
 //  STATE
@@ -791,109 +773,316 @@ var defaultState = {
 var state = JSON.parse(JSON.stringify(defaultState));
 var logs = [];
 
-function saveState(){lsSet(LS_STATE,{state:state,logs:logs})}
-function loadState(){
-  var d=lsGet(LS_STATE);
-  if(d && d.state){
-    // Merge: keep defaultState fields as fallback for any missing keys
-    var saved = d.state;
-    state = {
-      guests:    Array.isArray(saved.guests)    ? saved.guests    : JSON.parse(JSON.stringify(DEFAULT_GUESTS)),
-      tasks:     Array.isArray(saved.tasks)     ? saved.tasks     : defaultState.tasks,
-      fin:       Array.isArray(saved.fin)       ? saved.fin       : defaultState.fin,
-      suppliers: Array.isArray(saved.suppliers) ? saved.suppliers : defaultState.suppliers,
-      tables:    Array.isArray(saved.tables)    ? saved.tables    : defaultState.tables,
-      gifts:     Array.isArray(saved.gifts)     ? saved.gifts     : defaultState.gifts,
-      refs:      Array.isArray(saved.refs)      ? saved.refs      : [],
-      espaco:    (saved.espaco && typeof saved.espaco==='object') ? saved.espaco : {nome:'',end:'',cap:'',hora:'',contrato:'Em negociação',obs:''}
-    };
-    logs = Array.isArray(d.logs) ? d.logs : [];
-  } else {
-    // First run: use custom default guests if already configured
-    var dg = lsGet(LS_DEF_GUESTS);
-    if(dg && Array.isArray(dg)) state.guests = JSON.parse(JSON.stringify(dg));
+// ═══════════════════════════════════════════════════
+//  SINCRONIZAÇÃO COM O FIREBASE (Firestore)
+//  Dados compartilhados em: wedding/main
+//  Perfis de usuário em:    users/{uid}
+// ═══════════════════════════════════════════════════
+function clone(o){return JSON.parse(JSON.stringify(o))}
+
+var cloudLoaded=false, appEntered=false, defGuestsList=null;
+var _saveTimer=null, _inflight=0, _lastSent={}, _waitTimer=null, _lastPush=Promise.resolve();
+
+function normalizeState(s){
+  s=(s&&typeof s==='object')?s:{};
+  return {
+    guests:    Array.isArray(s.guests)    ? s.guests    : clone(DEFAULT_GUESTS),
+    tasks:     Array.isArray(s.tasks)     ? s.tasks     : clone(defaultState.tasks),
+    fin:       Array.isArray(s.fin)       ? s.fin       : clone(defaultState.fin),
+    suppliers: Array.isArray(s.suppliers) ? s.suppliers : clone(defaultState.suppliers),
+    tables:    Array.isArray(s.tables)    ? s.tables    : clone(defaultState.tables),
+    gifts:     Array.isArray(s.gifts)     ? s.gifts     : clone(defaultState.gifts),
+    refs:      Array.isArray(s.refs)      ? s.refs      : [],
+    espaco:    (s.espaco&&typeof s.espaco==='object') ? s.espaco : clone(defaultState.espaco)
+  };
+}
+
+// ─── Indicador de sincronização (cabeçalho) ───
+function setSync(s){
+  var el=document.getElementById('sync-ind'); if(!el) return;
+  if(!navigator.onLine && s!=='error') s='offline';
+  var map={ok:'☁️ Salvo',saving:'⏳ Salvando…',offline:'📴 Offline',error:'⚠️ Erro ao salvar'};
+  el.textContent=map[s]||'';
+}
+window.addEventListener('online', function(){ setSync((_inflight||_saveTimer)?'saving':'ok') });
+window.addEventListener('offline',function(){ setSync('offline') });
+
+// ─── Salvar: agenda envio (debounce) e manda só as seções que mudaram ───
+function saveState(){
+  setSync('saving');
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(pushCloud,500);
+}
+function pushCloud(){
+  _saveTimer=null;
+  if(!currentUser||!cloudLoaded||!window.FB) return;
+  var patch={state:{}}, sent={}, changed=false;
+  Object.keys(state).forEach(function(k){
+    var j=JSON.stringify(state[k]);
+    if(_lastSent['s.'+k]!==j){patch.state[k]=JSON.parse(j);sent['s.'+k]=j;changed=true}
+  });
+  var lj=JSON.stringify(logs);
+  if(_lastSent.logs!==lj){patch.logs=JSON.parse(lj);sent.logs=lj;changed=true}
+  var dj=JSON.stringify(getDefGuests());
+  if(_lastSent.def!==dj){patch.defaultGuests=JSON.parse(dj);sent.def=dj;changed=true}
+  if(!changed){ if(!_inflight) setSync('ok'); return }
+  var prev={};
+  Object.keys(sent).forEach(function(k){prev[k]=_lastSent[k];_lastSent[k]=sent[k]});
+  _inflight++; setSync('saving');
+  var p=FB.saveData(patch).then(function(){
+    _inflight--; if(!_inflight&&!_saveTimer) setSync('ok');
+  }).catch(function(err){
+    _inflight--;
+    Object.keys(prev).forEach(function(k){ if(_lastSent[k]===sent[k]) _lastSent[k]=prev[k] });
+    setSync('error'); console.error('Falha ao salvar:',err);
+    if(err&&err.code==='permission-denied') alert('Sem permissão para salvar no Firestore. Verifique as regras de segurança do banco.');
+  });
+  _lastPush=Promise.all([_lastPush,p]).catch(function(){});
+  return p;
+}
+function flushPending(){
+  if(_saveTimer){clearTimeout(_saveTimer);pushCloud()}
+  return _lastPush;
+}
+document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden'&&_saveTimer){clearTimeout(_saveTimer);pushCloud()} });
+window.addEventListener('pagehide',function(){ if(_saveTimer){clearTimeout(_saveTimer);pushCloud()} });
+
+// ─── Dados chegando do Firestore (tempo real) ───
+window.onCloudData=function(data,meta){
+  meta=meta||{};
+  if(!data){
+    // Documento ainda não existe. Só cria se o SERVIDOR confirmou (nunca a partir do cache offline).
+    if(meta.fromCache){ return }
+    seedCloud(); return;
   }
+  if(cloudLoaded && meta.pending) return;   // eco da nossa própria gravação
+  if(cloudLoaded && _saveTimer) return;     // há alterações locais a caminho
+  var st=normalizeState(data.state);
+  var lg=Array.isArray(data.logs)?data.logs:[];
+  var dg=Array.isArray(data.defaultGuests)?data.defaultGuests:null;
+  if(cloudLoaded){
+    var same=JSON.stringify([st,lg,dg])===JSON.stringify([state,logs,defGuestsList]);
+    if(same) return;
+  }
+  state=st; logs=lg; defGuestsList=dg;
+  Object.keys(state).forEach(function(k){_lastSent['s.'+k]=JSON.stringify(state[k])});
+  _lastSent.logs=JSON.stringify(logs);
+  _lastSent.def=JSON.stringify(getDefGuests());
+  cloudLoaded=true; clearTimeout(_waitTimer);
+  if(!appEntered){ appEntered=true; enterApp(); }
+  else {
+    renderAll();
+    if(document.getElementById('pg-config').classList.contains('on')){ renderDefGuests(); updateSharePreview(); }
+  }
+  setSync('ok');
+};
+window.onCloudError=function(err){
+  console.error('Firestore:',err);
+  var msg=(err&&err.code==='permission-denied')
+    ? 'Sem permissão para acessar os dados. Publique as regras do Firestore e entre novamente.'
+    : 'Erro ao carregar os dados'+((err&&err.code)?' ('+err.code+')':'.');
+  if(appEntered){ setSync('error'); return }
+  showSplash(msg,true);
+};
+
+// Primeiro acesso: cria o documento na nuvem (migra dados antigos do aparelho, se houver)
+function seedCloud(){
+  var leg=legacyData();
+  var dg=lsGet('wp_default_guests');
+  var def=Array.isArray(dg)?dg:clone(DEFAULT_GUESTS);
+  var st=leg?normalizeState(leg.state):clone(defaultState);
+  if(!leg) st.guests=clone(def);
+  var lg=(leg&&Array.isArray(leg.logs))?leg.logs:[];
+  FB.saveData({state:st,logs:lg,defaultGuests:def}).then(function(){
+    if(leg){ try{localStorage.setItem('wp_legacy_done','1')}catch(e){} }
+  }).catch(window.onCloudError);
+}
+
+// ─── Dados antigos (localStorage da versão anterior) ───
+function lsGet(k){
+  try{
+    var raw=localStorage.getItem(k);
+    if(raw===null||raw===undefined||raw==='null'||raw==='undefined') return null;
+    return JSON.parse(raw);
+  }catch(e){return null}
+}
+function legacyData(){
+  try{ if(localStorage.getItem('wp_legacy_done')==='1') return null }catch(e){}
+  var d=lsGet('wp_state');
+  return (d&&d.state)?d:null;
+}
+function refreshLegacyCard(){
+  var el=document.getElementById('legacy-card');
+  if(el) el.style.display=legacyData()?'block':'none';
+}
+function importLegacy(){
+  var d=legacyData(); if(!d) return;
+  if(!confirm('Substituir os dados da nuvem pelos dados antigos salvos neste aparelho?')) return;
+  state=normalizeState(d.state);
+  logs=Array.isArray(d.logs)?d.logs:[];
+  var dg=lsGet('wp_default_guests'); if(Array.isArray(dg)) defGuestsList=dg;
+  try{localStorage.setItem('wp_legacy_done','1')}catch(e){}
+  addLog('edit','Dados antigos importados','deste aparelho');
+  renderAll(); renderDefGuests(); refreshLegacyCard();
+  showImportMsg('✓ Dados antigos enviados para a nuvem!',true);
 }
 
 // ═══════════════════════════════════════════════════
-//  INIT
+//  TELAS: splash / login
 // ═══════════════════════════════════════════════════
-function _bootApp(){
-  loadState();
-  if(restoreCU()){
-    enterApp();
-  } else {
-    document.getElementById('login-screen').style.display='flex';
+function showSplash(msg,withLogout){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('boot-splash').style.display='flex';
+  document.getElementById('boot-msg').textContent=msg||'Carregando…';
+  document.getElementById('boot-logout').style.display=withLogout?'block':'none';
+}
+function hideSplash(){document.getElementById('boot-splash').style.display='none'}
+
+// Se o Firebase não carregar (sem internet / bloqueado)
+setTimeout(function(){
+  if(!window.__fbReady){
+    var m=document.getElementById('boot-msg');
+    if(m) m.textContent='Não foi possível carregar o Firebase. Verifique sua conexão e recarregue a página.';
   }
-}
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded', _bootApp);
-} else {
-  _bootApp();
-}
+},10000);
 
 // ═══════════════════════════════════════════════════
-//  AUTH
+//  AUTH (Firebase Authentication)
 // ═══════════════════════════════════════════════════
 function tpw(id){var e=document.getElementById(id);e.type=e.type==='password'?'text':'password'}
 function swReg(){document.getElementById('lf-login').style.display='none';document.getElementById('lf-reg').style.display='block'}
 function swLogin(){document.getElementById('lf-reg').style.display='none';document.getElementById('lf-login').style.display='block'}
+function show_err(id,msg,ok){var e=document.getElementById(id);e.textContent=msg;e.style.color=ok?'#4ecba0':'';e.style.display='block'}
+function hide_err(id){var e=document.getElementById(id);e.style.display='none';e.style.color=''}
+function v(id){return document.getElementById(id).value}
+
+function authMsg(e){
+  var c=(e&&e.code)||'';
+  var map={
+    'auth/invalid-credential':'E-mail ou senha incorretos.',
+    'auth/invalid-login-credentials':'E-mail ou senha incorretos.',
+    'auth/wrong-password':'E-mail ou senha incorretos.',
+    'auth/user-not-found':'E-mail ou senha incorretos.',
+    'auth/email-already-in-use':'E-mail já cadastrado.',
+    'auth/weak-password':'Senha muito fraca (mínimo 6 caracteres).',
+    'auth/invalid-email':'E-mail inválido.',
+    'auth/missing-password':'Informe a senha.',
+    'auth/too-many-requests':'Muitas tentativas. Aguarde um pouco e tente de novo.',
+    'auth/network-request-failed':'Sem conexão com a internet.',
+    'auth/unauthorized-domain':'Domínio não autorizado. No Firebase: Authentication → Settings → Domínios autorizados.',
+    'auth/operation-not-allowed':'Este método de login não está habilitado no Firebase.',
+    'auth/requires-recent-login':'Por segurança, saia e entre novamente antes de alterar a senha.',
+    'auth/popup-closed-by-user':'',
+    'auth/cancelled-popup-request':''
+  };
+  if(c in map) return map[c];
+  return 'Erro ao autenticar'+(c?' ('+c+')':'.');
+}
+function setBusy(b){
+  document.querySelectorAll('#login-screen button').forEach(function(el){el.disabled=b});
+}
+function _fbReadyOrWarn(errId){
+  if(window.FB) return true;
+  show_err(errId,'Firebase ainda não carregou. Aguarde um instante e tente de novo.');
+  return false;
+}
 
 function doLogin(){
-  var email=v('li-email').trim(),senha=v('li-senha');
-  var u=findUser(email,senha);
-  if(!u){show_err('li-err','E-mail ou senha incorretos.');return}
-  currentUser=u;saveCU();enterApp();
+  var email=v('li-email').trim(), senha=v('li-senha');
+  hide_err('li-err');
+  if(!email||!senha){show_err('li-err','Informe e-mail e senha.');return}
+  if(!_fbReadyOrWarn('li-err')) return;
+  setBusy(true);
+  FB.loginEmail(email,senha)
+    .catch(function(e){var m=authMsg(e);if(m)show_err('li-err',m)})
+    .then(function(){setBusy(false)});
 }
-
-function loginGuest(){
-  currentUser={nome:'Visitante',email:'',senha:'',role:'Visitante'};
-  saveCU();enterApp();
+function doGoogle(){
+  hide_err('li-err');
+  if(!_fbReadyOrWarn('li-err')) return;
+  setBusy(true);
+  FB.loginGoogle()
+    .catch(function(e){var m=authMsg(e);if(m)show_err('li-err',m)})
+    .then(function(){setBusy(false)});
 }
-
+function doForgot(){
+  var email=v('li-email').trim();
+  hide_err('li-err');
+  if(!email){show_err('li-err','Digite seu e-mail acima e toque novamente em “Esqueci minha senha”.');return}
+  if(!_fbReadyOrWarn('li-err')) return;
+  FB.resetPassword(email)
+    .then(function(){show_err('li-err','Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.',true)})
+    .catch(function(e){var m=authMsg(e);if(m)show_err('li-err',m)});
+}
 function doReg(){
   var nome=v('ri-nome').trim(),email=v('ri-email').trim(),role=v('ri-role'),
       senha=v('ri-senha'),senha2=v('ri-senha2');
+  hide_err('ri-err');
   if(!nome||!email||!senha){show_err('ri-err','Preencha todos os campos.');return}
   if(senha.length<6){show_err('ri-err','Senha deve ter ao menos 6 caracteres.');return}
   if(senha!==senha2){show_err('ri-err','As senhas não coincidem.');return}
-  if(findUserByEmail(email)){show_err('ri-err','E-mail já cadastrado.');return}
-  var u={nome:nome,email:email,senha:senha,role:role};
-  addUser(u);currentUser=u;saveCU();enterApp();
+  if(!_fbReadyOrWarn('ri-err')) return;
+  setBusy(true);
+  FB.register({nome:nome,email:email,role:role,senha:senha})
+    .catch(function(e){var m=authMsg(e);if(m)show_err('ri-err',m)})
+    .then(function(){setBusy(false)});
 }
-
 function doLogout(){
   closeProfile();
-  lsSet(LS_CU, null);
-  lsSet(LS_CU_OBJ, null);
-  currentUser=null;
-  document.getElementById('main-app').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('li-email').value='';
-  document.getElementById('li-senha').value='';
-  document.getElementById('li-err').style.display='none';
-  swLogin();
+  var wait=new Promise(function(r){setTimeout(r,3000)});
+  Promise.race([flushPending(),wait]).then(function(){
+    if(window.FB) return FB.logout();
+  }).catch(function(e){console.error(e)});
 }
 
+// Chamado pelo Firebase sempre que o login muda (inclusive ao reabrir o app)
+window.onAuthChanged=function(profile){
+  clearTimeout(_waitTimer);
+  if(!profile){
+    clearTimeout(_saveTimer); _saveTimer=null;
+    currentUser=null; cloudLoaded=false; appEntered=false; defGuestsList=null; _lastSent={};
+    state=clone(defaultState); logs=[];
+    closeProfile(); closeOv('edit-profile-modal');
+    document.getElementById('main-app').style.display='none';
+    hideSplash();
+    document.getElementById('login-screen').style.display='flex';
+    ['li-email','li-senha','ri-nome','ri-email','ri-senha','ri-senha2'].forEach(function(id){document.getElementById(id).value=''});
+    hide_err('li-err'); hide_err('ri-err');
+    swLogin(); setBusy(false);
+    return;
+  }
+  currentUser=profile;
+  if(appEntered){ updateHeader(); return }
+  showSplash('Carregando seus dados…');
+  _waitTimer=setTimeout(function(){
+    if(!cloudLoaded) showSplash('Sem conexão com o servidor. Verifique sua internet…',true);
+  },12000);
+};
+window.onAuthError=function(e){
+  var m=authMsg(e); if(m&&document.getElementById('li-err')) show_err('li-err',m);
+};
+
+document.addEventListener('DOMContentLoaded',function(){
+  ['li-email','li-senha'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')doLogin()});
+  });
+});
+
 function enterApp(){
-  loadState(); // always reload fresh from localStorage
+  hideSplash();
   document.getElementById('login-screen').style.display='none';
-  var mainApp = document.getElementById('main-app');
+  var mainApp=document.getElementById('main-app');
   mainApp.style.display='flex';
   mainApp.style.flexDirection='column';
   mainApp.style.minHeight='100vh';
   updateHeader();
-  // Use requestAnimationFrame to ensure DOM is painted before rendering lists
   requestAnimationFrame(function(){
     renderAll();
-    // scroll active nav button into view
-    var activeBtn = document.querySelector('.bn.on');
+    var activeBtn=document.querySelector('.bn.on');
     if(activeBtn) activeBtn.scrollIntoView({behavior:'instant',block:'nearest',inline:'center'});
   });
 }
-
-function show_err(id,msg){var e=document.getElementById(id);e.textContent=msg;e.style.display='block'}
-function v(id){return document.getElementById(id).value}
 
 // ═══════════════════════════════════════════════════
 //  HEADER / GREETING
@@ -907,7 +1096,7 @@ function initials(nome){
 }
 function updateHeader(){
   var g=greeting();
-  if(currentUser&&currentUser.email){
+  if(currentUser){
     var primeiro=currentUser.nome.split(' ')[0];
     document.getElementById('hdr-greeting').textContent=g+', '+primeiro+'! · '+currentUser.role;
     document.getElementById('hdr-avatar').textContent=initials(currentUser.nome);
@@ -934,9 +1123,11 @@ function openEditProfile(){
   if(currentUser){
     document.getElementById('ep-nome').value=currentUser.nome||'';
     document.getElementById('ep-email').value=currentUser.email||'';
-    document.getElementById('ep-role').value=currentUser.role||'Visitante';
+    document.getElementById('ep-role').value=currentUser.role||'Familiar';
   }
-  // clear password fields
+  // Troca de senha só existe para quem entrou com e-mail/senha (não para Google)
+  document.getElementById('ep-pw-section').style.display=
+    (currentUser&&currentUser.provider==='password')?'block':'none';
   document.getElementById('ep-senha-atual').value='';
   document.getElementById('ep-senha-nova').value='';
   document.getElementById('ep-senha-conf').value='';
@@ -944,32 +1135,29 @@ function openEditProfile(){
   openOv('edit-profile-modal');
 }
 function saveProfile(){
-  var nome=v('ep-nome').trim(),email=v('ep-email').trim(),role=v('ep-role');
+  var nome=v('ep-nome').trim(),role=v('ep-role');
   var senhaAtual=v('ep-senha-atual'),senhaNova=v('ep-senha-nova'),senhaConf=v('ep-senha-conf');
   var errEl=document.getElementById('ep-err');
   errEl.style.display='none';
-  if(!nome)return;
-  // Password change requested?
-  if(senhaNova||senhaAtual||senhaConf){
-    if(currentUser&&currentUser.email){
-      // Registered user: validate current password
-      if(senhaAtual!==currentUser.senha){
-        errEl.textContent='Senha atual incorreta.';errEl.style.display='block';return;
-      }
-    }
-    if(senhaNova.length<6){errEl.textContent='A nova senha deve ter ao menos 6 caracteres.';errEl.style.display='block';return;}
-    if(senhaNova!==senhaConf){errEl.textContent='As senhas não coincidem.';errEl.style.display='block';return;}
+  if(!nome||!currentUser) return;
+  var wantsPw=(currentUser.provider==='password')&&(senhaNova||senhaAtual||senhaConf);
+  function fail(m){errEl.textContent=m;errEl.style.display='block'}
+  if(wantsPw){
+    if(!senhaAtual){fail('Informe a senha atual.');return}
+    if(senhaNova.length<6){fail('A nova senha deve ter ao menos 6 caracteres.');return}
+    if(senhaNova!==senhaConf){fail('As senhas não coincidem.');return}
   }
-  var updates={nome:nome,email:email,role:role};
-  if(senhaNova) updates.senha=senhaNova;
-  if(currentUser&&currentUser.email){
-    updateUser(currentUser.email,updates);
-    currentUser.nome=nome;currentUser.email=email;currentUser.role=role;
-    if(senhaNova) currentUser.senha=senhaNova;
-    saveCU();
-  }
-  updateHeader();
-  closeOv('edit-profile-modal');
+  FB.saveProfile({nome:nome,role:role}).then(function(){
+    currentUser.nome=nome; currentUser.role=role;
+    updateHeader();
+    if(wantsPw) return FB.changePassword(senhaAtual,senhaNova);
+  }).then(function(){
+    closeOv('edit-profile-modal');
+  }).catch(function(e){
+    var c=(e&&e.code)||'';
+    if(c==='auth/invalid-credential'||c==='auth/wrong-password') fail('Senha atual incorreta.');
+    else fail(authMsg(e)||'Não foi possível salvar o perfil.');
+  });
 }
 
 // ═══════════════════════════════════════════════════
@@ -982,7 +1170,7 @@ function gotoPage(id,btn){
   btn.classList.add('on');
   btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
   if(id==='historico') renderLogs();
-  if(id==='config'){ renderDefGuests(); updateSharePreview(); }
+  if(id==='config'){ renderDefGuests(); updateSharePreview(); refreshLegacyCard(); }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1474,6 +1662,8 @@ function saveEspaco(){
 }
 function loadEspaco(){
   if(!state.espaco) return;
+  var ae=document.activeElement;
+  if(ae && ae.id && ae.id.indexOf('esp-')===0) return;
   var e=state.espaco;
   setVal('esp-nome', e.nome||'');
   setVal('esp-end',  e.end||'');
@@ -1488,17 +1678,19 @@ function loadEspaco(){
 // ═══════════════════════════════════════════════════
 function syncDefGuests(){
   var list = getDefGuests();
+  var changed = false;
   list.forEach(function(dg){
     var exists = state.guests.some(function(g){ return g.nome === dg.nome; });
-    if(!exists){ state.guests.push(JSON.parse(JSON.stringify(dg))); }
+    if(!exists){ state.guests.push(JSON.parse(JSON.stringify(dg))); changed = true; }
   });
+  return changed;
 }
 
 // ═══════════════════════════════════════════════════
 //  RENDER ALL
 // ═══════════════════════════════════════════════════
 function renderAll(){
-  syncDefGuests();
+  if(syncDefGuests()) saveState();
   renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();loadEspaco();
 }
 
@@ -1507,10 +1699,9 @@ function renderAll(){
 // ═══════════════════════════════════════════════════
 
 function getDefGuests(){
-  var saved = lsGet(LS_DEF_GUESTS);
-  return saved || JSON.parse(JSON.stringify(DEFAULT_GUESTS));
+  return defGuestsList || JSON.parse(JSON.stringify(DEFAULT_GUESTS));
 }
-function saveDefGuests(arr){ lsSet(LS_DEF_GUESTS, arr); }
+function saveDefGuests(arr){ defGuestsList = arr; saveState(); }
 
 function renderDefGuests(){
   var list = getDefGuests();
@@ -1635,8 +1826,8 @@ function processBackupFile(file){
       var data = JSON.parse(e.target.result);
       if(!data.state) throw new Error('Arquivo inválido');
       if(!confirm('Isso substituirá TODOS os dados atuais pelo backup. Continuar?')) return;
-      state = data.state;
-      logs = data.logs || [];
+      state = normalizeState(data.state);
+      logs = Array.isArray(data.logs) ? data.logs : [];
       if(data.defaultGuests) saveDefGuests(data.defaultGuests);
       saveState();
       renderAll();
@@ -1763,5 +1954,157 @@ function resetApp(){
 }
 
 </script>
+
+<!-- ════════════════════════════════════════
+     FIREBASE (Auth + Firestore)
+════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut,
+  updateProfile, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential,
+  updatePassword, setPersistence, browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
+  doc, getDoc, setDoc, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBdwhHAC92TQa66by0jlXnL4UUSjYZzxik",
+  authDomain: "casamentowep-40f98.firebaseapp.com",
+  projectId: "casamentowep-40f98",
+  storageBucket: "casamentowep-40f98.firebasestorage.app",
+  messagingSenderId: "140834439281",
+  appId: "1:140834439281:web:c7aa1419e52aafc0fa1bd0",
+  measurementId: "G-XLKY4832L4"
+};
+
+const app = initializeApp(firebaseConfig);
+
+// Analytics é opcional: nunca pode quebrar o app
+import("https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js")
+  .then(m => m.isSupported().then(ok => { if (ok) m.getAnalytics(app); }))
+  .catch(() => {});
+
+const auth = getAuth(app);
+// Mantém o login salvo no aparelho (sobrevive a fechar/abrir o app)
+const persistReady = setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+// Firestore com cache offline (funciona sem internet e sincroniza ao voltar)
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+} catch (e) {
+  db = getFirestore(app);
+}
+
+const dataRef = doc(db, "wedding", "main");
+const userRef = (uid) => doc(db, "users", uid);
+let pendingProfile = null;   // nome/função escolhidos no cadastro
+let unsubData = null;
+
+async function loadProfile(user) {
+  let prof = null, readOk = true;
+  try {
+    const s = await getDoc(userRef(user.uid));
+    if (s.exists()) prof = s.data();
+  } catch (e) { readOk = false; console.warn("Perfil:", e); }
+
+  if (!prof) {
+    prof = {
+      nome: (pendingProfile && pendingProfile.nome) || user.displayName || (user.email || "").split("@")[0] || "Usuário",
+      role: (pendingProfile && pendingProfile.role) || "Familiar",
+      email: user.email || ""
+    };
+    // só cria o perfil se conseguimos ler e ele realmente não existe
+    if (readOk) {
+      try { await setDoc(userRef(user.uid), { ...prof, createdAt: serverTimestamp() }); }
+      catch (e) { console.warn("Perfil (criar):", e); }
+    }
+  }
+  pendingProfile = null;
+  return {
+    uid: user.uid,
+    nome: prof.nome,
+    email: user.email || prof.email || "",
+    role: prof.role || "Familiar",
+    provider: (user.providerData[0] && user.providerData[0].providerId) || "password"
+  };
+}
+
+window.FB = {
+  async loginEmail(email, senha) {
+    await persistReady;
+    await signInWithEmailAndPassword(auth, email, senha);
+  },
+  async register({ nome, email, role, senha }) {
+    await persistReady;
+    pendingProfile = { nome, role };
+    try {
+      const c = await createUserWithEmailAndPassword(auth, email, senha);
+      try { await updateProfile(c.user, { displayName: nome }); } catch (e) {}
+    } catch (e) { pendingProfile = null; throw e; }
+  },
+  async loginGoogle() {
+    await persistReady;
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      if (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-this-environment") {
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+      throw e;
+    }
+  },
+  resetPassword(email) { return sendPasswordResetEmail(auth, email); },
+  logout() { return signOut(auth); },
+  saveData(patch) {
+    return setDoc(dataRef, {
+      ...patch,
+      updatedAt: serverTimestamp(),
+      updatedBy: auth.currentUser ? auth.currentUser.uid : null
+    }, { merge: true });
+  },
+  async saveProfile({ nome, role }) {
+    const u = auth.currentUser;
+    await setDoc(userRef(u.uid), { nome, role }, { merge: true });
+    try { await updateProfile(u, { displayName: nome }); } catch (e) {}
+  },
+  async changePassword(atual, nova) {
+    const u = auth.currentUser;
+    await reauthenticateWithCredential(u, EmailAuthProvider.credential(u.email, atual));
+    await updatePassword(u, nova);
+  }
+};
+window.__fbReady = true;
+
+getRedirectResult(auth).catch(e => { if (window.onAuthError) window.onAuthError(e); });
+
+// Fonte única da verdade sobre quem está logado — roda também ao reabrir o app
+onAuthStateChanged(auth, async (user) => {
+  if (unsubData) { unsubData(); unsubData = null; }
+  if (!user) { window.onAuthChanged(null); return; }
+
+  const profile = await loadProfile(user);
+  window.onAuthChanged(profile);
+
+  unsubData = onSnapshot(
+    dataRef,
+    (snap) => window.onCloudData(
+      snap.exists() ? snap.data() : null,
+      { fromCache: snap.metadata.fromCache, pending: snap.metadata.hasPendingWrites }
+    ),
+    (err) => window.onCloudError(err)
+  );
+});
+</script>
+
 </body>
 </html>
