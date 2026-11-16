@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Perfil de cada usuário: só o próprio dono lê e edita
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Dados do casamento (compartilhados entre Willians, Poliana e quem tiver conta)
+    match /wedding/{doc} {
+      allow read, write: if request.auth != null;
+      // Para restringir só a pessoas específicas, troque a linha acima por:
+      // allow read, write: if request.auth != null
+      //   && request.auth.token.email in ['email1@gmail.com', 'email2@gmail.com'];
+    }
+  }
+}
