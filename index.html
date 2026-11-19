@@ -2,7 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0f0e1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Casamento W&P">
 <title>Willians & Poliana 💍</title>
 <style>
 /* ═══════════════════════════════════════════
@@ -275,11 +282,28 @@ input:focus,select:focus{border-color:var(--purple)!important}
 .form-panel-ttl button{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:18px;line-height:1}
 
 /* ─── DRAG & DROP ─── */
-.card.draggable{cursor:grab;touch-action:none}
-.card.draggable:active{cursor:grabbing}
-.card.drag-over{border-color:var(--purple)!important;background:rgba(127,119,221,.08)!important}
-.card.dragging{opacity:.4;transform:scale(.98)}
-.drag-handle{color:var(--txt3);font-size:14px;padding:0 4px;flex-shrink:0;cursor:grab;user-select:none}
+/* ─── ARRASTAR PARA REORDENAR ─── */
+.drag-handle{color:var(--txt3);font-size:17px;line-height:1;padding:10px 7px;margin:-10px -3px -10px -8px;flex-shrink:0;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+.dragging{position:relative;z-index:50;box-shadow:0 10px 28px rgba(0,0,0,.55);background:#201d3a!important;border-radius:var(--radius-sm);transition:none!important;cursor:grabbing}
+.drag-over{outline:2px solid var(--purple);outline-offset:-2px;border-radius:var(--radius-sm);background:rgba(127,119,221,.1)!important}
+body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
+/* ─── FILTROS / LISTA NOIVA-NOIVO ─── */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.chip{font-size:11px;padding:6px 12px;border-radius:20px;border:1px solid var(--border2);background:none;color:var(--txt2);cursor:pointer}
+.chip.on{background:rgba(127,119,221,.2);color:var(--purple);border-color:rgba(127,119,221,.45);font-weight:600}
+.lado{font-size:10px;padding:1px 8px;border-radius:10px;font-weight:600;white-space:nowrap}
+.lado-noiva{background:rgba(212,83,126,.18);color:#f08cb0}
+.lado-noivo{background:rgba(74,144,217,.18);color:#7fb8f0}
+.sec-act{display:flex;gap:6px;align-items:center}
+.dr-count{padding:10px 16px;font-size:12px;line-height:1.7;color:var(--txt);background:rgba(127,119,221,.1);border-bottom:1px solid var(--border);cursor:pointer}
+/* ─── FOLHA DE EXPORTAÇÃO ─── */
+.sheet-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600}
+.sheet-ov.on{display:block}
+.sheet{position:fixed;bottom:0;left:max(0px,calc(50vw - 215px));width:min(430px,100vw);background:var(--bg2);border:1px solid var(--border2);border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0));z-index:610;transform:translateY(105%);visibility:hidden;transition:transform .25s ease,visibility 0s linear .25s}
+.sheet.on{transform:none;visibility:visible;transition:transform .25s ease,visibility 0s}
+.sheet-ttl{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:12px}
+.sheet .btn-save{margin-top:8px}
+.sheet-cancel{width:100%;padding:12px;margin-top:8px;background:none;border:none;color:var(--txt2);font-size:13px;cursor:pointer}
 .guest-default-badge{font-size:9px;color:var(--purple);background:rgba(127,119,221,.12);border:1px solid rgba(127,119,221,.2);border-radius:10px;padding:1px 6px;margin-left:4px;vertical-align:middle}
 
 /* ─── BOTTOM NAV ─── */
@@ -417,7 +441,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
         <span class="hdr-title">Willians &amp; Poliana</span>
       </div>
       <div class="hdr-right">
-        <div class="hdr-date" id="hdr-date">14 dez 2025</div>
+        <div class="hdr-date" id="hdr-date" onclick="goEvento()" style="cursor:pointer" title="Datas do casamento">⛪ 14 mar 2027</div>
         <button class="hdr-btn" id="bell-btn" onclick="toggleNotif()" aria-label="Notificações">🔔<span class="bell-badge" id="bell-badge"></span></button>
       </div>
     </div>
@@ -441,11 +465,13 @@ input:focus,select:focus{border-color:var(--purple)!important}
     <!-- CONVIDADOS -->
     <div class="pg on" id="pg-convidados">
       <div class="stats" id="guest-stats"></div>
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div>
+      <div class="chips" id="guest-filter"></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
         <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
         <input type="hidden" id="fg-idx" value="-1">
         <div class="f-lbl">Nome completo</div><input class="f-inp" id="fg-nome" placeholder="Nome do convidado">
+        <div class="f-lbl">Lista</div><select class="f-sel" id="fg-lado"><option value="">— Não informado —</option><option value="noiva">💗 Lista da noiva</option><option value="noivo">💙 Lista do noivo</option></select>
         <div class="f-grid2">
           <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fg-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
           <div><div class="f-lbl">RSVP</div><select class="f-sel" id="fg-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
@@ -461,7 +487,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- CHECKLIST -->
     <div class="pg" id="pg-checklist">
-      <div class="sec-hdr"><span class="sec-ttl">Checklist de Tarefas</span><button class="btn-sm" onclick="openPanel('fp-task','novo')">+ Tarefa</button></div>
+      <div class="sec-hdr"><span class="sec-ttl">Checklist de Tarefas</span><div class="sec-act"><button class="btn-sm" onclick="openExport('tasks')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-task','novo')">+ Tarefa</button></div></div>
       <div class="form-panel" id="fp-task">
         <div class="form-panel-ttl"><span id="fp-task-ttl">Nova tarefa</span><button onclick="closePanel('fp-task')">×</button></div>
         <input type="hidden" id="ft-idx" value="-1">
@@ -477,7 +503,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- FINANCEIRO -->
     <div class="pg" id="pg-financeiro">
-      <div class="sec-hdr"><span class="sec-ttl">Controle Financeiro</span><button class="btn-sm" onclick="openPanel('fp-fin','novo')">+ Item</button></div>
+      <div class="sec-hdr"><span class="sec-ttl">Controle Financeiro</span><div class="sec-act"><button class="btn-sm" onclick="openExport('fin')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-fin','novo')">+ Item</button></div></div>
       <div class="form-panel" id="fp-fin">
         <div class="form-panel-ttl"><span id="fp-fin-ttl">Novo item financeiro</span><button onclick="closePanel('fp-fin')">×</button></div>
         <input type="hidden" id="ff-idx" value="-1">
@@ -498,7 +524,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- FORNECEDORES -->
     <div class="pg" id="pg-fornecedores">
-      <div class="sec-hdr"><span class="sec-ttl">Fornecedores</span><button class="btn-sm" onclick="openPanel('fp-sup','novo')">+ Fornecedor</button></div>
+      <div class="sec-hdr"><span class="sec-ttl">Fornecedores</span><div class="sec-act"><button class="btn-sm" onclick="openExport('suppliers')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-sup','novo')">+ Fornecedor</button></div></div>
       <div class="form-panel" id="fp-sup">
         <div class="form-panel-ttl"><span id="fp-sup-ttl">Novo fornecedor</span><button onclick="closePanel('fp-sup')">×</button></div>
         <input type="hidden" id="fs-idx" value="-1">
@@ -519,7 +545,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- MESAS -->
     <div class="pg" id="pg-mesas">
-      <div class="sec-hdr"><span class="sec-ttl">Mapa de Mesas</span><button class="btn-sm" onclick="openPanel('fp-mesa','novo')">+ Mesa</button></div>
+      <div class="sec-hdr"><span class="sec-ttl">Mapa de Mesas</span><div class="sec-act"><button class="btn-sm" onclick="openExport('tables')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-mesa','novo')">+ Mesa</button></div></div>
       <div style="background:rgba(127,119,221,.1);border:1px solid rgba(127,119,221,.2);border-radius:var(--radius-sm);padding:8px;text-align:center;margin-bottom:12px;font-size:11px;color:var(--purple)">Pista de dança — Mesa dos noivos ao centro</div>
       <div class="form-panel" id="fp-mesa">
         <div class="form-panel-ttl"><span id="fp-mesa-ttl">Nova mesa</span><button onclick="closePanel('fp-mesa')">×</button></div>
@@ -537,7 +563,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- PRESENTES -->
     <div class="pg" id="pg-presentes">
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Presentes</span><button class="btn-sm" onclick="openPanel('fp-gift','novo')">+ Presente</button></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Presentes</span><div class="sec-act"><button class="btn-sm" onclick="openExport('gifts')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-gift','novo')">+ Presente</button></div></div>
       <div class="form-panel" id="fp-gift">
         <div class="form-panel-ttl"><span id="fp-gift-ttl">Novo presente</span><button onclick="closePanel('fp-gift')">×</button></div>
         <input type="hidden" id="fg2-idx" value="-1">
@@ -553,7 +579,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- ESTILO / INSPIRAÇÕES -->
     <div class="pg" id="pg-estilo">
-      <div class="sec-hdr"><span class="sec-ttl">Estilo &amp; Inspirações</span></div>
+      <div class="sec-hdr"><span class="sec-ttl">Estilo &amp; Inspirações</span><div class="sec-act"><button class="btn-sm" onclick="openExport('refs')">⤓ Exportar</button></div></div>
       <div class="mood-grid">
         <div class="mood-card"><div class="mood-icon">🌸</div><div class="mood-nm">Decoração floral</div><div class="mood-sub">Rosas brancas e bouvardia</div></div>
         <div class="mood-card"><div class="mood-icon">🌅</div><div class="mood-nm">Paleta de cores</div><div style="margin-top:8px;display:flex;gap:4px;justify-content:center"><div style="width:14px;height:14px;border-radius:50%;background:#7F77DD"></div><div style="width:14px;height:14px;border-radius:50%;background:#D4537E"></div><div style="width:14px;height:14px;border-radius:50%;background:#F4C0D1"></div><div style="width:14px;height:14px;border-radius:50%;background:#EEEDFE"></div></div><div class="mood-sub" style="margin-top:5px">Lilás, rosa e off-white</div></div>
@@ -574,7 +600,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- ESPAÇO -->
     <div class="pg" id="pg-espaco">
-      <div class="sec-hdr"><span class="sec-ttl">Salão &amp; Espaço</span></div>
+      <div class="sec-hdr"><span class="sec-ttl">Salão &amp; Espaço</span><div class="sec-act"><button class="btn-sm" onclick="openExport('espaco')">⤓ Exportar</button></div></div>
       <div class="card">
         <div class="f-lbl">Nome do espaço</div><input class="f-inp" id="esp-nome" placeholder="Ex: Espaço Villa Verde">
         <div class="f-lbl">Endereço completo</div><input class="f-inp" id="esp-end" placeholder="Rua, número, bairro, cidade">
@@ -592,12 +618,24 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
     <!-- HISTÓRICO -->
     <div class="pg" id="pg-historico">
-      <div class="sec-hdr"><span class="sec-ttl">Histórico de Ações</span><button class="btn-sm" onclick="clearLogs()" style="background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.2)">Limpar</button></div>
+      <div class="sec-hdr"><span class="sec-ttl">Histórico de Ações</span><div class="sec-act"><button class="btn-sm" onclick="openExport('logs')">⤓ Exportar</button><button class="btn-sm" onclick="clearLogs()" style="background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.2)">Limpar</button></div></div>
       <div class="card" id="log-list" style="padding:4px 12px"><div class="empty">📭 Nenhuma ação registrada.</div></div>
     </div>
 
     <!-- CONFIGURAÇÕES / BACKUP -->
     <div class="pg" id="pg-config">
+
+      <!-- DATAS DO CASAMENTO -->
+      <div class="card" id="evento-card" style="margin-bottom:12px">
+        <div class="nm" style="margin-bottom:10px">💍 Datas do casamento</div>
+        <div class="f-grid2">
+          <div><div class="f-lbl">📜 Casamento civil</div><input class="f-inp" id="ev-civil" type="date"></div>
+          <div><div class="f-lbl">⛪ Casamento religioso</div><input class="f-inp" id="ev-religioso" type="date"></div>
+        </div>
+        <div id="ev-count" style="font-size:12px;line-height:1.7;color:var(--txt);margin:2px 0 4px"></div>
+        <button class="btn-save" onclick="saveEvento()">Salvar datas</button>
+        <div id="ev-msg" class="space-save-msg">✓ Datas salvas!</div>
+      </div>
 
       <!-- CONVIDADOS PADRÃO -->
       <div class="sec-hdr" style="margin-bottom:8px"><span class="sec-ttl">👥 Convidados padrão</span><button class="btn-sm" onclick="openPanel('fp-defguest','novo')">+ Adicionar</button></div>
@@ -606,6 +644,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
         <div class="form-panel-ttl"><span id="fp-defguest-ttl">Novo convidado padrão</span><button onclick="closePanel('fp-defguest')">×</button></div>
         <input type="hidden" id="fdg-idx" value="-1">
         <div class="f-lbl">Nome</div><input class="f-inp" id="fdg-nome" placeholder="Ex: Madrinha da noiva">
+        <div class="f-lbl">Lista</div><select class="f-sel" id="fdg-lado"><option value="">— Não informado —</option><option value="noiva">💗 Lista da noiva</option><option value="noivo">💙 Lista do noivo</option></select>
         <div class="f-grid2">
           <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fdg-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
           <div><div class="f-lbl">RSVP inicial</div><select class="f-sel" id="fdg-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
@@ -659,6 +698,26 @@ input:focus,select:focus{border-color:var(--purple)!important}
 
       <div class="divider" style="margin:16px 0"></div>
 
+      <!-- RELATÓRIOS -->
+      <div class="card" style="margin-bottom:10px">
+        <div class="nm" style="margin-bottom:4px">📄 Relatórios (PDF / Excel)</div>
+        <div class="sub" style="margin-bottom:10px">Exporte todas as telas de uma vez. Cada tela também tem o botão “⤓ Exportar”.</div>
+        <button class="btn-save" onclick="openExport('all')">⤓ Exportar tudo</button>
+      </div>
+
+      <!-- AVISOS NO CELULAR (PUSH) -->
+      <div class="card" id="push-card" style="margin-bottom:10px">
+        <div class="nm" style="margin-bottom:4px">🔔 Avisos no celular</div>
+        <div class="sub" style="margin-bottom:10px">Receba um aviso quando outra pessoa incluir, alterar ou excluir algo, mesmo com o app fechado.</div>
+        <div id="push-status" style="font-size:12px;color:var(--txt);line-height:1.5;margin-bottom:10px"></div>
+        <button class="btn-save" id="push-on" onclick="enablePush()">🔔 Ativar avisos neste aparelho</button>
+        <div id="push-actions" style="display:none;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="btn-save" style="margin-top:0" onclick="testPush()">📨 Enviar teste</button>
+          <button class="btn-save" style="margin-top:0;background:rgba(248,113,113,.15);color:#f87171" onclick="disablePush()">Desativar</button>
+        </div>
+        <div id="push-msg" style="display:none;padding:8px 10px;border-radius:var(--radius-sm);font-size:12px;margin-top:10px"></div>
+      </div>
+
       <!-- DADOS ANTIGOS DESTE APARELHO -->
       <div class="card" id="legacy-card" style="display:none">
         <div class="nm" style="margin-bottom:4px">📲 Dados antigos neste aparelho</div>
@@ -695,6 +754,7 @@ input:focus,select:focus{border-color:var(--purple)!important}
     <div style="min-width:0"><div class="pp-nm" id="dr-nm">—</div><div class="pp-role" id="dr-role">—</div></div>
     <button class="dr-close" onclick="closeDrawer()" aria-label="Fechar menu">×</button>
   </div>
+  <div class="dr-count" id="dr-count" onclick="closeDrawer();goEvento()"></div>
   <nav class="dr-list">
     <button class="dr-item on" data-page="convidados" onclick="gotoPage('convidados')"><span>👥</span>Convidados</button>
     <button class="dr-item" data-page="checklist" onclick="gotoPage('checklist')"><span>✅</span>Checklist</button>
@@ -723,6 +783,18 @@ input:focus,select:focus{border-color:var(--purple)!important}
   </div>
 </div>
 <div class="toast" id="toast" onclick="hideToast();openNotif()"></div>
+
+<!-- EXPORTAR -->
+<div class="sheet-ov" id="export-ov" onclick="closeExport()"></div>
+<div class="sheet" id="export-sheet" aria-label="Exportar">
+  <div class="sheet-ttl" id="export-ttl">Exportar</div>
+  <div id="export-scope" style="display:none;margin-bottom:6px"><div class="f-lbl">Quais convidados?</div><div class="chips" id="export-scope-chips"></div></div>
+  <button class="btn-save" onclick="doExport('pdf')">📄 Baixar PDF</button>
+  <button class="btn-save" style="background:#1D9E75" onclick="doExport('xlsx')">📊 Baixar Excel (.xlsx)</button>
+  <div id="export-status" style="display:none;font-size:12px;margin-top:10px;line-height:1.5"></div>
+  <button class="btn-save" id="export-save" style="display:none;background:#25D366" onclick="saveExported()">📤 Salvar / compartilhar</button>
+  <button class="sheet-cancel" onclick="closeExport()">Fechar</button>
+</div>
 
 <!-- PROFILE POPUP -->
 <div class="profile-popup" id="profile-popup">
@@ -777,36 +849,36 @@ var currentUser = null;
 //  STATE
 // ═══════════════════════════════════════════════════
 var DEFAULT_GUESTS = [
-    {nome:"Mãe da noiva",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:""},
-    {nome:"Pai da noiva",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:""},
-    {nome:"Mãe do noivo",cat:"Família",rsvp:"Confirmado",mesa:"2",rest:""},
-    {nome:"Pai do noivo",cat:"Família",rsvp:"Confirmado",mesa:"2",rest:""},
-    {nome:"Irmã da noiva",cat:"Família",rsvp:"Aguardando",mesa:"",rest:""},
-    {nome:"Irmã do noivo",cat:"Família",rsvp:"Aguardando",mesa:"",rest:""}
+    {nome:"Mãe da noiva",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:"",lado:"noiva"},
+    {nome:"Pai da noiva",cat:"Família",rsvp:"Confirmado",mesa:"1",rest:"",lado:"noiva"},
+    {nome:"Mãe do noivo",cat:"Família",rsvp:"Confirmado",mesa:"2",rest:"",lado:"noivo"},
+    {nome:"Pai do noivo",cat:"Família",rsvp:"Confirmado",mesa:"2",rest:"",lado:"noivo"},
+    {nome:"Irmã da noiva",cat:"Família",rsvp:"Aguardando",mesa:"",rest:"",lado:"noiva"},
+    {nome:"Irmã do noivo",cat:"Família",rsvp:"Aguardando",mesa:"",rest:"",lado:"noivo"}
   ];
 var defaultState = {
   guests: JSON.parse(JSON.stringify(DEFAULT_GUESTS)),
   tasks:[
-    {desc:"Reservar salão de festas",data:"2025-03-10",cat:"Espaço",done:true},
-    {desc:"Escolher e reservar buffet",data:"2025-04-01",cat:"Fornecedor",done:true},
-    {desc:"Prova do vestido nº 1",data:"2025-05-15",cat:"Traje",done:true},
-    {desc:"Definir decoração e floricultura",data:"2025-06-01",cat:"Fornecedor",done:true},
-    {desc:"Enviar convites com QR Code",data:"2025-10-01",cat:"Convidados",done:false},
-    {desc:"Prova do vestido nº 2 (ajustes)",data:"2025-11-10",cat:"Traje",done:false},
-    {desc:"Confirmar DJ e playlist",data:"2025-11-20",cat:"Fornecedor",done:false},
-    {desc:"Aluguel terno e sapatos",data:"2025-11-30",cat:"Traje",done:false},
-    {desc:"Montar mapa de mesas final",data:"2025-12-05",cat:"Espaço",done:false},
-    {desc:"Pagamento final do buffet",data:"2025-12-01",cat:"Financeiro",done:false}
+    {desc:"Reservar salão de festas",data:"2026-06-10",cat:"Espaço",done:true},
+    {desc:"Escolher e reservar buffet",data:"2026-07-15",cat:"Fornecedor",done:true},
+    {desc:"Prova do vestido nº 1",data:"2026-09-12",cat:"Traje",done:true},
+    {desc:"Definir decoração e floricultura",data:"2026-10-05",cat:"Fornecedor",done:true},
+    {desc:"Enviar convites com QR Code",data:"2026-12-10",cat:"Convidados",done:false},
+    {desc:"Prova do vestido nº 2 (ajustes)",data:"2027-01-16",cat:"Traje",done:false},
+    {desc:"Confirmar DJ e playlist",data:"2027-01-30",cat:"Fornecedor",done:false},
+    {desc:"Aluguel terno e sapatos",data:"2027-01-23",cat:"Traje",done:false},
+    {desc:"Montar mapa de mesas final",data:"2027-02-27",cat:"Espaço",done:false},
+    {desc:"Pagamento final do buffet",data:"2027-02-13",cat:"Financeiro",done:false}
   ],
   fin:[
     {desc:"Salão",est:8000,real:7500,venc:"",status:"Quitado"},
-    {desc:"Buffet completo",est:15000,real:15000,venc:"2025-12-01",status:"Pago parcial"},
-    {desc:"Fotógrafo e vídeo",est:6000,real:5800,venc:"2025-12-10",status:"Pago parcial"},
+    {desc:"Buffet completo",est:15000,real:15000,venc:"2027-02-13",status:"Pago parcial"},
+    {desc:"Fotógrafo e vídeo",est:6000,real:5800,venc:"2027-01-15",status:"Pago parcial"},
     {desc:"Decoração floral",est:5000,real:4800,venc:"",status:"Quitado"},
-    {desc:"DJ / Sonorização",est:3500,real:3200,venc:"2025-11-20",status:"Pendente"},
+    {desc:"DJ / Sonorização",est:3500,real:3200,venc:"2027-01-30",status:"Pendente"},
     {desc:"Vestido e acessórios",est:4000,real:3900,venc:"",status:"Quitado"},
-    {desc:"Terno e sapatos",est:1500,real:1700,venc:"2025-11-30",status:"Pendente"},
-    {desc:"Cerimonial / assessoria",est:3000,real:2800,venc:"2025-12-05",status:"Pago parcial"}
+    {desc:"Terno e sapatos",est:1500,real:1700,venc:"2027-01-23",status:"Pendente"},
+    {desc:"Cerimonial / assessoria",est:3000,real:2800,venc:"2027-02-27",status:"Pago parcial"}
   ],
   suppliers:[
     {nome:"Buffet Sabor & Arte",cat:"Buffet",status:"Pago parcial",total:15000,pago:7500,link:""},
@@ -834,7 +906,9 @@ var defaultState = {
     {nome:"Lua de mel contribuição",preco:500,cat:"Viagem",dado:false}
   ],
   refs:[],
-  espaco:{nome:'',end:'',cap:'',hora:'',contrato:'Em negociação',obs:''}
+  espaco:{nome:'',end:'',cap:'',hora:'',contrato:'Em negociação',obs:''},
+  evento:{civil:'',religioso:'2027-03-14'},
+  meta:{v2:true}
 };
 var state = JSON.parse(JSON.stringify(defaultState));
 var logs = [];
@@ -859,8 +933,120 @@ function normalizeState(s){
     tables:    Array.isArray(s.tables)    ? s.tables    : clone(defaultState.tables),
     gifts:     Array.isArray(s.gifts)     ? s.gifts     : clone(defaultState.gifts),
     refs:      Array.isArray(s.refs)      ? s.refs      : [],
-    espaco:    (s.espaco&&typeof s.espaco==='object') ? s.espaco : clone(defaultState.espaco)
+    espaco:    (s.espaco&&typeof s.espaco==='object') ? s.espaco : clone(defaultState.espaco),
+    evento:    (s.evento&&typeof s.evento==='object') ? {civil:s.evento.civil||'',religioso:s.evento.religioso||''} : {civil:'',religioso:'2027-03-14'},
+    meta:      (s.meta&&typeof s.meta==='object') ? s.meta : {}
   };
+}
+
+// ═══════════════════════════════════════════════════
+//  DATAS DO CASAMENTO (civil e religioso)
+// ═══════════════════════════════════════════════════
+var MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function parseISO(s){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||''); return m?new Date(+m[1],+m[2]-1,+m[3]):null }
+function daysUntil(iso){
+  var d=parseISO(iso); if(!d) return null;
+  var t=new Date(); t=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  return Math.round((d-t)/86400000);
+}
+function fmtShort(iso){ var d=parseISO(iso); return d?d.getDate()+' '+MESES[d.getMonth()]+' '+d.getFullYear():'' }
+function fmtLong(iso){ var d=parseISO(iso); return d?fmtDate(iso)+' ('+d.toLocaleDateString('pt-BR',{weekday:'long'})+')':'' }
+function countText(iso){
+  var n=daysUntil(iso); if(n===null) return '';
+  if(n>1) return 'faltam '+n+' dias';
+  if(n===1) return 'falta 1 dia (amanhã!)';
+  if(n===0) return 'é hoje! 🎉';
+  return 'já aconteceu';
+}
+// cerimônia mais próxima que ainda não passou (se todas passaram, a mais recente)
+function nextCeremony(){
+  var ev=state.evento||{}, c=[];
+  if(ev.religioso) c.push({iso:ev.religioso,ic:'⛪'});
+  if(ev.civil) c.push({iso:ev.civil,ic:'📜'});
+  if(!c.length) return null;
+  var up=c.filter(function(x){return daysUntil(x.iso)>=0}).sort(function(a,b){return daysUntil(a.iso)-daysUntil(b.iso)});
+  if(up.length) return up[0];
+  return c.sort(function(a,b){return daysUntil(b.iso)-daysUntil(a.iso)})[0];
+}
+function updateEventUI(){
+  var pill=document.getElementById('hdr-date'), n=nextCeremony();
+  if(pill) pill.textContent=n?(n.ic+' '+fmtShort(n.iso)):'Definir data';
+  var dc=document.getElementById('dr-count');
+  if(dc){
+    var ev=state.evento||{}, parts=[];
+    if(ev.religioso) parts.push('⛪ Religioso: '+fmtDate(ev.religioso)+' · '+countText(ev.religioso));
+    if(ev.civil) parts.push('📜 Civil: '+fmtDate(ev.civil)+' · '+countText(ev.civil));
+    dc.innerHTML=parts.length?parts.join('<br>'):'Toque para definir as datas do casamento';
+  }
+}
+function renderEvento(force){
+  updateEventUI();
+  var ae=document.activeElement;
+  if(!force&&ae&&ae.id&&ae.id.indexOf('ev-')===0) return;
+  var ev=state.evento||{};
+  setVal('ev-civil',ev.civil||''); setVal('ev-religioso',ev.religioso||'');
+  var el=document.getElementById('ev-count'); if(!el) return;
+  var h=[];
+  if(ev.religioso) h.push('⛪ Religioso: '+fmtLong(ev.religioso)+' — '+countText(ev.religioso));
+  if(ev.civil) h.push('📜 Civil: '+fmtLong(ev.civil)+' — '+countText(ev.civil));
+  el.innerHTML=h.join('<br>')||'Nenhuma data definida ainda.';
+}
+function saveEvento(){
+  var civil=v('ev-civil'), rel=v('ev-religioso');
+  state.evento={civil:civil,religioso:rel};
+  var det=[]; if(rel) det.push('religioso '+fmtDate(rel)); if(civil) det.push('civil '+fmtDate(civil));
+  addLog('edit','Datas do casamento atualizadas',det.join(' · ')||'sem datas');
+  renderEvento(true);
+  var m=document.getElementById('ev-msg'); if(m){ m.style.display='block'; setTimeout(function(){m.style.display='none'},2500) }
+}
+function goEvento(){
+  gotoPage('config');
+  setTimeout(function(){ var c=document.getElementById('evento-card'); if(c) c.scrollIntoView({behavior:'smooth',block:'start'}) },80);
+}
+
+// ═══════════════════════════════════════════════════
+//  AJUSTE DE VERSÃO (roda uma vez): datas de exemplo antigas + lista noiva/noivo
+// ═══════════════════════════════════════════════════
+// Só troca datas que ainda são EXATAMENTE as de exemplo antigas (mesmo texto e mesma data).
+var OLD_SAMPLE_DATES={
+  tasks:{
+    'Reservar salão de festas|2025-03-10':'2026-06-10',
+    'Escolher e reservar buffet|2025-04-01':'2026-07-15',
+    'Prova do vestido nº 1|2025-05-15':'2026-09-12',
+    'Definir decoração e floricultura|2025-06-01':'2026-10-05',
+    'Enviar convites com QR Code|2025-10-01':'2026-12-10',
+    'Prova do vestido nº 2 (ajustes)|2025-11-10':'2027-01-16',
+    'Confirmar DJ e playlist|2025-11-20':'2027-01-30',
+    'Aluguel terno e sapatos|2025-11-30':'2027-01-23',
+    'Montar mapa de mesas final|2025-12-05':'2027-02-27',
+    'Pagamento final do buffet|2025-12-01':'2027-02-13'
+  },
+  fin:{
+    'Buffet completo|2025-12-01':'2027-02-13',
+    'Fotógrafo e vídeo|2025-12-10':'2027-01-15',
+    'DJ / Sonorização|2025-11-20':'2027-01-30',
+    'Terno e sapatos|2025-11-30':'2027-01-23',
+    'Cerimonial / assessoria|2025-12-05':'2027-02-27'
+  }
+};
+function inferLado(nome){
+  var n=String(nome||'').toLowerCase();
+  if(/noiva/.test(n)) return 'noiva';
+  if(/noivo/.test(n)) return 'noivo';
+  return '';
+}
+function migrateState(st){
+  if(!st.meta||typeof st.meta!=='object') st.meta={};
+  if(st.meta.v2) return false;
+  st.tasks.forEach(function(t){ var k=t.desc+'|'+t.data; if(OLD_SAMPLE_DATES.tasks[k]) t.data=OLD_SAMPLE_DATES.tasks[k] });
+  st.fin.forEach(function(f){ var k=f.desc+'|'+f.venc; if(OLD_SAMPLE_DATES.fin[k]) f.venc=OLD_SAMPLE_DATES.fin[k] });
+  st.guests.forEach(function(g){ if(g.lado===undefined) g.lado=inferLado(g.nome) });
+  st.meta.v2=true;
+  return true;
+}
+function migrateDefGuests(arr){
+  if(Array.isArray(arr)) arr.forEach(function(g){ if(g.lado===undefined) g.lado=inferLado(g.nome) });
+  return arr;
 }
 
 // ─── Indicador de sincronização (cabeçalho) ───
@@ -943,6 +1129,10 @@ window.onCloudData=function(data,meta){
   sent.logs=JSON.stringify(lg);
   sent.def=JSON.stringify(dg||DEFAULT_GUESTS);
 
+  // ajuste de versão (uma vez): datas de exemplo + lista noiva/noivo
+  var migrated=false;
+  if(!st.meta||!st.meta.v2){ migrated=migrateState(st); migrateDefGuests(dg); }
+
   if(wasLoaded){
     // Preserva o que EU alterei e ainda não foi enviado; o resto vem da nuvem
     Object.keys(st).forEach(function(k){
@@ -965,6 +1155,7 @@ window.onCloudData=function(data,meta){
   }
   renderBell();
   if(wasLoaded) notifyRemote(lg,prevMax);
+  if(migrated) saveState();
   setSync('ok');
 };
 window.onCloudError=function(err){
@@ -983,6 +1174,7 @@ function seedCloud(){
   var def=Array.isArray(dg)?dg:clone(DEFAULT_GUESTS);
   var st=leg?normalizeState(leg.state):clone(defaultState);
   if(!leg) st.guests=clone(def);
+  migrateState(st); migrateDefGuests(def);
   var lg=(leg&&Array.isArray(leg.logs))?leg.logs:[];
   FB.saveData({state:st,logs:lg,defaultGuests:def}).then(function(){
     if(leg){ try{localStorage.setItem('wp_legacy_done','1')}catch(e){} }
@@ -1009,7 +1201,7 @@ function refreshLegacyCard(){
 function importLegacy(){
   var d=legacyData(); if(!d) return;
   if(!confirm('Substituir os dados da nuvem pelos dados antigos salvos neste aparelho?')) return;
-  state=normalizeState(d.state);
+  state=normalizeState(d.state); migrateState(state);
   logs=Array.isArray(d.logs)?d.logs:[];
   var dg=lsGet('wp_default_guests'); if(Array.isArray(dg)) defGuestsList=dg;
   try{localStorage.setItem('wp_legacy_done','1')}catch(e){}
@@ -1042,6 +1234,438 @@ setTimeout(function(){
     if(m) m.textContent='Não foi possível carregar o Firebase. Verifique sua conexão e recarregue a página.';
   }
 },10000);
+
+// ═══════════════════════════════════════════════════
+//  EXPORTAÇÃO (PDF e Excel) — todas as telas
+//  As bibliotecas só são baixadas quando você abre "Exportar".
+// ═══════════════════════════════════════════════════
+var EXPORT_LIBS={
+  pdf:[
+    [{u:'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',i:'sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk'},
+     {u:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'}],
+    [{u:'https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js',i:'sha384-fCAW/rDWORTbQXSiB7mOg0QtQ5c+r0f544y6XoKjuVva0nMBlCpNUjiFeG5iMdS3'},
+     {u:'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'}]
+  ],
+  xlsx:[
+    [{u:'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',i:'sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw'},
+     {u:'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'}]
+  ]
+};
+var _libP={};
+function libReady(fmt){
+  if(fmt==='xlsx') return !!window.XLSX;
+  var J=window.jspdf&&window.jspdf.jsPDF;
+  return !!(J&&J.API&&typeof J.API.autoTable==='function');
+}
+function _loadOne(list){
+  return new Promise(function(resolve,reject){
+    var i=0;
+    (function next(){
+      if(i>=list.length){ reject(new Error('lib')); return }
+      var it=list[i++], s=document.createElement('script');
+      s.src=it.u; s.async=true;
+      if(it.i){ s.integrity=it.i; s.crossOrigin='anonymous'; }
+      s.onload=function(){ resolve() };
+      s.onerror=function(){ s.remove(); next() };
+      document.head.appendChild(s);
+    })();
+  });
+}
+function ensureLib(fmt){
+  if(libReady(fmt)) return Promise.resolve();
+  if(_libP[fmt]) return _libP[fmt];
+  var p=EXPORT_LIBS[fmt].reduce(function(acc,list){ return acc.then(function(){ return _loadOne(list) }) },Promise.resolve());
+  _libP[fmt]=p.then(function(){ if(!libReady(fmt)) throw new Error('lib') }).catch(function(e){ _libP[fmt]=null; throw e });
+  return _libP[fmt];
+}
+
+// ─── formatação ───
+function fmtMoney(n){ return 'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) }
+function pdfSafe(s){
+  return String(s==null?'':s)
+    .replace(/[\u2013\u2014]/g,'-').replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"')
+    .replace(/\u2026/g,'...').replace(/\u2192/g,'->').replace(/\u00B7/g,'-')
+    .replace(/[^\u0009\u000A\u0020-\u007E\u00A0-\u00FF]/g,'').replace(/\s+/g,' ').trim();
+}
+function cellPDF(val,c){
+  if(val===''||val==null) return '';
+  if(c.t==='date') return fmtDate(val);
+  if(c.t==='money') return fmtMoney(val);
+  return pdfSafe(val);
+}
+function cellXLSX(val,c){
+  if(val===''||val==null) return '';
+  if(c.t==='date'){ var d=parseISO(val); return d?new Date(d.getFullYear(),d.getMonth(),d.getDate(),12):String(val) }
+  if(c.t==='money'||c.t==='num') return Number(val)||0;
+  return String(val);
+}
+function nowText(){
+  var d=new Date(), p=function(n){return String(n).padStart(2,'0')};
+  return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function headerLine(){
+  var ev=state.evento||{}, parts=[];
+  parts.push('Religioso: '+(ev.religioso?fmtDate(ev.religioso):'a definir'));
+  parts.push('Civil: '+(ev.civil?fmtDate(ev.civil):'a definir'));
+  parts.push('Gerado em '+nowText());
+  return parts.join('   |   ');
+}
+function tableNum(nome){ var m=/(\d+)/.exec(nome||''); return m?m[1]:null }
+function sumBy(arr,f){ return arr.reduce(function(a,x){return a+(Number(f(x))||0)},0) }
+
+// ─── conteúdo de cada tela ───
+function getExport(key,opts){
+  opts=opts||{}; var S=state, t, rows;
+  switch(key){
+    case 'resumo':
+      var ev=S.evento||{};
+      var nConf=S.guests.filter(function(g){return g.rsvp==='Confirmado'}).length;
+      var nAgt=S.guests.filter(function(g){return g.rsvp==='Aguardando'}).length;
+      var nRec=S.guests.filter(function(g){return g.rsvp==='Recusou'}).length;
+      var nN=S.guests.filter(function(g){return ladoOf(g)==='noiva'}).length;
+      var nV=S.guests.filter(function(g){return ladoOf(g)==='noivo'}).length;
+      var tDone=S.tasks.filter(function(x){return x.done}).length;
+      var est=sumBy(S.fin,function(x){return x.est}), real=sumBy(S.fin,function(x){return x.real});
+      var gDone=S.gifts.filter(function(x){return x.dado}).length;
+      return {title:'Resumo',sheet:'Resumo',cols:[{h:'Item',t:'text',w:28},{h:'Informação',t:'text',w:62}],rows:[
+        ['Casamento religioso',ev.religioso?fmtLong(ev.religioso)+' - '+countText(ev.religioso):'A definir'],
+        ['Casamento civil',ev.civil?fmtLong(ev.civil)+' - '+countText(ev.civil):'A definir'],
+        ['Convidados',S.guests.length+' (confirmados: '+nConf+', aguardando: '+nAgt+', recusaram: '+nRec+')'],
+        ['Lista da noiva / do noivo',nN+' / '+nV+(S.guests.length-nN-nV?' (sem lista: '+(S.guests.length-nN-nV)+')':'')],
+        ['Checklist',tDone+' de '+S.tasks.length+' tarefas concluídas ('+Math.round(tDone/Math.max(S.tasks.length,1)*100)+'%)'],
+        ['Financeiro','Estimado '+fmtMoney(est)+' | Real '+fmtMoney(real)],
+        ['Fornecedores',S.suppliers.length+' (pago '+fmtMoney(sumBy(S.suppliers,function(x){return x.pago}))+' de '+fmtMoney(sumBy(S.suppliers,function(x){return x.total}))+')'],
+        ['Presentes',gDone+' de '+S.gifts.length+' recebidos']
+      ]};
+    case 'guests':
+      var sc=opts.scope||'todos';
+      rows=S.guests.filter(function(g){return guestMatches(g,sc)}).map(function(g){
+        return [g.nome,ladoLabel(ladoOf(g)).replace('Não informado',''),g.cat,g.rsvp,g.mesa||'',g.rest||'']; });
+      t=sc==='noiva'?'Convidados - Lista da noiva':sc==='noivo'?'Convidados - Lista do noivo':sc==='sem'?'Convidados - Sem lista':'Convidados';
+      return {title:t,sheet:'Convidados',cols:[{h:'Nome',t:'text',w:34},{h:'Lista',t:'text',w:16},{h:'Categoria',t:'text',w:13},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26}],
+        rows:rows,
+        foot:rows.length?['Total: '+rows.length+' convidado(s)','','','','','']:null};
+    case 'tasks':
+      return {title:'Checklist de tarefas',sheet:'Checklist',cols:[{h:'Tarefa',t:'text',w:42},{h:'Categoria',t:'text',w:14},{h:'Data limite',t:'date',w:14},{h:'Situação',t:'text',w:13}],
+        rows:S.tasks.map(function(x){return [x.desc,x.cat,x.data||'',x.done?'Concluída':'Pendente']}),
+        foot:S.tasks.length?['Concluídas: '+S.tasks.filter(function(x){return x.done}).length+' de '+S.tasks.length,'','','']:null};
+    case 'fin':
+      return {title:'Controle financeiro',sheet:'Financeiro',cols:[{h:'Item',t:'text',w:36},{h:'Estimado',t:'money',w:15},{h:'Real',t:'money',w:15},{h:'Diferença',t:'money',w:15},{h:'Vencimento',t:'date',w:14},{h:'Situação',t:'text',w:14}],
+        rows:S.fin.map(function(x){return [x.desc,x.est,x.real,(Number(x.real)||0)-(Number(x.est)||0),x.venc||'',x.status]}),
+        foot:S.fin.length?['Total',sumBy(S.fin,function(x){return x.est}),sumBy(S.fin,function(x){return x.real}),sumBy(S.fin,function(x){return (Number(x.real)||0)-(Number(x.est)||0)}),'','']:null};
+    case 'suppliers':
+      return {title:'Fornecedores',sheet:'Fornecedores',cols:[{h:'Fornecedor',t:'text',w:30},{h:'Categoria',t:'text',w:15},{h:'Situação',t:'text',w:14},{h:'Valor total',t:'money',w:15},{h:'Valor pago',t:'money',w:15},{h:'Saldo',t:'money',w:15},{h:'Contrato (link)',t:'text',w:30}],
+        rows:S.suppliers.map(function(x){return [x.nome,x.cat,x.status,x.total,x.pago,(Number(x.total)||0)-(Number(x.pago)||0),x.link||'']}),
+        foot:S.suppliers.length?['Total','','',sumBy(S.suppliers,function(x){return x.total}),sumBy(S.suppliers,function(x){return x.pago}),sumBy(S.suppliers,function(x){return (Number(x.total)||0)-(Number(x.pago)||0)}),'']:null};
+    case 'tables':
+      return {title:'Mapa de mesas',sheet:'Mesas',cols:[{h:'Mesa',t:'text',w:14},{h:'Grupo',t:'text',w:26},{h:'Capacidade',t:'num',w:12},{h:'Ocupados',t:'num',w:11},{h:'Convidados na mesa',t:'text',w:60}],
+        rows:S.tables.map(function(x){
+          var n=tableNum(x.nome);
+          var names=n?S.guests.filter(function(g){return String(g.mesa||'').trim()===n}).map(function(g){return g.nome}).join(', '):'';
+          return [x.nome,x.grupo||'',x.cap,x.ocupados,names]; }),
+        foot:S.tables.length?['Total','',sumBy(S.tables,function(x){return x.cap}),sumBy(S.tables,function(x){return x.ocupados}),'']:null};
+    case 'gifts':
+      return {title:'Lista de presentes',sheet:'Presentes',cols:[{h:'Presente',t:'text',w:40},{h:'Categoria',t:'text',w:15},{h:'Preço',t:'money',w:15},{h:'Situação',t:'text',w:14}],
+        rows:S.gifts.map(function(x){return [x.nome,x.cat,x.preco,x.dado?'Recebido':'Pendente']}),
+        foot:S.gifts.length?['Total',  '',sumBy(S.gifts,function(x){return x.preco}),'Recebidos: '+S.gifts.filter(function(x){return x.dado}).length+' de '+S.gifts.length]:null};
+    case 'refs':
+      return {title:'Estilo e referências',sheet:'Referências',cols:[{h:'Link de referência',t:'text',w:90}],rows:S.refs.map(function(r){return [r]}),foot:null};
+    case 'espaco':
+      var e=S.espaco||{};
+      return {title:'Salão e espaço',sheet:'Espaço',cols:[{h:'Campo',t:'text',w:22},{h:'Informação',t:'text',w:70}],rows:[
+        ['Nome do espaço',e.nome||''],['Endereço',e.end||''],['Capacidade',e.cap||''],['Horário do evento',e.hora||''],['Contrato',e.contrato||''],['Observações / link',e.obs||'']],foot:null};
+    case 'logs':
+      var AC={add:'Inclusão',edit:'Alteração',del:'Exclusão'};
+      return {title:'Histórico de ações',sheet:'Histórico',cols:[{h:'Data e hora',t:'text',w:18},{h:'Quem',t:'text',w:22},{h:'Ação',t:'text',w:12},{h:'O que',t:'text',w:70}],
+        rows:logs.map(function(l){return [fmtLogTime(l),l.who||'',AC[l.action]||l.action||'',(l.entity||'')+': '+(l.detail||'')]}),foot:null};
+  }
+  return {title:key,sheet:key,cols:[],rows:[],foot:null};
+}
+
+// ─── PDF ───
+function _orient(sec){ return sec.cols.length>=6?'landscape':'portrait' }
+function buildPDF(keys,opts){
+  var J=window.jspdf.jsPDF;
+  var secs=keys.map(function(k){return getExport(k,opts)});
+  var doc=new J({orientation:_orient(secs[0]),unit:'pt',format:'a4'});
+  secs.forEach(function(sec,idx){
+    if(idx>0) doc.addPage('a4',_orient(sec));
+    doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(60,52,137);
+    doc.text(pdfSafe('Willians & Poliana - '+sec.title),40,46);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(110,110,130);
+    doc.text(pdfSafe(headerLine()),40,62);
+    if(!sec.rows.length){
+      doc.setFontSize(11); doc.setTextColor(120,120,140); doc.text('Nenhum registro.',40,92); return;
+    }
+    var colStyles={};
+    sec.cols.forEach(function(c,i){ if(c.t==='money'||c.t==='num') colStyles[i]={halign:'right'}; });
+    doc.autoTable({
+      startY:74,
+      head:[sec.cols.map(function(c){return pdfSafe(c.h)})],
+      body:sec.rows.map(function(r){return r.map(function(v,i){return cellPDF(v,sec.cols[i])})}),
+      foot:sec.foot?[sec.foot.map(function(v,i){return cellPDF(v,sec.cols[i])})]:undefined,
+      showFoot:'lastPage',
+      theme:'striped',
+      headStyles:{fillColor:[127,119,221],textColor:255,fontStyle:'bold'},
+      footStyles:{fillColor:[238,237,254],textColor:[60,52,137],fontStyle:'bold'},
+      alternateRowStyles:{fillColor:[247,246,255]},
+      styles:{fontSize:9,cellPadding:4,overflow:'linebreak',textColor:[40,40,60]},
+      columnStyles:colStyles,
+      margin:{left:40,right:40,bottom:42}
+    });
+  });
+  var n=doc.internal.getNumberOfPages();
+  for(var p=1;p<=n;p++){
+    doc.setPage(p);
+    var W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight();
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(140,140,160);
+    doc.text('Casamento Willians & Poliana',40,H-22);
+    doc.text('Pagina '+p+' de '+n,W-40,H-22,{align:'right'});
+  }
+  return doc.output('blob');
+}
+
+// ─── Excel (.xlsx) ───
+function buildXLSX(keys,opts){
+  var X=window.XLSX, wb=X.utils.book_new();
+  keys.forEach(function(k){
+    var sec=getExport(k,opts);
+    var aoa=[sec.cols.map(function(c){return c.h})];
+    sec.rows.forEach(function(r){ aoa.push(r.map(function(v,i){return cellXLSX(v,sec.cols[i])})) });
+    if(sec.foot) aoa.push(sec.foot.map(function(v,i){return cellXLSX(v,sec.cols[i])}));
+    var ws=X.utils.aoa_to_sheet(aoa,{cellDates:true});
+    var range=X.utils.decode_range(ws['!ref']||'A1');
+    for(var R=1;R<=range.e.r;R++){
+      for(var C=0;C<=range.e.c;C++){
+        var cell=ws[X.utils.encode_cell({r:R,c:C})]; if(!cell||!sec.cols[C]) continue;
+        if(sec.cols[C].t==='money'&&cell.t==='n') cell.z='"R$" #,##0.00';
+        if(sec.cols[C].t==='date'&&(cell.t==='d'||cell.t==='n')) cell.z='dd/mm/yyyy';
+      }
+    }
+    ws['!cols']=sec.cols.map(function(c){return {wch:c.w||16}});
+    X.utils.book_append_sheet(wb,ws,String(sec.sheet).replace(/[\\\/\?\*\[\]:]/g,' ').slice(0,31));
+  });
+  var out=X.write(wb,{bookType:'xlsx',type:'array'});
+  return new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+
+// ─── interface (folha "Exportar") ───
+var exportKey=null, exportScope='todos', _exportFile=null;
+var EXPORT_TITLES={guests:'Convidados',tasks:'Checklist',fin:'Financeiro',suppliers:'Fornecedores',tables:'Mesas',gifts:'Presentes',refs:'Estilo e referências',espaco:'Salão e espaço',logs:'Histórico',all:'Relatório completo'};
+function exportKeys(){ return exportKey==='all'?['resumo','guests','tasks','fin','suppliers','tables','gifts','refs','espaco','logs']:[exportKey] }
+function exportStatus(msg,ok){
+  var el=document.getElementById('export-status'); if(!el) return;
+  el.textContent=msg; el.style.display=msg?'block':'none';
+  el.style.color=ok===false?'#f87171':(ok?'#4ecba0':'var(--txt2)');
+}
+function renderExportScope(){
+  var box=document.getElementById('export-scope'); if(!box) return;
+  if(exportKey!=='guests'){ box.style.display='none'; return }
+  box.style.display='block';
+  document.getElementById('export-scope-chips').innerHTML=[['todos','Todos'],['noiva','💗 Lista da noiva'],['noivo','💙 Lista do noivo']].map(function(x){
+    return '<button class="chip'+(exportScope===x[0]?' on':'')+'" onclick="setExportScope(\''+x[0]+'\')">'+x[1]+'</button>';
+  }).join('');
+}
+function setExportScope(s){ exportScope=s; renderExportScope(); }
+function openExport(key){
+  exportKey=key; _exportFile=null;
+  exportScope=(key==='guests'&&(guestFilter==='noiva'||guestFilter==='noivo'))?guestFilter:'todos';
+  document.getElementById('export-ttl').textContent='Exportar — '+(EXPORT_TITLES[key]||'');
+  renderExportScope(); exportStatus('');
+  document.getElementById('export-save').style.display='none';
+  document.getElementById('export-ov').classList.add('on');
+  document.getElementById('export-sheet').classList.add('on');
+  // baixa os geradores já agora, para o botão responder na hora
+  ensureLib('pdf').catch(function(){}); ensureLib('xlsx').catch(function(){});
+}
+function closeExport(){
+  document.getElementById('export-ov').classList.remove('on');
+  document.getElementById('export-sheet').classList.remove('on');
+}
+function exportFileName(fmt){
+  var d=new Date(), p=function(n){return String(n).padStart(2,'0')};
+  var base={all:'completo',guests:'convidados',tasks:'checklist',fin:'financeiro',suppliers:'fornecedores',tables:'mesas',gifts:'presentes',refs:'referencias',espaco:'espaco',logs:'historico'}[exportKey]||'dados';
+  if(exportKey==='guests'&&exportScope!=='todos') base+='-'+exportScope;
+  return 'casamento-WP_'+base+'_'+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'.'+fmt;
+}
+function doExport(fmt){
+  exportStatus('Gerando '+(fmt==='pdf'?'PDF':'Excel')+'…');
+  document.getElementById('export-save').style.display='none';
+  var go=function(){
+    try{
+      var blob=fmt==='pdf'?buildPDF(exportKeys(),{scope:exportScope}):buildXLSX(exportKeys(),{scope:exportScope});
+      deliverFile(blob,exportFileName(fmt));
+    }catch(e){ console.error(e); exportStatus('Erro ao gerar o arquivo: '+((e&&e.message)||e),false); }
+  };
+  if(libReady(fmt)) go();
+  else ensureLib(fmt).then(go).catch(function(){
+    exportStatus('Não foi possível carregar o gerador de '+(fmt==='pdf'?'PDF':'Excel')+'. Verifique a internet e tente de novo.',false);
+  });
+}
+function canShareFile(file){
+  try{ return /iphone|ipad|ipod|android/i.test(navigator.userAgent)&&!!navigator.canShare&&navigator.canShare({files:[file]}); }
+  catch(e){ return false }
+}
+function deliverFile(blob,name){
+  var file=null; try{ file=new File([blob],name,{type:blob.type}) }catch(e){}
+  _exportFile={blob:blob,name:name,file:file};
+  if(file&&canShareFile(file)){
+    // celular: abre a folha de compartilhar (Salvar em Arquivos, WhatsApp, e-mail…)
+    navigator.share({files:[file],title:name}).then(function(){ exportStatus('✓ Pronto!',true) }).catch(function(e){
+      document.getElementById('export-save').style.display='block';
+      exportStatus(e&&e.name==='AbortError'?'Cancelado. Toque abaixo para tentar de novo.':'Arquivo pronto. Toque em "Salvar / compartilhar".',e&&e.name==='AbortError'?undefined:true);
+    });
+  } else {
+    downloadBlob(blob,name);
+    exportStatus('✓ Arquivo gerado: '+name,true);
+  }
+}
+function saveExported(){
+  var f=_exportFile; if(!f) return;
+  if(f.file&&canShareFile(f.file)) navigator.share({files:[f.file],title:f.name}).catch(function(){ downloadBlob(f.blob,f.name) });
+  else downloadBlob(f.blob,f.name);
+}
+function downloadBlob(blob,name){
+  var url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(function(){ a.remove(); URL.revokeObjectURL(url) },4000);
+}
+
+// ═══════════════════════════════════════════════════
+//  AVISOS NO CELULAR (Web Push via Cloudflare Worker)
+// ═══════════════════════════════════════════════════
+var PUSH_WORKER='https://casamento.willbrasilia.workers.dev';   // URL do seu Worker
+
+function pushSupported(){ return ('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window) }
+function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1) }
+function isStandalone(){ return window.navigator.standalone===true||(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches) }
+function b64uToU8(str){
+  str=String(str).replace(/-/g,'+').replace(/_/g,'/'); while(str.length%4) str+='=';
+  var bin=atob(str), out=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) out[i]=bin.charCodeAt(i); return out;
+}
+function u8ToB64u(u8){ var s=''; for(var i=0;i<u8.length;i++) s+=String.fromCharCode(u8[i]); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'') }
+
+// registra o service worker (necessário para receber avisos com o app fechado)
+if('serviceWorker' in navigator && window.isSecureContext){
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW:',e)}) });
+}
+
+function workerFetch(path,body){
+  return Promise.resolve().then(function(){return FB.getToken()}).then(function(tok){
+    return fetch(PUSH_WORKER+path,{method:'POST',headers:{'Authorization':'Bearer '+tok,'Content-Type':'application/json'},body:JSON.stringify(body||{})});
+  }).then(function(r){
+    return r.json().catch(function(){return {}}).then(function(j){
+      if(!r.ok) throw new Error(j.error||('Erro '+r.status));
+      return j;
+    });
+  });
+}
+function pushMsg(text,ok){
+  var el=document.getElementById('push-msg'); if(!el) return;
+  el.textContent=text; el.style.display='block';
+  el.style.background=ok?'rgba(29,158,117,.12)':'rgba(248,113,113,.12)';
+  el.style.color=ok?'#4ecba0':'#f87171';
+  el.style.border='1px solid '+(ok?'rgba(29,158,117,.2)':'rgba(248,113,113,.2)');
+  if(ok) setTimeout(function(){el.style.display='none'},5000);
+}
+
+function refreshPushCard(){
+  var st=document.getElementById('push-status'); if(!st) return;
+  var on=document.getElementById('push-on'), act=document.getElementById('push-actions');
+  on.style.display='none'; act.style.display='none';
+  if(isIOS()&&!isStandalone()){
+    st.innerHTML='📱 <strong>No iPhone</strong>, primeiro instale o app: toque em <strong>Compartilhar</strong> → <strong>Adicionar à Tela de Início</strong>, abra o app pelo novo ícone e volte aqui.'; return;
+  }
+  if(!pushSupported()){ st.textContent='Este navegador não suporta avisos. No iPhone é preciso iOS 16.4 ou superior.'; return }
+  if(Notification.permission==='denied'){
+    st.textContent='🚫 As notificações estão bloqueadas para este app. Libere em Ajustes do aparelho (Notificações → Casamento W&P) e volte aqui.'; return;
+  }
+  var pref=false; try{pref=localStorage.getItem('wp_push_pref')==='1'}catch(e){}
+  if(pref&&Notification.permission==='granted'){
+    st.textContent='✅ Avisos ativados neste aparelho.'; act.style.display='grid';
+  } else {
+    st.textContent='Avisos desativados neste aparelho.'; on.style.display='block';
+  }
+}
+
+function withTimeout(promise,ms,msg){
+  return Promise.race([promise,new Promise(function(_,rej){setTimeout(function(){rej(new Error(msg))},ms)})]);
+}
+function registerPush(){
+  return withTimeout(navigator.serviceWorker.ready,8000,'O arquivo sw.js não carregou. Confira se ele foi enviado ao GitHub junto com o index.html.').then(function(reg){
+    return fetch(PUSH_WORKER+'/vapid').then(function(r){return r.json()}).then(function(j){
+      if(!j.publicKey) throw new Error('Servidor de avisos sem chave VAPID.');
+      return reg.pushManager.getSubscription().then(function(sub){
+        if(sub&&sub.options&&sub.options.applicationServerKey&&u8ToB64u(new Uint8Array(sub.options.applicationServerKey))!==j.publicKey){
+          return sub.unsubscribe().then(function(){return null});
+        }
+        return sub;
+      }).then(function(sub){
+        return sub||reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uToU8(j.publicKey)});
+      });
+    });
+  }).then(function(sub){
+    return workerFetch('/subscribe',{subscription:sub.toJSON()});
+  }).then(function(){ try{localStorage.setItem('wp_push_pref','1')}catch(e){} });
+}
+function enablePush(){
+  if(!pushSupported()){ refreshPushCard(); return }
+  if(!window.FB||!currentUser){ pushMsg('Faça login primeiro.',false); return }
+  // o pedido de permissão precisa vir direto do toque no botão
+  Notification.requestPermission().then(function(perm){
+    if(perm!=='granted'){ refreshPushCard(); pushMsg('Permissão negada. Para receber avisos, permita as notificações.',false); return }
+    pushMsg('Ativando…',true);
+    return registerPush().then(function(){ refreshPushCard(); pushMsg('✓ Avisos ativados! Toque em "Enviar teste" para conferir.',true) });
+  }).catch(function(e){ pushMsg('Não foi possível ativar: '+(e&&e.message||e),false) });
+}
+function testPush(){
+  workerFetch('/test',{}).then(function(r){
+    pushMsg(r.sent?'✓ Teste enviado. O aviso deve aparecer em instantes.':'Nenhum aviso entregue ('+(r.removed?'aparelho expirado, ative de novo':'tente de novo')+').',!!r.sent);
+  }).catch(function(e){ pushMsg('Falha no teste: '+(e&&e.message||e),false) });
+}
+function disablePush(){
+  navigator.serviceWorker.getRegistration().then(function(reg){
+    return reg?reg.pushManager.getSubscription():null;
+  }).then(function(sub){
+    if(!sub) return;
+    return workerFetch('/unsubscribe',{endpoint:sub.endpoint}).catch(function(){}).then(function(){return sub.unsubscribe()});
+  }).then(function(){
+    try{localStorage.setItem('wp_push_pref','0')}catch(e){}
+    refreshPushCard(); pushMsg('Avisos desativados neste aparelho.',true);
+  }).catch(function(e){ pushMsg('Erro: '+(e&&e.message||e),false) });
+}
+// Ao entrar, reinscreve este aparelho para a conta atual (sem pedir nada)
+function silentPushSync(){
+  try{
+    if(!pushSupported()||!window.FB||!currentUser) return;
+    if(Notification.permission!=='granted'||localStorage.getItem('wp_push_pref')!=='1') return;
+    registerPush().catch(function(e){console.warn('Push:',e)});
+  }catch(e){}
+}
+// Ao sair da conta, este aparelho deixa de receber os avisos dessa conta
+function pushLogoutCleanup(){
+  if(!pushSupported()||!window.FB) return Promise.resolve();
+  return navigator.serviceWorker.getRegistration().then(function(reg){
+    return reg?reg.pushManager.getSubscription():null;
+  }).then(function(sub){
+    if(sub) return workerFetch('/unsubscribe',{endpoint:sub.endpoint});
+  }).catch(function(){});
+}
+
+// Envia aviso aos OUTROS usuários quando eu mudo algo (agrupa mudanças próximas)
+var _pushQueue=[], _pushTimer=null;
+function queueNotify(l){
+  if(!PUSH_WORKER||!window.FB||!currentUser||!l) return;
+  _pushQueue.push(l);
+  clearTimeout(_pushTimer); _pushTimer=setTimeout(flushNotify,1500);
+}
+function flushNotify(){
+  var q=_pushQueue; _pushQueue=[]; if(!q.length||!currentUser) return;
+  var body = q.length===1
+    ? q[0].entity+': '+q[0].detail
+    : q.length+' atualizações: '+q.slice(0,3).map(function(x){return x.entity}).join(', ')+(q.length>3?'…':'');
+  workerFetch('/notify',{title:currentUser.nome,body:body}).catch(function(e){console.warn('Aviso não enviado:',e)});
+}
 
 // ═══════════════════════════════════════════════════
 //  AUTH (Firebase Authentication)
@@ -1128,7 +1752,7 @@ function doLogout(){
   closeProfile(); closeDrawer(); closeNotif();
   try{localStorage.removeItem('wp_last_login')}catch(e){}
   var wait=new Promise(function(r){setTimeout(r,3000)});
-  Promise.race([flushPending(),wait]).then(function(){
+  Promise.race([Promise.all([flushPending(),pushLogoutCleanup()]),wait]).then(function(){
     if(window.FB) return FB.logout();
   }).catch(function(e){console.error(e)});
 }
@@ -1158,6 +1782,7 @@ window.onAuthChanged=function(profile){
   currentUser=profile;
   loadNotifSeen();
   try{localStorage.setItem('wp_last_login',JSON.stringify({nome:profile.nome,email:profile.email}))}catch(e){}
+  setTimeout(silentPushSync,2000);
   if(appEntered){ updateHeader(); return }
   showSplash('Carregando seus dados…');
   _waitTimer=setTimeout(function(){
@@ -1197,6 +1822,7 @@ function initials(nome){
 }
 function updateHeader(){
   updateDrawerUser();
+  updateEventUI();
   var g=greeting();
   if(currentUser){
     var primeiro=currentUser.nome.split(' ')[0];
@@ -1280,7 +1906,7 @@ function gotoPage(id){
   var sa=document.querySelector('.scroll-area'); if(sa) sa.scrollTop=0;
   window.scrollTo(0,0);
   if(id==='historico') renderLogs();
-  if(id==='config'){ renderDefGuests(); updateSharePreview(); refreshLegacyCard(); }
+  if(id==='config'){ renderDefGuests(); updateSharePreview(); refreshLegacyCard(); refreshPushCard(); }
 }
 
 // ─── Menu lateral ───
@@ -1395,6 +2021,7 @@ function addLog(action,entity,detail){
   var now=new Date();
   var time=now.toLocaleDateString('pt-BR')+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   logs.unshift({action:action,entity:entity,detail:detail,who:who,time:time,ts:now.getTime(),uid:currentUser?currentUser.uid:''});
+  if(!/^Backup exportado/.test(entity)) queueNotify(logs[0]);
   if(logs.length>300) logs=logs.slice(0,300);
   saveState();
 }
@@ -1423,39 +2050,141 @@ function setVal(id,val){
 }
 
 // ═══════════════════════════════════════════════════
-//  CONVIDADOS — helpers de padrão e ordenação
+//  ARRASTAR PARA REORDENAR (vale para todas as listas)
+//  Segure o ícone ⠿ da linha e arraste para cima ou para baixo.
+// ═══════════════════════════════════════════════════
+var _dragActive=false, _pendingRender=false;
+
+// Move o item `from` para a posição de `to`, mexendo só nas posições visíveis (`slots`).
+// Assim funciona também com filtro ativo (ex.: só a lista da noiva).
+function moveWithin(arr,slots,from,to){
+  var pf=slots.indexOf(from), pt=slots.indexOf(to);
+  if(pf<0||pt<0||pf===pt) return false;
+  var items=slots.map(function(i){return arr[i]});
+  var moved=items.splice(pf,1)[0];
+  items.splice(pt,0,moved);
+  slots.forEach(function(pos,k){arr[pos]=items[k]});
+  return true;
+}
+function _scrollerOf(el){
+  var p=el.parentElement;
+  while(p&&p!==document.body){
+    var oy=getComputedStyle(p).overflowY;
+    if((oy==='auto'||oy==='scroll')&&p.scrollHeight>p.clientHeight+1) return p;
+    p=p.parentElement;
+  }
+  return null; // página inteira
+}
+function _scrollPos(sc){ return sc?sc.scrollTop:(window.pageYOffset||0) }
+function _scrollBy(sc,dy){ if(sc) sc.scrollTop+=dy; else window.scrollBy(0,dy) }
+
+function initSortable(cid,itemSel,getArr,after){
+  var box=document.getElementById(cid); if(!box) return;
+  box._sort={itemSel:itemSel,getArr:getArr,after:after};
+  if(box._sortInit) return;
+  box._sortInit=true;
+  box.addEventListener('pointerdown',function(e){
+    var h=e.target&&e.target.closest?e.target.closest('.drag-handle'):null;
+    if(!h||!box.contains(h)) return;
+    if(e.pointerType==='mouse'&&e.button!==0) return;
+    var cfg=box._sort, item=h.closest(cfg.itemSel);
+    if(!item||item.parentElement!==box) return;
+    e.preventDefault();
+    _startDrag(box,cfg,item,h,e);
+  });
+}
+
+function _startDrag(box,cfg,item,handle,e){
+  var items=[].filter.call(box.children,function(el){return el.matches(cfg.itemSel)});
+  var sc=_scrollerOf(box);
+  var startX=e.clientX, startY=e.clientY, lastX=startX, lastY=startY;
+  var startScroll=_scrollPos(sc);
+  var r0=item.getBoundingClientRect();
+  var orig={l:r0.left,r:r0.right,t:r0.top+startScroll,b:r0.bottom+startScroll};
+  var target=null, raf=null, active=true;
+
+  _dragActive=true;
+  document.body.classList.add('drag-active');
+  item.classList.add('dragging');
+  try{handle.setPointerCapture(e.pointerId)}catch(_){}
+
+  function update(){
+    var sp=_scrollPos(sc);
+    item.style.transform='translate('+(lastX-startX)+'px,'+(lastY-startY+(sp-startScroll))+'px)';
+    // zona morta: ainda sobre a posição original → sem alvo
+    var pageY=lastY+sp;
+    var inOrig=lastX>=orig.l&&lastX<=orig.r&&pageY>=orig.t&&pageY<=orig.b;
+    var best=null, bd=1e12;
+    if(!inOrig){
+      items.forEach(function(el){
+        if(el===item) return;
+        var r=el.getBoundingClientRect();
+        var inside=lastX>=r.left&&lastX<=r.right&&lastY>=r.top&&lastY<=r.bottom;
+        var d=inside?-1:Math.hypot(lastX-(r.left+r.right)/2,lastY-(r.top+r.bottom)/2);
+        if(d<bd){bd=d;best=el}
+      });
+    }
+    if(best!==target){
+      if(target) target.classList.remove('drag-over');
+      target=best;
+      if(target) target.classList.add('drag-over');
+    }
+  }
+  function loop(){
+    if(!active) return;
+    var vh=window.innerHeight||600;
+    if(lastY<90) _scrollBy(sc,-14);
+    else if(lastY>vh-120) _scrollBy(sc,14);
+    update();
+    raf=requestAnimationFrame(loop);
+  }
+  function onMove(ev){ lastX=ev.clientX; lastY=ev.clientY; if(ev.cancelable) ev.preventDefault(); update(); }
+  function blockTouch(ev){ if(ev.cancelable) ev.preventDefault(); }
+  function finish(commit){
+    if(!active) return; active=false;
+    cancelAnimationFrame(raf);
+    window.removeEventListener('pointermove',onMove);
+    window.removeEventListener('pointerup',onUp);
+    window.removeEventListener('pointercancel',onCancel);
+    window.removeEventListener('touchmove',blockTouch);
+    item.classList.remove('dragging'); item.style.transform='';
+    if(target) target.classList.remove('drag-over');
+    document.body.classList.remove('drag-active');
+    var changed=false;
+    if(commit&&target){
+      var from=+item.getAttribute('data-i'), to=+target.getAttribute('data-i');
+      var slots=items.map(function(el){return +el.getAttribute('data-i')});
+      changed=moveWithin(cfg.getArr(),slots,from,to);
+    }
+    _dragActive=false;
+    if(changed) cfg.after();
+    if(_pendingRender){ _pendingRender=false; renderAll(); }
+  }
+  function onUp(){ finish(true) }
+  function onCancel(){ finish(false) }
+  window.addEventListener('pointermove',onMove,{passive:false});
+  window.addEventListener('pointerup',onUp);
+  window.addEventListener('pointercancel',onCancel);
+  window.addEventListener('touchmove',blockTouch,{passive:false});
+  loop();
+}
+
+// ═══════════════════════════════════════════════════
+//  CONVIDADOS
 // ═══════════════════════════════════════════════════
 function isDefGuest(nome){
   return getDefGuests().some(function(dg){ return dg.nome===nome; });
 }
-
-// Retorna a lista de convidados com padrão sempre no topo (na ordem da lista padrão),
-// seguidos dos demais na ordem que estão em state.guests.
-function sortedGuests(){
-  var defList = getDefGuests();
-  var defNames = defList.map(function(dg){ return dg.nome; });
-  var pinned = [];
-  defNames.forEach(function(nm){
-    var found = state.guests.find(function(g){ return g.nome===nm; });
-    if(found) pinned.push(found);
-  });
-  var others = state.guests.filter(function(g){
-    return defNames.indexOf(g.nome) === -1;
-  });
-  return pinned.concat(others);
+var guestFilter='todos';
+function ladoOf(g){ return (g&&(g.lado==='noiva'||g.lado==='noivo'))?g.lado:'' }
+function ladoLabel(l){ return l==='noiva'?'Lista da noiva':(l==='noivo'?'Lista do noivo':'Não informado') }
+function ladoChip(l){ return l?'<span class="lado lado-'+l+'">'+(l==='noiva'?'💗 Noiva':'💙 Noivo')+'</span>':'' }
+function setGuestFilter(f){ guestFilter=f; renderGuests(); }
+function guestMatches(g,f){
+  f=f||guestFilter; var l=ladoOf(g);
+  return f==='todos'||(f==='sem'?l==='':l===f);
 }
 
-// Reordena state.guests para refletir a ordem visual atual
-function applyGuestOrder(ordered){
-  state.guests = ordered;
-}
-
-// ─── Drag & Drop state ───
-var _dragSrcIdx = null; // índice REAL em state.guests (só convidados não-padrão)
-
-// ═══════════════════════════════════════════════════
-//  CONVIDADOS — render
-// ═══════════════════════════════════════════════════
 function renderGuests(){
   var c=state.guests.length,
       conf=state.guests.filter(function(g){return g.rsvp==='Confirmado'}).length,
@@ -1467,34 +2196,40 @@ function renderGuests(){
     '<div class="sc"><div class="sc-n">'+agt+'</div><div class="sc-l">Aguardando</div></div>'+
     '<div class="sc"><div class="sc-n">'+rec+'</div><div class="sc-l">Recusaram</div></div>';
 
-  var sorted = sortedGuests();
-  var defNames = getDefGuests().map(function(dg){ return dg.nome; });
+  // filtro por lista (noiva / noivo)
+  var cnt={todos:c,noiva:0,noivo:0,sem:0};
+  state.guests.forEach(function(g){ cnt[ladoOf(g)||'sem']++ });
+  if(guestFilter==='sem'&&!cnt.sem) guestFilter='todos';
+  var chips=[['todos','Todos'],['noiva','💗 Noiva'],['noivo','💙 Noivo']];
+  if(cnt.sem) chips.push(['sem','Sem lista']);
+  document.getElementById('guest-filter').innerHTML=chips.map(function(x){
+    return '<button class="chip'+(guestFilter===x[0]?' on':'')+'" onclick="setGuestFilter(\''+x[0]+'\')">'+x[1]+' ('+cnt[x[0]]+')</button>';
+  }).join('');
 
-  if(!sorted.length){
-    document.getElementById('guest-list').innerHTML='<div class="empty">Nenhum convidado cadastrado.</div>';
+  var defNames=getDefGuests().map(function(dg){ return dg.nome; });
+  var vis=state.guests.map(function(g,i){return {g:g,i:i}}).filter(function(x){return guestMatches(x.g)});
+
+  if(!vis.length){
+    document.getElementById('guest-list').innerHTML='<div class="empty">'+(c?'Nenhum convidado nesta lista.':'Nenhum convidado cadastrado.')+'</div>';
   } else {
-    document.getElementById('guest-list').innerHTML=sorted.map(function(g,visIdx){
-      var realIdx = state.guests.indexOf(g);
-      var isPinned = defNames.indexOf(g.nome) !== -1;
+    document.getElementById('guest-list').innerHTML=vis.map(function(x){
+      var g=x.g, realIdx=x.i;
+      var isPinned=defNames.indexOf(g.nome)!==-1;
       var ini=g.nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase();
-      var handle = isPinned
-        ? '<span style="width:18px;flex-shrink:0"></span>'
-        : '<span class="drag-handle" title="Arrastar para reordenar">⠿</span>';
-      var pinnedStyle = isPinned ? 'border-left:2px solid rgba(127,119,221,.4);' : '';
-      return '<div class="card'+(isPinned?'':' draggable')+'" data-vis="'+visIdx+'" data-real="'+realIdx+'" data-pinned="'+(isPinned?'1':'0')+'" style="'+pinnedStyle+'">'+
+      return '<div class="card" data-i="'+realIdx+'"'+(isPinned?' style="border-left:2px solid rgba(127,119,221,.4)"':'')+'>'+
         '<div class="card-row">'+
-        handle+
+        '<span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
         '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">'+
-        '<div class="av '+avClass(visIdx)+'">'+ini+'</div>'+
+        '<div class="av '+avClass(realIdx)+'">'+ini+'</div>'+
         '<div style="min-width:0"><div class="nm" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">'+g.nome+
-        (isPinned?'<span class="guest-default-badge">padrão</span>':'')+'</div>'+
+        ladoChip(ladoOf(g))+(isPinned?'<span class="guest-default-badge">padrão</span>':'')+'</div>'+
         '<div class="sub">'+g.cat+(g.mesa?' · Mesa '+g.mesa:'')+(g.rest?' · '+g.rest:'')+'</div></div></div>'+
         '<div class="act-group"><span class="bdg '+rsvpBadge(g.rsvp)+'">'+g.rsvp+'</span>'+
         '<button class="btn-act edit" onclick="editGuest('+realIdx+')" title="Editar">✏️</button>'+
         '<button class="btn-act del" onclick="delGuest('+realIdx+')" title="Excluir">×</button>'+
         '</div></div></div>';
     }).join('');
-    setupGuestDrag();
+    initSortable('guest-list','.card',function(){return state.guests},function(){saveState();renderGuests()});
   }
 
   var pct=Math.round(conf/Math.max(c,1)*100);
@@ -1502,90 +2237,9 @@ function renderGuests(){
   document.getElementById('pct-rsvp').textContent=pct+'%';
 }
 
-// ─── Drag & Drop setup ───
-function setupGuestDrag(){
-  var list = document.getElementById('guest-list');
-  var cards = list.querySelectorAll('.card.draggable');
-  var dragEl = null;
-
-  cards.forEach(function(card){
-    // Touch
-    card.addEventListener('touchstart', function(e){
-      dragEl = card;
-      card.classList.add('dragging');
-    }, {passive:true});
-
-    card.addEventListener('touchmove', function(e){
-      e.preventDefault();
-      var touch = e.touches[0];
-      var target = document.elementFromPoint(touch.clientX, touch.clientY);
-      if(!target) return;
-      var targetCard = target.closest('.card');
-      if(!targetCard || targetCard===dragEl) return;
-      list.querySelectorAll('.card').forEach(function(c){ c.classList.remove('drag-over'); });
-      targetCard.classList.add('drag-over');
-    }, {passive:false});
-
-    card.addEventListener('touchend', function(e){
-      card.classList.remove('dragging');
-      var overCard = list.querySelector('.card.drag-over');
-      if(overCard && overCard !== dragEl){
-        overCard.classList.remove('drag-over');
-        commitDrop(dragEl, overCard);
-      }
-      dragEl = null;
-    });
-
-    // Mouse
-    card.setAttribute('draggable','true');
-    card.addEventListener('dragstart', function(e){
-      dragEl = card;
-      setTimeout(function(){ card.classList.add('dragging'); }, 0);
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    card.addEventListener('dragend', function(){
-      card.classList.remove('dragging');
-      list.querySelectorAll('.card').forEach(function(c){ c.classList.remove('drag-over'); });
-      dragEl = null;
-    });
-  });
-
-  list.querySelectorAll('.card').forEach(function(card){
-    card.addEventListener('dragover', function(e){
-      e.preventDefault();
-      if(card === dragEl) return;
-      if(card.dataset.pinned === '1') return; // não permite drop em cima de padrão
-      list.querySelectorAll('.card').forEach(function(c){ c.classList.remove('drag-over'); });
-      card.classList.add('drag-over');
-    });
-    card.addEventListener('drop', function(e){
-      e.preventDefault();
-      if(dragEl && card !== dragEl && card.dataset.pinned !== '1'){
-        card.classList.remove('drag-over');
-        commitDrop(dragEl, card);
-      }
-    });
-  });
-}
-
-function commitDrop(fromCard, toCard){
-  // Trabalha sobre state.guests usando os índices reais
-  var fromReal = parseInt(fromCard.dataset.real);
-  var toReal   = parseInt(toCard.dataset.real);
-  if(isNaN(fromReal)||isNaN(toReal)||fromReal===toReal) return;
-  var arr = state.guests;
-  var item = arr.splice(fromReal, 1)[0];
-  // Recalcula toReal após splice
-  var newTo = parseInt(toCard.dataset.real);
-  if(fromReal < newTo) newTo--;
-  arr.splice(newTo, 0, item);
-  saveState();
-  renderGuests();
-}
-
 function editGuest(i){
   var g=state.guests[i];
-  setVal('fg-idx',i);setVal('fg-nome',g.nome);setVal('fg-cat',g.cat);setVal('fg-rsvp',g.rsvp);setVal('fg-mesa',g.mesa);setVal('fg-rest',g.rest);
+  setVal('fg-idx',i);setVal('fg-nome',g.nome);setVal('fg-cat',g.cat);setVal('fg-rsvp',g.rsvp);setVal('fg-mesa',g.mesa);setVal('fg-rest',g.rest);setVal('fg-lado',ladoOf(g));
   document.getElementById('fp-guest-ttl').textContent='Editar convidado';
   openPanel('fp-guest','edit');
   document.getElementById('fp-guest').scrollIntoView({behavior:'smooth',block:'start'});
@@ -1593,10 +2247,10 @@ function editGuest(i){
 function saveGuest(){
   var idx=parseInt(v('fg-idx'));
   var nome=v('fg-nome').trim();if(!nome)return;
-  var obj={nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest')};
+  var obj={nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest'),lado:v('fg-lado')};
   if(idx>=0){addLog('edit','Convidado editado',state.guests[idx].nome+' → '+nome);state.guests[idx]=obj;}
   else{addLog('add','Convidado adicionado',nome);state.guests.push(obj);}
-  setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');
+  setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');setVal('fg-lado','');
   document.getElementById('fp-guest-ttl').textContent='Novo convidado';
   closePanel('fp-guest');saveState();renderGuests();
 }
@@ -1612,7 +2266,8 @@ function delGuest(i){
 function renderTasks(){
   var done=state.tasks.filter(function(t){return t.done}).length,total=state.tasks.length;
   document.getElementById('task-list').innerHTML=state.tasks.map(function(t,i){
-    return '<div class="ci">'+
+    return '<div class="ci" data-i="'+i+'">'+
+      '<span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
       '<div class="cb'+(t.done?' ck':'')+'" onclick="toggleTask('+i+')">'+(t.done?'✓':'')+'</div>'+
       '<div style="flex:1" onclick="toggleTask('+i+')">'+
       '<div class="ct'+(t.done?' ck':'')+'">'+t.desc+'</div>'+
@@ -1622,6 +2277,7 @@ function renderTasks(){
       '<button class="btn-act del" onclick="event.stopPropagation();delTask('+i+')" title="Excluir">×</button>'+
       '</div></div>';
   }).join('')||'<div class="empty">Nenhuma tarefa.</div>';
+  initSortable('task-list','.ci',function(){return state.tasks},function(){saveState();renderTasks()});
   var pct=Math.round(done/Math.max(total,1)*100);
   document.getElementById('bar-task').style.width=pct+'%';
   document.getElementById('pct-task').textContent=pct+'%';
@@ -1657,8 +2313,11 @@ function renderFin(){
   document.getElementById('fin-list').innerHTML=state.fin.map(function(f,i){
     est+=f.est;real+=f.real;
     var cls=f.real>f.est?'fv-ov':f.status==='Quitado'?'fv-ok':'fv-pd';
-    return '<div class="fr"><div><div class="fl">'+f.desc+'</div>'+
-      '<div class="fe">Est: R$'+f.est.toLocaleString('pt-BR')+(f.venc?' · Vence: '+fmtDate(f.venc):'')+'</div></div>'+
+    return '<div class="fr" data-i="'+i+'">'+
+      '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1">'+
+      '<span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
+      '<div style="min-width:0"><div class="fl">'+f.desc+'</div>'+
+      '<div class="fe">Est: R$'+f.est.toLocaleString('pt-BR')+(f.venc?' · Vence: '+fmtDate(f.venc):'')+'</div></div></div>'+
       '<div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px">'+
       '<div class="fv '+cls+'">R$'+f.real.toLocaleString('pt-BR')+'</div>'+
       '<span class="bdg '+statusBadge(f.status)+'">'+f.status+'</span>'+
@@ -1667,6 +2326,7 @@ function renderFin(){
       '<button class="btn-act del" onclick="delFin('+i+')" title="Excluir">×</button>'+
       '</div></div></div>';
   }).join('')||'<div class="empty">Nenhum item financeiro.</div>';
+  initSortable('fin-list','.fr',function(){return state.fin},function(){saveState();renderFin()});
   document.getElementById('fin-est-val').textContent='R$'+est.toLocaleString('pt-BR');
   document.getElementById('fin-real-sub').textContent='Real: R$'+real.toLocaleString('pt-BR');
   var pct=Math.round(real/Math.max(est,1)*100);
@@ -1701,7 +2361,10 @@ function delFin(i){
 function renderSuppliers(){
   document.getElementById('sup-list').innerHTML=state.suppliers.map(function(s,i){
     var pct=Math.round(s.pago/Math.max(s.total,1)*100);
-    return '<div class="card"><div class="card-row"><div><div class="nm">'+s.nome+'</div><div class="sub">'+s.cat+'</div></div>'+
+    return '<div class="card" data-i="'+i+'"><div class="card-row">'+
+      '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1">'+
+      '<span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
+      '<div style="min-width:0"><div class="nm">'+s.nome+'</div><div class="sub">'+s.cat+'</div></div></div>'+
       '<div class="act-group"><span class="bdg '+statusBadge(s.status)+'">'+s.status+'</span>'+
       '<button class="btn-act edit" onclick="editSupplier('+i+')" title="Editar">✏️</button>'+
       '<button class="btn-act del" onclick="delSupplier('+i+')" title="Excluir">×</button>'+
@@ -1710,6 +2373,7 @@ function renderSuppliers(){
       '<div style="font-size:10px;color:var(--txt2);margin-top:4px">R$'+s.pago.toLocaleString('pt-BR')+' de R$'+s.total.toLocaleString('pt-BR')+
       (s.link?' · <a href="'+s.link+'" style="color:var(--purple)">contrato</a>':'')+'</div></div>';
   }).join('')||'<div class="empty">Nenhum fornecedor.</div>';
+  initSortable('sup-list','.card',function(){return state.suppliers},function(){saveState();renderSuppliers()});
 }
 function editSupplier(i){
   var s=state.suppliers[i];
@@ -1740,7 +2404,8 @@ function renderTables(){
   document.getElementById('mesa-grid').innerHTML=state.tables.map(function(t,i){
     var spots='';for(var j=0;j<t.cap;j++) spots+='<div class="sp '+(j<t.ocupados?'sp-tk':'sp-fr')+'"></div>';
     var isN=t.nome==='Noivos';
-    return '<div class="mi"'+(isN?' style="border-color:rgba(127,119,221,.4)"':'')+'>'+
+    return '<div class="mi" data-i="'+i+'"'+(isN?' style="border-color:rgba(127,119,221,.4)"':'')+'>'+
+      '<span class="drag-handle" title="Segure e arraste para reordenar" style="display:block;text-align:center;margin:-4px 0 0;padding:4px">⠿</span>'+
       '<div class="mn"'+(isN?' style="color:var(--purple)"':'')+'>'+t.nome+'</div>'+
       '<div class="msub">'+t.grupo+'</div>'+
       '<div class="spots">'+spots+'</div>'+
@@ -1750,6 +2415,7 @@ function renderTables(){
       '<button class="btn-act del" onclick="delMesa('+i+')" style="font-size:11px">×</button>'+
       '</div></div>';
   }).join('')||'<div class="empty" style="grid-column:1/-1">Nenhuma mesa.</div>';
+  initSortable('mesa-grid','.mi',function(){return state.tables},function(){saveState();renderTables()});
 }
 function editMesa(i){
   var t=state.tables[i];
@@ -1779,7 +2445,8 @@ function delMesa(i){
 function renderGifts(){
   var total=state.gifts.length,dado=state.gifts.filter(function(g){return g.dado}).length;
   document.getElementById('gift-list').innerHTML=state.gifts.map(function(g,i){
-    return '<div class="gift-row">'+
+    return '<div class="gift-row" data-i="'+i+'">'+
+      '<span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
       '<div class="gchk'+(g.dado?' ck':'')+'" onclick="toggleGift('+i+')">'+(g.dado?'✓':'')+'</div>'+
       '<div class="gift-nm">'+g.nome+'<br><span style="font-size:10px;color:var(--txt2)">'+g.cat+'</span></div>'+
       '<div style="display:flex;align-items:center;gap:4px">'+
@@ -1788,6 +2455,7 @@ function renderGifts(){
       '<button class="btn-act del" onclick="delGift('+i+')" title="Excluir">×</button>'+
       '</div></div>';
   }).join('')||'<div class="empty">Nenhum presente na lista.</div>';
+  initSortable('gift-list','.gift-row',function(){return state.gifts},function(){saveState();renderGifts()});
   var pct=Math.round(dado/Math.max(total,1)*100);
   document.getElementById('bar-gift').style.width=pct+'%';
   document.getElementById('pct-gift').textContent=pct+'%';
@@ -1824,9 +2492,11 @@ function addRef(){
 }
 function renderRefs(){
   document.getElementById('ref-list').innerHTML=state.refs.map(function(r,i){
-    return '<div class="ref-link"><a href="'+r+'" target="_blank">'+r+'</a>'+
+    return '<div class="ref-link" data-i="'+i+'"><span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
+      '<a href="'+r+'" target="_blank" style="flex:1;min-width:0;word-break:break-all">'+r+'</a>'+
       '<button class="btn-act del" onclick="delRef('+i+')">×</button></div>';
   }).join('')||'<div style="font-size:12px;color:var(--txt3)">Nenhuma referência salva.</div>';
+  initSortable('ref-list','.ref-link',function(){return state.refs},function(){saveState();renderRefs()});
 }
 function delRef(i){state.refs.splice(i,1);saveState();renderRefs()}
 
@@ -1878,8 +2548,9 @@ function syncDefGuests(){
 //  RENDER ALL
 // ═══════════════════════════════════════════════════
 function renderAll(){
+  if(_dragActive){ _pendingRender=true; return }
   if(syncDefGuests()) saveState();
-  renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();loadEspaco();
+  renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();loadEspaco();renderEvento();
 }
 
 // ═══════════════════════════════════════════════════
@@ -1895,17 +2566,19 @@ function renderDefGuests(){
   var list = getDefGuests();
   document.getElementById('defguest-list').innerHTML = list.map(function(g,i){
     var ini = g.nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase();
-    return '<div class="card" style="margin-bottom:6px"><div class="card-row">'+
-      '<div style="display:flex;align-items:center;gap:10px">'+
+    return '<div class="card" data-i="'+i+'" style="margin-bottom:6px"><div class="card-row">'+
+      '<span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
+      '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">'+
       '<div class="av av'+(i%5)+'">'+ini+'</div>'+
-      '<div><div class="nm">'+g.nome+'</div><div class="sub">'+g.cat+' · '+g.rsvp+'</div></div></div>'+
+      '<div style="min-width:0"><div class="nm" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">'+g.nome+ladoChip(ladoOf(g))+'</div><div class="sub">'+g.cat+' · '+g.rsvp+'</div></div></div>'+
       '<div class="act-group">'+
       '<button class="btn-act edit" onclick="editDefGuest('+i+')" title="Editar">✏️</button>'+
       '<button class="btn-act del" onclick="delDefGuest('+i+')" title="Excluir">×</button>'+
       '</div></div></div>';
   }).join('') || '<div class="empty">Nenhum convidado padrão.</div>';
+  initSortable('defguest-list','.card',function(){ if(!defGuestsList) defGuestsList=getDefGuests(); return defGuestsList },
+    function(){ saveDefGuests(defGuestsList); renderDefGuests(); });
 }
-
 function editDefGuest(i){
   var list = getDefGuests();
   var g = list[i];
@@ -1913,6 +2586,7 @@ function editDefGuest(i){
   setVal('fdg-nome', g.nome);
   setVal('fdg-cat', g.cat);
   setVal('fdg-rsvp', g.rsvp);
+  setVal('fdg-lado', ladoOf(g));
   document.getElementById('fp-defguest-ttl').textContent = 'Editar convidado padrão';
   openPanel('fp-defguest','edit');
   document.getElementById('fp-defguest').scrollIntoView({behavior:'smooth',block:'start'});
@@ -1927,6 +2601,7 @@ function saveDefGuest(){
     nome: nome,
     cat: document.getElementById('fdg-cat').value,
     rsvp: document.getElementById('fdg-rsvp').value,
+    lado: document.getElementById('fdg-lado').value,
     mesa: '',
     rest: ''
   };
@@ -1937,7 +2612,7 @@ function saveDefGuest(){
     var gi = state.guests.findIndex(function(g){ return g.nome === oldNome; });
     if(gi >= 0){
       // Preserva mesa e restrição já preenchidas
-      state.guests[gi] = Object.assign({}, state.guests[gi], {nome: obj.nome, cat: obj.cat, rsvp: obj.rsvp});
+      state.guests[gi] = Object.assign({}, state.guests[gi], {nome: obj.nome, cat: obj.cat, rsvp: obj.rsvp, lado: obj.lado});
     } else {
       state.guests.push(JSON.parse(JSON.stringify(obj)));
     }
@@ -2014,9 +2689,9 @@ function processBackupFile(file){
       var data = JSON.parse(e.target.result);
       if(!data.state) throw new Error('Arquivo inválido');
       if(!confirm('Isso substituirá TODOS os dados atuais pelo backup. Continuar?')) return;
-      state = normalizeState(data.state);
+      state = normalizeState(data.state); migrateState(state);
       logs = Array.isArray(data.logs) ? data.logs : [];
-      if(data.defaultGuests) saveDefGuests(data.defaultGuests);
+      if(data.defaultGuests) saveDefGuests(migrateDefGuests(data.defaultGuests));
       saveState();
       renderAll();
       renderDefGuests();
@@ -2061,11 +2736,16 @@ function showImportMsg(msg, ok){
 // ═══════════════════════════════════════════════════
 function buildShareText(section){
   var lines = ['💍 Casamento Willians & Poliana', ''];
+  var _ev=state.evento||{};
+  if(_ev.religioso) lines.push('⛪ Religioso: '+fmtDate(_ev.religioso)+' ('+countText(_ev.religioso)+')');
+  if(_ev.civil) lines.push('📜 Civil: '+fmtDate(_ev.civil)+' ('+countText(_ev.civil)+')');
+  if(lines.length>2) lines.push('');
   if(section==='all' || section==='guests'){
     lines.push('👥 CONVIDADOS');
     var conf=state.guests.filter(function(g){return g.rsvp==='Confirmado'}).length;
     var agt=state.guests.filter(function(g){return g.rsvp==='Aguardando'}).length;
     lines.push('Total: '+state.guests.length+' | Confirmados: '+conf+' | Aguardando: '+agt);
+    lines.push('Lista da noiva: '+state.guests.filter(function(g){return ladoOf(g)==='noiva'}).length+' | Lista do noivo: '+state.guests.filter(function(g){return ladoOf(g)==='noivo'}).length);
     lines.push('');
   }
   if(section==='all' || section==='tasks'){
@@ -2264,6 +2944,7 @@ window.FB = {
   },
   resetPassword(email) { return sendPasswordResetEmail(auth, email); },
   logout() { return signOut(auth); },
+  getToken() { return auth.currentUser ? auth.currentUser.getIdToken() : Promise.reject(new Error('sem login')); },
   saveData(patch) {
     return setDoc(dataRef, {
       ...patch,
