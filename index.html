@@ -2355,7 +2355,7 @@ function treeNodeHTML(x){
   var g=x.g, cls=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait';
   var sub=[g.viaConvite?'📨':'',g.rsvp,g.mesa?'Mesa '+g.mesa:'',g.rest||''].filter(Boolean).join(' · ');
   return '<li class="gt-li"><div class="gt-node"><span class="gt-dot '+cls+'" title="'+esc(g.rsvp)+'"></span><span class="gt-nm">'+esc(g.nome)+'</span><span class="gt-sub">'+esc(sub)+'</span>'+
-    '<button class="btn-act edit" onclick="editGuest('+x.i+')" title="Editar">✏️</button></div></li>';
+    '<button class="btn-act edit" onclick="editGuest('+x.i+')" title="Editar">✏️</button><button class="btn-act del" onclick="delGuest('+x.i+')" title="Excluir">×</button></div></li>';
 }
 function renderGuestTree(){
   var box=document.getElementById('guest-tree'); if(!box) return;
@@ -2850,13 +2850,13 @@ function renderRsvpModal(){
         return '<button class="btn-sm" onclick="linkRsvp(\''+id+'\','+c.i+')">🔗 '+esc(c.g.nome)+' ('+Math.round(c.s*100)+'%)</button>';}).join('')+'</div>':'')+
       '<div class="f-lbl" style="margin-top:10px">Vincular a outro convidado</div>'+
       '<div style="display:flex;gap:6px"><select class="f-sel" style="margin:0;flex:1" id="rs-sel-'+id+'">'+opts+'</select><button class="btn-sm" onclick="linkRsvpSel(\''+id+'\')">Vincular</button></div>'+
-      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn-sm" onclick="addRsvpAsGuest(\''+id+'\')">➕ Adicionar como novo convidado</button><button class="btn-sm" style="background:none" onclick="hideRsvp(\''+id+'\')">Ocultar</button></div></div>';
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn-sm" onclick="addRsvpAsGuest(\''+id+'\')">➕ Adicionar como novo convidado</button><button class="btn-sm" style="background:none" onclick="hideRsvp(\''+id+'\')">Ocultar</button><button class="btn-sm" style="background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.3)" onclick="deleteRsvp(\''+id+'\')">🗑 Excluir resposta</button></div></div>';
   }).join(''):'<div class="empty" style="padding:10px 0">Tudo vinculado ✓</div>';
   h+='<div class="sec-ttl" style="margin:14px 0 8px">✅ Vinculadas ('+linked.length+')</div>';
   h+=linked.length?linked.map(function(r){
     var g=state.guests[rsvpLinkedTo(r.id)[0]], diff=nomeKey(g.nome)!==nomeKey(r.nome);
     return '<div class="card">'+rsvpHead(r)+'<div class="sub" style="margin-top:6px">🔗 Na lista: <b>'+esc(g.nome)+'</b>'+(diff?' <span class="bdg bdg-amber">nome diferente</span>':'')+'</div>'+
-      acompHTML(r,true)+'<div style="margin-top:8px"><button class="btn-sm" style="background:none" onclick="unlinkRsvp(\''+esc(r.id)+'\')">Desvincular</button></div></div>';
+      acompHTML(r,true)+'<div style="margin-top:8px"><button class="btn-sm" style="background:none" onclick="unlinkRsvp(\''+esc(r.id)+'\')">Desvincular</button> <button class="btn-sm" style="background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.3)" onclick="deleteRsvp(\''+esc(r.id)+'\')">🗑 Excluir resposta</button></div></div>';
   }).join(''):'<div class="empty" style="padding:10px 0">Nenhuma ainda.</div>';
   if(hid.length) h+='<div class="sub" style="margin-top:12px">'+hid.length+' resposta(s) oculta(s). <a href="#" style="color:var(--purple)" onclick="unhideRsvps();return false">Mostrar de novo</a></div>';
   box.innerHTML=h;
@@ -2875,6 +2875,19 @@ function addRsvpAsGuest(id){
   var r=rsvpById(id); if(!r) return;
   var g={nome:r.nome,cat:'Amigos',rsvp:r.status,mesa:'',rest:r.restricao||'',lado:''};
   state.guests.push(g); applyRsvp(r,g); addLog('add','Convidado adicionado (convite)',r.nome); afterRsvpChange();
+}
+function deleteRsvp(id){
+  var r=rsvpById(id); if(!r) return;
+  if(!confirm('Excluir a resposta de "'+r.nome+'" da nuvem? Isso não pode ser desfeito.')) return;
+  FB.deleteRsvp(id).then(function(){
+    state.guests.forEach(function(g){
+      if((g.rsvpIds||[]).indexOf(id)<0) return;
+      g.rsvpIds=g.rsvpIds.filter(function(x){return x!==id});
+      if(!g.rsvpIds.length){ delete g.rsvpIds; delete g.viaConvite; delete g.conviteNome; delete g.conviteEm; delete g.conviteOrigem; delete g.acomp; delete g.acompN; delete g.conviteMsg; }
+    });
+    rsvpCache=rsvpCache.filter(function(x){return x.id!==id});
+    addLog('del','Resposta do convite excluída',r.nome); afterRsvpChange();
+  }).catch(function(e){alert('Não foi possível excluir: '+((e&&e.message)||e))});
 }
 function hideRsvp(id){ state.conviteOcultos=(state.conviteOcultos||[]).concat(id); afterRsvpChange() }
 function unhideRsvps(){ state.conviteOcultos=[]; afterRsvpChange() }
@@ -2927,8 +2940,14 @@ function saveGuest(){
 }
 function delGuest(i){
   if(!confirm('Excluir o convidado '+state.guests[i].nome+'?'))return;
-  addLog('del','Convidado removido',state.guests[i].nome);
+  var gg=state.guests[i], ids=(gg.rsvpIds||[]).slice();
+  addLog('del','Convidado removido',gg.nome);
   state.guests.splice(i,1);saveState();renderGuests();
+  if(ids.length&&window.FB&&FB.deleteRsvp&&confirm('Esse convidado respondeu pelo convite.\nExcluir também a resposta dele da nuvem?\n(OK = excluir · Cancelar = manter a resposta em “📥 Convite”)')){
+    Promise.all(ids.map(function(id){return FB.deleteRsvp(id)})).then(function(){
+      rsvpCache=rsvpCache.filter(function(r){return ids.indexOf(r.id)<0}); updateConviteBtn();
+    }).catch(function(e){alert('Não foi possível excluir a resposta: '+((e&&e.message)||e))});
+  } else updateConviteBtn();
 }
 
 // ═══════════════════════════════════════════════════
