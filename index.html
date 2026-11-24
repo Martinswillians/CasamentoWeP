@@ -569,7 +569,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div class="stats" id="guest-stats"></div>
       <div class="view-row" id="guest-view"></div>
       <div class="chips" id="guest-filter"></div>
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" onclick="importRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-convite" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
         <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
         <input type="hidden" id="fg-idx" value="-1">
@@ -583,6 +583,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
           <div><div class="f-lbl">Mesa nº</div><input class="f-inp" id="fg-mesa" placeholder="ex: 3"></div>
           <div><div class="f-lbl">Restrição alimentar</div><input class="f-inp" id="fg-rest" placeholder="ex: Vegetariano"></div>
         </div>
+        <div id="fg-convite-info" style="display:none"></div>
         <button class="btn-save" onclick="saveGuest()">Salvar convidado</button>
       </div>
       <div id="guest-list"></div>
@@ -729,7 +730,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
 
       <!-- CONVIDADOS PADRÃO -->
       <div class="sec-hdr" style="margin-bottom:8px"><span class="sec-ttl">👥 Convidados padrão</span><button class="btn-sm" onclick="openPanel('fp-defguest','novo')">+ Adicionar</button></div>
-      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Estes convidados aparecem quando o app é reiniciado do zero. Edite os nomes para corresponder à sua família.</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Modelo usado apenas quando o app é reiniciado do zero. Alterar aqui NÃO muda a lista de convidados — para editar ou excluir convidados use a tela Convidados.</div>
       <div class="form-panel" id="fp-defguest">
         <div class="form-panel-ttl"><span id="fp-defguest-ttl">Novo convidado padrão</span><button onclick="closePanel('fp-defguest')">×</button></div>
         <input type="hidden" id="fdg-idx" value="-1">
@@ -903,6 +904,16 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
   </div>
 </div>
 
+<!-- RESPOSTAS DO CONVITE -->
+<div class="ov-modal" id="rsvp-modal">
+  <div class="ov-box" style="max-width:560px">
+    <div class="ov-ttl">📨 Respostas do convite <button class="ov-close" onclick="closeOv('rsvp-modal')">×</button></div>
+    <div class="est-hint" id="rsvp-sum"></div>
+    <div id="rsvp-body"></div>
+    <button class="btn-save" onclick="loadRsvps()">🔄 Atualizar respostas</button>
+  </div>
+</div>
+
 <!-- EDIT PROFILE MODAL -->
 <div class="ov-modal" id="edit-profile-modal">
   <div class="ov-box">
@@ -997,6 +1008,7 @@ var defaultState = {
   ],
   refs:[],
   estilo:defaultEstilo(),
+  conviteOcultos:[],
   espaco:{nome:'',end:'',cap:'',hora:'',contrato:'Em negociação',obs:''},
   evento:{civil:'',religioso:'2027-03-14'},
   meta:{v2:true}
@@ -1025,6 +1037,7 @@ function normalizeState(s){
     gifts:     Array.isArray(s.gifts)     ? s.gifts     : clone(defaultState.gifts),
     refs:      Array.isArray(s.refs)      ? s.refs      : [],
     estilo:    normalizeEstilo(s.estilo),
+    conviteOcultos: Array.isArray(s.conviteOcultos)?s.conviteOcultos:[],
     espaco:    (s.espaco&&typeof s.espaco==='object') ? s.espaco : clone(defaultState.espaco),
     evento:    (s.evento&&typeof s.evento==='object') ? {civil:s.evento.civil||'',religioso:s.evento.religioso||''} : {civil:'',religioso:'2027-03-14'},
     meta:      (s.meta&&typeof s.meta==='object') ? s.meta : {}
@@ -1432,11 +1445,11 @@ function getExport(key,opts){
     case 'guests':
       var sc=opts.scope||'todos';
       rows=S.guests.filter(function(g){return guestMatches(g,sc)}).map(function(g){
-        return [g.nome,ladoLabel(ladoOf(g)).replace('Não informado',''),g.cat,g.rsvp,g.mesa||'',g.rest||'']; });
+        return [g.nome,ladoLabel(ladoOf(g)).replace('Não informado',''),g.cat,g.rsvp,g.mesa||'',g.rest||'',g.acompDe?'Acompanhante de '+g.acompDe:(g.viaConvite?'Via convite'+((g.acomp&&g.acomp.length)?' - acomp.: '+g.acomp.join(', '):''):'')]; });
       t=sc==='noiva'?'Convidados - Lista da noiva':sc==='noivo'?'Convidados - Lista do noivo':sc==='sem'?'Convidados - Sem lista':'Convidados';
-      return {title:t,sheet:'Convidados',cols:[{h:'Nome',t:'text',w:34},{h:'Lista',t:'text',w:16},{h:'Categoria',t:'text',w:13},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26}],
+      return {title:t,sheet:'Convidados',cols:[{h:'Nome',t:'text',w:34},{h:'Lista',t:'text',w:16},{h:'Categoria',t:'text',w:13},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26},{h:'Convite',t:'text',w:34}],
         rows:rows,
-        foot:rows.length?['Total: '+rows.length+' convidado(s)','','','','','']:null};
+        foot:rows.length?['Total: '+rows.length+' convidado(s)','','','','','','']:null};
     case 'tasks':
       return {title:'Checklist de tarefas',sheet:'Checklist',cols:[{h:'Tarefa',t:'text',w:42},{h:'Categoria',t:'text',w:14},{h:'Data limite',t:'date',w:14},{h:'Situação',t:'text',w:13}],
         rows:S.tasks.map(function(x){return [x.desc,x.cat,x.data||'',x.done?'Concluída':'Pendente']}),
@@ -1952,6 +1965,7 @@ function enterApp(){
   mainApp.style.minHeight='100vh';
   updateHeader();
   requestAnimationFrame(function(){ renderAll(); renderBell(); });
+  setTimeout(function(){ loadRsvps(true) },1500);
 }
 
 // ═══════════════════════════════════════════════════
@@ -2323,8 +2337,8 @@ function toggleTreeGroup(){ treeGroup=!treeGroup; renderGuests() }
 function treeBranches(scope,group){
   var defs=[['noiva','Lista da noiva','💗'],['noivo','Lista do noivo','💙'],['sem','Sem lista','👥']], out=[];
   defs.forEach(function(d){
-    if(scope!=='todos'&&scope!==d[0]) return;
-    var items=[]; state.guests.forEach(function(g,i){ if((ladoOf(g)||'sem')===d[0]) items.push({g:g,i:i}) });
+    if(scope!=='todos'&&scope!=='convite'&&scope!==d[0]) return;
+    var items=[]; state.guests.forEach(function(g,i){ if((ladoOf(g)||'sem')===d[0]&&(scope!=='convite'||g.viaConvite)) items.push({g:g,i:i}) });
     if(d[0]==='sem'&&!items.length) return;
     var groups;
     if(group){
@@ -2339,7 +2353,7 @@ function treeBranches(scope,group){
 }
 function treeNodeHTML(x){
   var g=x.g, cls=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait';
-  var sub=[g.rsvp,g.mesa?'Mesa '+g.mesa:'',g.rest||''].filter(Boolean).join(' · ');
+  var sub=[g.viaConvite?'📨':'',g.rsvp,g.mesa?'Mesa '+g.mesa:'',g.rest||''].filter(Boolean).join(' · ');
   return '<li class="gt-li"><div class="gt-node"><span class="gt-dot '+cls+'" title="'+esc(g.rsvp)+'"></span><span class="gt-nm">'+esc(g.nome)+'</span><span class="gt-sub">'+esc(sub)+'</span>'+
     '<button class="btn-act edit" onclick="editGuest('+x.i+')" title="Editar">✏️</button></div></li>';
 }
@@ -2667,7 +2681,7 @@ function ladoChip(l){ return l?'<span class="lado lado-'+l+'">'+(l==='noiva'?'�
 function setGuestFilter(f){ guestFilter=f; renderGuests(); }
 function guestMatches(g,f){
   f=f||guestFilter; var l=ladoOf(g);
-  return f==='todos'||(f==='sem'?l==='':l===f);
+  return f==='todos'||(f==='convite'?!!g.viaConvite:(f==='sem'?l==='':l===f));
 }
 
 function renderGuests(){
@@ -2682,11 +2696,13 @@ function renderGuests(){
     '<div class="sc"><div class="sc-n">'+rec+'</div><div class="sc-l">Recusaram</div></div>';
 
   // filtro por lista (noiva / noivo)
-  var cnt={todos:c,noiva:0,noivo:0,sem:0};
-  state.guests.forEach(function(g){ cnt[ladoOf(g)||'sem']++ });
+  var cnt={todos:c,noiva:0,noivo:0,sem:0,convite:0};
+  state.guests.forEach(function(g){ cnt[ladoOf(g)||'sem']++; if(g.viaConvite) cnt.convite++ });
   if(guestFilter==='sem'&&!cnt.sem) guestFilter='todos';
+  if(guestFilter==='convite'&&!cnt.convite) guestFilter='todos';
   var chips=[['todos','Todos'],['noiva','💗 Noiva'],['noivo','💙 Noivo']];
   if(cnt.sem) chips.push(['sem','Sem lista']);
+  if(cnt.convite) chips.push(['convite','📨 Via convite']);
   document.getElementById('guest-filter').innerHTML=chips.map(function(x){
     return '<button class="chip'+(guestFilter===x[0]?' on':'')+'" onclick="setGuestFilter(\''+x[0]+'\')">'+x[1]+' ('+cnt[x[0]]+')</button>';
   }).join('');
@@ -2704,7 +2720,7 @@ function renderGuests(){
   } else {
     document.getElementById('guest-list').innerHTML=vis.map(function(x){
       var g=x.g, realIdx=x.i;
-      var isPinned=defNames.indexOf(g.nome)!==-1;
+      var isPinned=false;
       var ini=g.nome.split(' ').slice(0,2).map(function(w){return w[0]||''}).join('').toUpperCase();
       return '<div class="card" data-i="'+realIdx+'"'+(isPinned?' style="border-left:2px solid rgba(127,119,221,.4)"':'')+'>'+
         '<div class="card-row">'+
@@ -2713,7 +2729,7 @@ function renderGuests(){
         '<div class="av '+avClass(realIdx)+'">'+ini+'</div>'+
         '<div style="min-width:0"><div class="nm" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">'+g.nome+
         ladoChip(ladoOf(g))+(isPinned?'<span class="guest-default-badge">padrão</span>':'')+'</div>'+
-        '<div class="sub">'+g.cat+(g.mesa?' · Mesa '+g.mesa:'')+(g.rest?' · '+g.rest:'')+'</div></div></div>'+
+        '<div class="sub">'+g.cat+(g.mesa?' · Mesa '+g.mesa:'')+(g.rest?' · '+g.rest:'')+'</div>'+conviteLine(g)+'</div></div>'+
         '<div class="act-group"><span class="bdg '+rsvpBadge(g.rsvp)+'">'+g.rsvp+'</span>'+
         '<button class="btn-act edit" onclick="editGuest('+realIdx+')" title="Editar">✏️</button>'+
         '<button class="btn-act del" onclick="delGuest('+realIdx+')" title="Excluir">×</button>'+
@@ -2730,36 +2746,182 @@ function renderGuests(){
 function editGuest(i){
   var g=state.guests[i];
   setVal('fg-idx',i);setVal('fg-nome',g.nome);setVal('fg-cat',g.cat);setVal('fg-rsvp',g.rsvp);setVal('fg-mesa',g.mesa);setVal('fg-rest',g.rest);setVal('fg-lado',ladoOf(g));
+  guestConviteInfo(g);
   document.getElementById('fp-guest-ttl').textContent='Editar convidado';
   openPanel('fp-guest','edit');
   document.getElementById('fp-guest').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function importRsvps(){
-  if(!window.FB||!FB.listRsvps){alert('Firebase ainda não carregou. Tente de novo.');return}
-  FB.listRsvps().then(function(list){
-    if(!list.length){alert('Nenhuma resposta nova do convite.');return}
-    var add=0,upd=0;
-    list.forEach(function(r){
-      var key=(r.nome||'').trim().toLowerCase();
-      var g=state.guests.filter(function(x){return (x.nome||'').trim().toLowerCase()===key})[0];
-      var obs=[r.acompanhantes?('+'+r.acompanhantes+' acomp.'):'',r.restricao||''].filter(Boolean).join(' · ');
-      if(g){ g.rsvp=r.status; if(obs&&!g.rest)g.rest=obs; upd++ }
-      else{ state.guests.push({nome:r.nome,cat:'Amigos',rsvp:r.status,mesa:'',rest:obs,lado:''}); add++ }
-      addLog('add','Resposta do convite',r.nome+' → '+r.status+(r.mensagem?' · "'+r.mensagem+'"':''));
-    });
-    saveState();renderGuests();
-    if(confirm(add+' novo(s) e '+upd+' atualizado(s). Apagar as respostas já importadas da nuvem?')){
-      Promise.all(list.map(function(r){return FB.deleteRsvp(r.id)}));
-    }
-  }).catch(function(e){alert('Não foi possível ler as respostas: '+(e&&e.message||e))});
+// ═══════════════════════════════════════════════════
+//  RESPOSTAS DO CONVITE VIRTUAL (convite.html → coleção "rsvps")
+//  As respostas ficam guardadas na nuvem; o vínculo com a lista fica no convidado (rsvpIds).
+// ═══════════════════════════════════════════════════
+var rsvpCache=[];
+var NOME_LIGA=['de','da','do','dos','das','e'];
+function normNome(s){
+  return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(function(w){return w&&NOME_LIGA.indexOf(w)<0});
 }
+function nomeKey(s){ return normNome(s).join(' ') }
+function nomeScore(a,b){
+  var A=normNome(a), B=normNome(b); if(!A.length||!B.length) return 0;
+  if(A.join(' ')===B.join(' ')) return 1;
+  var com=A.filter(function(w){return B.indexOf(w)>=0}).length; if(!com) return 0;
+  var sc=com/Math.max(A.length,B.length)*0.5+com/Math.min(A.length,B.length)*0.5+(A[0]===B[0]?0.1:0);
+  return Math.min(sc,0.99);
+}
+function rsvpLinkedTo(id){ var o=[]; state.guests.forEach(function(g,i){ if((g.rsvpIds||[]).indexOf(id)>=0) o.push(i) }); return o }
+function rsvpAcomp(r){ return String(r.acompanhantesNomes||'').split('|').map(function(x){return x.trim()}).filter(Boolean) }
+function rsvpHidden(id){ return (state.conviteOcultos||[]).indexOf(id)>=0 }
+function pendingRsvps(){ return rsvpCache.filter(function(r){return !rsvpLinkedTo(r.id).length&&!rsvpHidden(r.id)}) }
+function fmtTs(ts){ if(!ts) return ''; var d=new Date(ts); return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) }
+function origemLabel(o){ return o==='cartao'?'QR do cartão':o==='virtual'?'QR do convite virtual':o?'link':'' }
+
+function applyRsvp(r,g){
+  g.rsvpIds=g.rsvpIds||[]; if(g.rsvpIds.indexOf(r.id)<0) g.rsvpIds.push(r.id);
+  if(!g.conviteEm||(r.ts||0)>=g.conviteEm){
+    g.rsvp=r.status; g.viaConvite=true; g.conviteNome=r.nome; g.conviteEm=r.ts||Date.now();
+    g.conviteOrigem=r.origem||''; g.acomp=rsvpAcomp(r); g.acompN=r.acompanhantes||0; g.conviteMsg=r.mensagem||'';
+  }
+  if(r.restricao&&!g.rest) g.rest=r.restricao;
+}
+function autoLinkRsvps(){
+  var n=0;
+  rsvpCache.forEach(function(r){
+    if(rsvpLinkedTo(r.id).length||rsvpHidden(r.id)) return;
+    var k=nomeKey(r.nome), m=[];
+    state.guests.forEach(function(g,i){ if(nomeKey(g.nome)===k) m.push(i) });
+    if(m.length===1){
+      applyRsvp(r,state.guests[m[0]]);
+      addLog('add','Resposta do convite',r.nome+' → '+r.status+(r.acompanhantes?' (+'+r.acompanhantes+')':'')); n++;
+    }
+  });
+  if(n){ saveState(); renderGuests() }
+  return n;
+}
+function loadRsvps(silent){
+  if(!window.FB||!FB.listRsvps||!cloudLoaded){ if(silent!==true) alert('Ainda carregando. Tente de novo em instantes.'); return Promise.resolve() }
+  return FB.listRsvps().then(function(list){
+    rsvpCache=list.sort(function(a,b){return (a.ts||0)-(b.ts||0)});
+    autoLinkRsvps(); updateConviteBtn();
+    if(document.getElementById('rsvp-modal').classList.contains('on')) renderRsvpModal();
+  }).catch(function(e){ console.warn('rsvps:',e); if(silent!==true) alert('Não foi possível ler as respostas: '+((e&&e.message)||e)); });
+}
+function updateConviteBtn(){
+  var b=document.getElementById('btn-convite'); if(!b) return;
+  var n=pendingRsvps().length; b.textContent='📥 Convite'+(n?' ('+n+')':'');
+}
+function openRsvps(){ openOv('rsvp-modal'); renderRsvpModal(); loadRsvps(); }
+
+function rsvpCandidates(r){
+  return state.guests.map(function(g,i){return {i:i,g:g,s:nomeScore(r.nome,g.nome)}})
+    .filter(function(x){return x.s>=0.5}).sort(function(a,b){return b.s-a.s}).slice(0,3);
+}
+function acompHTML(r,linked){
+  var names=rsvpAcomp(r); if(!names.length) return r.acompanhantes?'<div class="sub">+'+r.acompanhantes+' acompanhante(s) sem nome informado</div>':'';
+  return '<div class="sub" style="margin-top:4px">Acompanhantes:</div>'+names.map(function(n,k){
+    var inList=state.guests.some(function(g){return nomeKey(g.nome)===nomeKey(n)});
+    return '<div class="rst-row" style="padding:4px 0"><span>'+esc(n)+'</span>'+(inList?'<span class="bdg bdg-green">✓ na lista</span>':
+      (linked?'<button class="btn-sm" onclick="addAcompGuest(\''+esc(r.id)+'\','+k+')">➕ Adicionar à lista</button>':'<span class="bdg bdg-gray">não está na lista</span>'))+'</div>';
+  }).join('');
+}
+function rsvpHead(r){
+  var st=r.status==='Confirmado'?'bdg-green':'bdg-red';
+  var meta=[fmtTs(r.ts),origemLabel(r.origem)].filter(Boolean).join(' · ');
+  return '<div class="card-row"><div style="min-width:0"><div class="nm">'+esc(r.nome)+'</div><div class="sub">'+esc(meta)+'</div></div><span class="bdg '+st+'">'+esc(r.status)+'</span></div>'+
+    (r.restricao?'<div class="sub">🥗 '+esc(r.restricao)+'</div>':'')+
+    (r.mensagem?'<div class="sub" style="font-style:italic">“'+esc(r.mensagem)+'”</div>':'');
+}
+function renderRsvpModal(){
+  var box=document.getElementById('rsvp-body'); if(!box) return;
+  var pend=pendingRsvps(), linked=rsvpCache.filter(function(r){return rsvpLinkedTo(r.id).length}).reverse();
+  var hid=rsvpCache.filter(function(r){return rsvpHidden(r.id)&&!rsvpLinkedTo(r.id).length});
+  var yes=rsvpCache.filter(function(r){return r.status==='Confirmado'}).length;
+  document.getElementById('rsvp-sum').innerHTML=rsvpCache.length
+    ? '<b>'+rsvpCache.length+'</b> resposta(s): '+yes+' confirmaram, '+(rsvpCache.length-yes)+' recusaram. Respostas com o mesmo nome da lista são vinculadas sozinhas; as demais ficam abaixo para você vincular.'
+    : 'Nenhuma resposta recebida ainda pelo convite virtual.';
+  var opts='<option value="">Escolher convidado da lista…</option>'+state.guests.map(function(g,i){return {g:g,i:i}})
+    .sort(function(a,b){return String(a.g.nome).localeCompare(String(b.g.nome),'pt-BR')})
+    .map(function(x){return '<option value="'+x.i+'">'+esc(x.g.nome)+(x.g.viaConvite?' ✓':'')+'</option>'}).join('');
+  var h='';
+  h+='<div class="sec-ttl" style="margin:6px 0 8px">⏳ Aguardando vínculo ('+pend.length+')</div>';
+  h+=pend.length?pend.map(function(r){
+    var cand=rsvpCandidates(r), id=esc(r.id);
+    return '<div class="card">'+rsvpHead(r)+acompHTML(r,false)+
+      (cand.length?'<div class="sub" style="margin-top:8px">Parecidos na lista:</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">'+cand.map(function(c){
+        return '<button class="btn-sm" onclick="linkRsvp(\''+id+'\','+c.i+')">🔗 '+esc(c.g.nome)+' ('+Math.round(c.s*100)+'%)</button>';}).join('')+'</div>':'')+
+      '<div class="f-lbl" style="margin-top:10px">Vincular a outro convidado</div>'+
+      '<div style="display:flex;gap:6px"><select class="f-sel" style="margin:0;flex:1" id="rs-sel-'+id+'">'+opts+'</select><button class="btn-sm" onclick="linkRsvpSel(\''+id+'\')">Vincular</button></div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn-sm" onclick="addRsvpAsGuest(\''+id+'\')">➕ Adicionar como novo convidado</button><button class="btn-sm" style="background:none" onclick="hideRsvp(\''+id+'\')">Ocultar</button></div></div>';
+  }).join(''):'<div class="empty" style="padding:10px 0">Tudo vinculado ✓</div>';
+  h+='<div class="sec-ttl" style="margin:14px 0 8px">✅ Vinculadas ('+linked.length+')</div>';
+  h+=linked.length?linked.map(function(r){
+    var g=state.guests[rsvpLinkedTo(r.id)[0]], diff=nomeKey(g.nome)!==nomeKey(r.nome);
+    return '<div class="card">'+rsvpHead(r)+'<div class="sub" style="margin-top:6px">🔗 Na lista: <b>'+esc(g.nome)+'</b>'+(diff?' <span class="bdg bdg-amber">nome diferente</span>':'')+'</div>'+
+      acompHTML(r,true)+'<div style="margin-top:8px"><button class="btn-sm" style="background:none" onclick="unlinkRsvp(\''+esc(r.id)+'\')">Desvincular</button></div></div>';
+  }).join(''):'<div class="empty" style="padding:10px 0">Nenhuma ainda.</div>';
+  if(hid.length) h+='<div class="sub" style="margin-top:12px">'+hid.length+' resposta(s) oculta(s). <a href="#" style="color:var(--purple)" onclick="unhideRsvps();return false">Mostrar de novo</a></div>';
+  box.innerHTML=h;
+}
+function rsvpById(id){ return rsvpCache.filter(function(r){return r.id===id})[0] }
+function afterRsvpChange(){ saveState(); renderGuests(); updateConviteBtn(); renderRsvpModal(); }
+function linkRsvp(id,idx){
+  var r=rsvpById(id), g=state.guests[idx]; if(!r||!g) return;
+  applyRsvp(r,g); addLog('edit','Convite vinculado',r.nome+' → '+g.nome); afterRsvpChange();
+}
+function linkRsvpSel(id){
+  var el=document.getElementById('rs-sel-'+id); if(!el||el.value==='') { alert('Escolha um convidado da lista.'); return }
+  linkRsvp(id,parseInt(el.value,10));
+}
+function addRsvpAsGuest(id){
+  var r=rsvpById(id); if(!r) return;
+  var g={nome:r.nome,cat:'Amigos',rsvp:r.status,mesa:'',rest:r.restricao||'',lado:''};
+  state.guests.push(g); applyRsvp(r,g); addLog('add','Convidado adicionado (convite)',r.nome); afterRsvpChange();
+}
+function hideRsvp(id){ state.conviteOcultos=(state.conviteOcultos||[]).concat(id); afterRsvpChange() }
+function unhideRsvps(){ state.conviteOcultos=[]; afterRsvpChange() }
+function unlinkRsvp(id){
+  var r=rsvpById(id);
+  state.guests.forEach(function(g){
+    if((g.rsvpIds||[]).indexOf(id)<0) return;
+    g.rsvpIds=g.rsvpIds.filter(function(x){return x!==id});
+    if(!g.rsvpIds.length){ delete g.rsvpIds; delete g.viaConvite; delete g.conviteNome; delete g.conviteEm; delete g.conviteOrigem; delete g.acomp; delete g.acompN; delete g.conviteMsg; }
+  });
+  if(r) addLog('edit','Convite desvinculado',r.nome); afterRsvpChange();
+}
+function addAcompGuest(id,k){
+  var r=rsvpById(id), li=rsvpLinkedTo(id); if(!r||!li.length) return;
+  var main=state.guests[li[0]], name=rsvpAcomp(r)[k]; if(!name) return;
+  var ex=state.guests.filter(function(g){return nomeKey(g.nome)===nomeKey(name)})[0];
+  if(ex){ ex.rsvp='Confirmado'; ex.viaConvite=true; ex.acompDe=main.nome; }
+  else state.guests.push({nome:name,cat:main.cat||'Amigos',rsvp:'Confirmado',mesa:main.mesa||'',rest:'',lado:main.lado||'',viaConvite:true,conviteNome:name,conviteEm:r.ts||Date.now(),acompDe:main.nome});
+  addLog('add','Acompanhante adicionado (convite)',name+' · de '+main.nome); afterRsvpChange();
+}
+function conviteLine(g){
+  if(!g.viaConvite) return '';
+  var t;
+  if(g.acompDe) t='📨 Acompanhante de '+esc(g.acompDe)+' (convite)';
+  else{
+    t='📨 '+(g.rsvp==='Confirmado'?'Confirmou':g.rsvp==='Recusou'?'Recusou':'Respondeu')+' pelo convite';
+    if(g.conviteNome&&nomeKey(g.conviteNome)!==nomeKey(g.nome)) t+=' como “'+esc(g.conviteNome)+'”';
+    if(g.acomp&&g.acomp.length) t+=' · acomp.: '+esc(g.acomp.join(', '));
+    else if(g.acompN) t+=' · +'+g.acompN+' acomp.';
+  }
+  return '<div class="sub" style="color:var(--purple)">'+t+'</div>';
+}
+function guestConviteInfo(g){
+  var el=document.getElementById('fg-convite-info'); if(!el) return;
+  if(!g||!g.viaConvite){ el.style.display='none'; el.innerHTML=''; return }
+  el.style.display='block';
+  el.innerHTML=conviteLine(g).replace('class="sub"','class="sub" style="margin:0 0 10px;padding:8px 10px;background:rgba(127,119,221,.1);border-radius:8px"')+
+    (g.conviteMsg?'<div class="sub" style="margin:-4px 0 10px;font-style:italic">“'+esc(g.conviteMsg)+'”</div>':'');
+}
+
 function saveGuest(){
   var idx=parseInt(v('fg-idx'));
   var nome=v('fg-nome').trim();if(!nome)return;
-  var obj={nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest'),lado:v('fg-lado')};
+  var obj=Object.assign({},idx>=0?state.guests[idx]:{},{nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest'),lado:v('fg-lado')});
   if(idx>=0){addLog('edit','Convidado editado',state.guests[idx].nome+' → '+nome);state.guests[idx]=obj;}
   else{addLog('add','Convidado adicionado',nome);state.guests.push(obj);}
-  setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');setVal('fg-lado','');
+  setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');setVal('fg-lado','');guestConviteInfo(null);
   document.getElementById('fp-guest-ttl').textContent='Novo convidado';
   closePanel('fp-guest');saveState();renderGuests();
 }
@@ -3046,15 +3208,9 @@ function loadEspaco(){
 // ═══════════════════════════════════════════════════
 //  SYNC CONVIDADOS PADRÃO → LISTA REAL
 // ═══════════════════════════════════════════════════
-function syncDefGuests(){
-  var list = getDefGuests();
-  var changed = false;
-  list.forEach(function(dg){
-    var exists = state.guests.some(function(g){ return g.nome === dg.nome; });
-    if(!exists){ state.guests.push(JSON.parse(JSON.stringify(dg))); changed = true; }
-  });
-  return changed;
-}
+// Desativado: os convidados padrão são só um modelo inicial (usado ao resetar o app).
+// Antes eles eram recriados sempre que o nome mudava ou o convidado era excluído, gerando duplicados.
+function syncDefGuests(){ return false; }
 
 // ═══════════════════════════════════════════════════
 //  RENDER ALL
@@ -3120,20 +3276,9 @@ function saveDefGuest(){
   if(idx >= 0){
     var oldNome = list[idx].nome;
     list[idx] = obj;
-    // Atualiza na lista real de convidados pelo nome antigo
-    var gi = state.guests.findIndex(function(g){ return g.nome === oldNome; });
-    if(gi >= 0){
-      // Preserva mesa e restrição já preenchidas
-      state.guests[gi] = Object.assign({}, state.guests[gi], {nome: obj.nome, cat: obj.cat, rsvp: obj.rsvp, lado: obj.lado});
-    } else {
-      state.guests.push(JSON.parse(JSON.stringify(obj)));
-    }
     addLog('edit','Convidado padrão editado', oldNome + ' → ' + nome);
   } else {
     list.push(obj);
-    // Adiciona na lista real de convidados se ainda não existe
-    var exists = state.guests.some(function(g){ return g.nome === obj.nome; });
-    if(!exists){ state.guests.push(JSON.parse(JSON.stringify(obj))); }
     addLog('add','Convidado padrão adicionado', nome);
   }
   saveDefGuests(list);
@@ -3151,9 +3296,6 @@ function delDefGuest(i){
   var removedNome = list[i].nome;
   list.splice(i,1);
   saveDefGuests(list);
-  // Remove também da lista real de convidados
-  var gi = state.guests.findIndex(function(g){ return g.nome === removedNome; });
-  if(gi >= 0){ state.guests.splice(gi,1); }
   addLog('del','Convidado padrão removido', removedNome);
   saveState();
   renderDefGuests();
@@ -3457,7 +3599,7 @@ window.FB = {
   },
   async listRsvps() {
     const snap = await getDocs(query(collection(db, "rsvps"), orderBy("createdAt")));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    return snap.docs.map(d => { const x = d.data(); const ts = (x.createdAt && x.createdAt.toMillis) ? x.createdAt.toMillis() : 0; delete x.createdAt; return { id: d.id, ...x, ts }; });
   },
   deleteRsvp(id) { return deleteDoc(doc(db, "rsvps", id)); },
   resetPassword(email) { return sendPasswordResetEmail(auth, email); },

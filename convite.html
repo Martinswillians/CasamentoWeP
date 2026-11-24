@@ -191,6 +191,7 @@ footer .serif{font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#
       <div id="boxAcomp">
         <label for="acomp">Acompanhantes (além de você)</label>
         <select id="acomp"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+        <div id="boxNomes" class="hide"></div>
         <label for="rest">Restrição alimentar (opcional)</label>
         <input type="text" id="rest" maxlength="200" placeholder="Alergia, vegetariano…">
       </div>
@@ -227,7 +228,7 @@ const CONFIG = {
     endereco: "SMPW Quadra 05, Conjunto 3, Lote 3 · Park Way, Brasília – DF",
     mapa: ""                     // opcional: link do Google Maps (vazio = busca pelo endereço)
   },
-  confirmarAte: "2027-02-01",    // prazo para confirmar (vazio = não mostrar)
+  confirmarAte: "2027-02-01",    // prazo para confirmar: 01/02/2027 (vazio = não mostrar)
   presentesUrl: "",              // opcional: link da lista de presentes
   programacao: [
     ["15:30","Cerimônia"],["16:30","Coquetel"],["18:00","Recepção"],["19:30","Jantar"],["21:30","Festa"]  // ← ajuste os horários após a cerimônia
@@ -245,6 +246,7 @@ const FIREBASE = {apiKey:"AIzaSyBdwhHAC92TQa66by0jlXnL4UUSjYZzxik",authDomain:"c
 /* ══════════════════════════════════════════════════ */
 
 const $=id=>document.getElementById(id);
+const ORIGEM=(()=>{const o=new URLSearchParams(location.search).get("o");return o==="cartao"||o==="virtual"?o:"link"})();
 const C=CONFIG;
 const dt=new Date(C.data+"T"+C.hora+":00");
 const mes=["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"][dt.getMonth()];
@@ -258,7 +260,7 @@ $("mapBtn").href=C.local.mapa||"https://www.google.com/maps/search/?api=1&query=
 $("prog").innerHTML=C.programacao.map(p=>`<li><b>${p[0]}</b><span>${p[1]}</span></li>`).join("");
 $("tips").innerHTML=C.dicas.map(d=>`<div class="tip rv"><div class="e">${d[0]}</div><div><h4>${d[1]}</h4><p>${d[2]}</p></div></div>`).join("");
 if(C.presentesUrl){const g=$("giftBtn");g.href=C.presentesUrl;g.classList.remove("hide")}
-$("deadline").textContent=C.confirmarAte?"Por favor, responda até "+new Date(C.confirmarAte+"T12:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"})+".":"Sua resposta é muito importante para nós.";
+$("deadline").innerHTML=C.confirmarAte?"Por favor, confirme sua presença até <b>"+C.confirmarAte.split("-").reverse().join("/")+"</b>.":"Sua resposta é muito importante para nós.";
 
 /* contagem regressiva */
 function tick(){
@@ -295,14 +297,26 @@ const f=$("f");
 f.querySelectorAll("input[name=status]").forEach(r=>r.addEventListener("change",()=>{
   $("boxAcomp").classList.toggle("hide",f.status.value==="Recusou");
 }));
-function showDone(status,nome){
+/* nome de cada acompanhante */
+function nomesAcomp(){
+  const n=parseInt($("acomp").value,10)||0, box=$("boxNomes"), old=[...box.querySelectorAll("input")].map(i=>i.value);
+  box.classList.toggle("hide",n===0);
+  box.innerHTML=Array.from({length:n},(_,i)=>`<label for="ac${i}">Nome completo do acompanhante ${n>1?i+1:""}</label><input type="text" id="ac${i}" class="ac" maxlength="80" autocomplete="off" placeholder="Nome e sobrenome">`).join("");
+  box.querySelectorAll("input").forEach((el,i)=>el.value=old[i]||"");
+}
+$("acomp").addEventListener("change",nomesAcomp);
+const limpa=t=>t.trim().replace(/\s+/g," ").replace(/[|]/g,"");
+function showDone(status,nome,acs){
   f.classList.add("hide"); $("ok").classList.remove("hide");
   const yes=status==="Confirmado", first=nome.split(" ")[0];
   $("okIco").textContent=yes?"💍":"💌";
   $("okTit").textContent=yes?"Presença confirmada!":"Obrigado por avisar";
-  $("okTxt").textContent=yes?first+", mal podemos esperar para celebrar com você!":first+", sentiremos sua falta, mas agradecemos o carinho.";
+  $("okTxt").textContent=yes?first+", mal podemos esperar para celebrar com você!"+(acs&&acs.length?" Confirmados também: "+acs.join(", ")+".":""):first+", sentiremos sua falta, mas agradecemos o carinho.";
+  let again=$("again");
+  if(!again){again=document.createElement("button");again.id="again";again.className="btn";again.type="button";again.textContent="Corrigir ou enviar nova resposta";again.style.marginTop="14px";$("ok").appendChild(again)}
+  again.onclick=()=>{try{localStorage.removeItem("rsvp_done")}catch(e){} $("ok").classList.add("hide"); f.classList.remove("hide"); $("send").disabled=false; $("send").textContent="Enviar resposta"};
 }
-try{const prev=JSON.parse(localStorage.getItem("rsvp_done")||"null");if(prev)showDone(prev.status,prev.nome)}catch(e){}
+try{const prev=JSON.parse(localStorage.getItem("rsvp_done")||"null");if(prev)showDone(prev.status,prev.nome,prev.acs)}catch(e){}
 
 f.addEventListener("submit",async ev=>{
   ev.preventDefault();
@@ -311,6 +325,9 @@ f.addEventListener("submit",async ev=>{
   const nome=$("nome").value.trim().replace(/\s+/g," ");
   if(nome.split(" ").length<2){err.textContent="Por favor, informe nome e sobrenome.";err.classList.remove("hide");return}
   const status=f.status.value, btn=$("send");
+  const nAc=status==="Confirmado"?(parseInt($("acomp").value,10)||0):0;
+  const acs=nAc?[...f.querySelectorAll(".ac")].map(i=>limpa(i.value)):[];
+  if(acs.some(x=>x.length<3)){err.textContent="Informe o nome completo de cada acompanhante.";err.classList.remove("hide");return}
   btn.disabled=true; btn.textContent="Enviando…";
   try{
     const [{initializeApp},{getFirestore,collection,addDoc,serverTimestamp}]=await Promise.all([
@@ -319,13 +336,15 @@ f.addEventListener("submit",async ev=>{
     const db=getFirestore(initializeApp(FIREBASE,"convite"));
     await addDoc(collection(db,"rsvps"),{
       nome, status,
-      acompanhantes: status==="Confirmado"?parseInt($("acomp").value,10):0,
+      acompanhantes: nAc,
+      acompanhantesNomes: acs.join(" | "),
+      origem: ORIGEM,
       restricao: status==="Confirmado"?$("rest").value.trim():"",
       mensagem: $("msg").value.trim(),
       createdAt: serverTimestamp()
     });
-    try{localStorage.setItem("rsvp_done",JSON.stringify({status,nome}))}catch(e){}
-    showDone(status,nome);
+    try{localStorage.setItem("rsvp_done",JSON.stringify({status,nome,acs}))}catch(e){}
+    showDone(status,nome,acs);
   }catch(e){
     console.error(e);
     err.textContent="Não foi possível enviar agora. Verifique a internet e tente novamente.";

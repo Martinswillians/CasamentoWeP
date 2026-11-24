@@ -20,7 +20,7 @@ service cloud.firestore {
     // Só quem tem login no app pode ler ou apagar.
     match /rsvps/{id} {
       allow create: if request.resource.data.keys().hasOnly(
-                         ['nome','status','acompanhantes','restricao','mensagem','createdAt'])
+                         ['nome','status','acompanhantes','acompanhantesNomes','origem','restricao','mensagem','createdAt'])
                     && request.resource.data.nome is string
                     && request.resource.data.nome.size() >= 3
                     && request.resource.data.nome.size() <= 80
@@ -28,6 +28,11 @@ service cloud.firestore {
                     && request.resource.data.acompanhantes is int
                     && request.resource.data.acompanhantes >= 0
                     && request.resource.data.acompanhantes <= 10
+                    && (!('acompanhantesNomes' in request.resource.data)
+                        || (request.resource.data.acompanhantesNomes is string
+                            && request.resource.data.acompanhantesNomes.size() <= 700))
+                    && (!('origem' in request.resource.data)
+                        || request.resource.data.origem in ['cartao','virtual','link'])
                     && request.resource.data.restricao is string
                     && request.resource.data.restricao.size() <= 200
                     && request.resource.data.mensagem is string
