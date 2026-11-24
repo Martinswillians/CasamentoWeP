@@ -569,7 +569,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div class="stats" id="guest-stats"></div>
       <div class="view-row" id="guest-view"></div>
       <div class="chips" id="guest-filter"></div>
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" onclick="importRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
         <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
         <input type="hidden" id="fg-idx" value="-1">
@@ -2734,6 +2734,25 @@ function editGuest(i){
   openPanel('fp-guest','edit');
   document.getElementById('fp-guest').scrollIntoView({behavior:'smooth',block:'start'});
 }
+function importRsvps(){
+  if(!window.FB||!FB.listRsvps){alert('Firebase ainda não carregou. Tente de novo.');return}
+  FB.listRsvps().then(function(list){
+    if(!list.length){alert('Nenhuma resposta nova do convite.');return}
+    var add=0,upd=0;
+    list.forEach(function(r){
+      var key=(r.nome||'').trim().toLowerCase();
+      var g=state.guests.filter(function(x){return (x.nome||'').trim().toLowerCase()===key})[0];
+      var obs=[r.acompanhantes?('+'+r.acompanhantes+' acomp.'):'',r.restricao||''].filter(Boolean).join(' · ');
+      if(g){ g.rsvp=r.status; if(obs&&!g.rest)g.rest=obs; upd++ }
+      else{ state.guests.push({nome:r.nome,cat:'Amigos',rsvp:r.status,mesa:'',rest:obs,lado:''}); add++ }
+      addLog('add','Resposta do convite',r.nome+' → '+r.status+(r.mensagem?' · "'+r.mensagem+'"':''));
+    });
+    saveState();renderGuests();
+    if(confirm(add+' novo(s) e '+upd+' atualizado(s). Apagar as respostas já importadas da nuvem?')){
+      Promise.all(list.map(function(r){return FB.deleteRsvp(r.id)}));
+    }
+  }).catch(function(e){alert('Não foi possível ler as respostas: '+(e&&e.message||e))});
+}
 function saveGuest(){
   var idx=parseInt(v('fg-idx'));
   var nome=v('fg-nome').trim();if(!nome)return;
@@ -3329,7 +3348,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
-  doc, getDoc, setDoc, onSnapshot, serverTimestamp
+  doc, getDoc, setDoc, onSnapshot, serverTimestamp,
+  collection, getDocs, query, orderBy, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -3435,6 +3455,11 @@ window.FB = {
       throw e;
     }
   },
+  async listRsvps() {
+    const snap = await getDocs(query(collection(db, "rsvps"), orderBy("createdAt")));
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  },
+  deleteRsvp(id) { return deleteDoc(doc(db, "rsvps", id)); },
   resetPassword(email) { return sendPasswordResetEmail(auth, email); },
   logout() { return signOut(auth); },
   getToken() { return auth.currentUser ? auth.currentUser.getIdToken() : Promise.reject(new Error('sem login')); },
