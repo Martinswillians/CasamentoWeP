@@ -372,6 +372,108 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .space-save-msg{display:none;margin-top:10px;padding:10px;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.2);border-radius:var(--radius-sm);font-size:12px;color:#4ecba0}
 /* ─── DROP ZONE ACTIVE ─── */
 .drop-active{border-color:var(--purple)!important;background:rgba(127,119,221,.08)!important}
+
+/* ═══════════════════════════════════════════
+   ÁRVORE DE CONVIDADOS
+═══════════════════════════════════════════ */
+.view-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.gtree{padding-bottom:8px}
+.gt-root{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 auto;width:fit-content;max-width:100%;padding:10px 20px;border-radius:30px;background:linear-gradient(135deg,#6b63cc 0%,#9b7fd4 100%);color:#fff;font-weight:700;font-size:14px;text-align:center}
+.gt-root small{font-weight:500;font-size:11px;opacity:.85}
+.gt-trunk{width:2px;height:16px;background:var(--border2);margin:0 auto}
+.gt-branches{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+.gt-br{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px}
+.gt-br>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--txt);padding:2px 0 6px}
+.gt-br>summary::-webkit-details-marker{display:none}
+.gt-br>summary::before{content:'▾';color:var(--txt3);font-size:12px}
+.gt-br:not([open])>summary::before{content:'▸'}
+.gt-br.gt-noiva{border-top:3px solid #d4537e}
+.gt-br.gt-noivo{border-top:3px solid #4a90d9}
+.gt-br.gt-sem{border-top:3px solid var(--txt3)}
+.gt-ul{list-style:none;margin:2px 0 0 8px;padding:0 0 0 16px;border-left:2px solid var(--border2)}
+.gt-ul .gt-ul{margin-left:6px}
+.gt-li{position:relative;padding:4px 0}
+.gt-li::before{content:'';position:absolute;left:-16px;top:50%;width:14px;border-top:2px solid var(--border2)}
+.gt-li:last-child::after{content:'';position:absolute;left:-18px;top:50%;bottom:0;width:2px;background:var(--bg2)}
+.gt-gli::before{top:12px}.gt-gli:last-child::after{top:12px}.gt-grp{font-size:12px;font-weight:600;color:var(--purple);padding:2px 0}
+.gt-node{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px}
+.gt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.gt-dot.r-ok{background:#4ecba0}.gt-dot.r-wait{background:#d4941c}.gt-dot.r-no{background:#f87171}
+.gt-nm{font-size:12px;font-weight:600;color:var(--txt);flex:1;min-width:0;overflow-wrap:anywhere}
+.gt-sub{font-size:10px;color:var(--txt2);text-align:right;max-width:42%}
+.gt-empty{font-size:11px;color:var(--txt3);padding:4px 0 2px}
+
+/* ═══════════════════════════════════════════
+   FOTOS & ESTILO
+═══════════════════════════════════════════ */
+.pal-strip{display:flex;height:34px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border2);margin:10px 0}
+.pal-strip.empty-strip{align-items:center;justify-content:center;font-size:11px;color:var(--txt3);background:var(--bg3)}
+.pal-strip span{flex:1}
+.pal-sw{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;align-items:flex-start}
+.sw{display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+.sw input[type=color]{width:44px;height:44px;padding:0;border:2px solid var(--border2);border-radius:50%;background:none;cursor:pointer}
+.sw input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.sw input[type=color]::-webkit-color-swatch{border:none;border-radius:50%}
+.sw input[type=color]::-moz-color-swatch{border:none;border-radius:50%}
+.sw-hex{font-size:9px;color:var(--txt2);font-family:monospace;text-transform:uppercase}
+.sw-x{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;border:none;background:#3a3660;color:var(--txt2);font-size:12px;line-height:1;cursor:pointer;padding:0}
+.sw-x:hover{background:#f87171;color:#fff}
+.sw-add{width:44px;height:44px;border-radius:50%;border:2px dashed var(--border2);background:none;color:var(--txt2);font-size:20px;cursor:pointer}
+.sw-add:hover{border-color:var(--purple);color:var(--purple)}
+.f-ta{width:100%;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg3);color:var(--txt);font-size:12px;margin-bottom:10px;font-family:inherit;resize:vertical;min-height:60px}
+.f-ta::placeholder{color:var(--txt3)}
+.est-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.est-hint{font-size:11px;color:var(--txt2);line-height:1.5;margin-bottom:12px}
+.est-add{display:flex;gap:8px;margin-top:6px}
+.est-ico{width:54px!important;flex:none;text-align:center;font-size:18px!important}
+.mus-link{font-size:11px;color:var(--purple);text-decoration:none}
+.rst-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.rst-row:last-child{border-bottom:none}
+.ref-thumb{width:46px;height:46px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border2)}
+
+/* ═══════════════════════════════════════════
+   COMPUTADOR (telas ≥ 900px): menu fixo à esquerda + conteúdo em tela cheia
+═══════════════════════════════════════════ */
+@media (min-width:900px){
+  #app{max-width:none;margin:0}
+  #login-screen{padding:48px 24px}
+  #login-screen .login-card{max-width:420px}
+  body.in-app #main-app{margin-left:264px;min-height:100vh}
+  body.in-app .drawer{left:0;width:264px;transform:none;visibility:visible;box-shadow:none;z-index:50;transition:none}
+  body.in-app .drawer-ov{display:none!important}
+  body.in-app .dr-close,body.in-app #menu-btn,body.in-app .bot-nav{display:none!important}
+  body.in-app .dr-foot{padding-bottom:14px}
+  .hdr{padding:18px 32px 12px}
+  .hdr-title{font-size:20px}
+  .hdr-date{font-size:12px;padding:4px 14px}
+  .prg-row{padding:12px 32px;gap:24px}
+  .scroll-area{padding-bottom:32px}
+  .pg{padding:24px 32px;max-width:1180px;margin:0 auto;width:100%}
+  .stats{gap:14px}
+  .sc{padding:16px}
+  .sc-n{font-size:26px}
+  .sc-l{font-size:12px}
+  .sec-ttl{font-size:16px}
+  .btn-sm{font-size:12px;padding:7px 16px}
+  .nm{font-size:14px}
+  .sub{font-size:12px}
+  .card{padding:14px 18px}
+  .mgrid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+  .mood-grid{grid-template-columns:repeat(3,1fr)}
+  .est-grid{grid-template-columns:repeat(2,1fr)}
+  .f-inp,.f-sel,.f-ta{font-size:13px}
+  .form-panel{max-width:760px}
+  .gt-branches{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+  .sheet{left:50%;bottom:auto;top:50%;width:min(460px,92vw);border-radius:18px;transform:translate(-50%,-46%);opacity:0;pointer-events:none;padding-bottom:16px;transition:transform .2s ease,opacity .2s ease,visibility 0s linear .2s}
+  .sheet.on{transform:translate(-50%,-50%);opacity:1;pointer-events:auto;visibility:visible;transition:transform .2s ease,opacity .2s ease,visibility 0s}
+  .ov-box{max-width:520px}
+  .notif-panel,.profile-popup{left:auto;right:24px;margin:0;width:400px;max-width:92vw}
+  .np-inner,.pp-inner{border-radius:0 0 var(--radius) var(--radius)}
+}
+@media (min-width:1500px){
+  .pg{max-width:1320px}
+  .mood-grid{grid-template-columns:repeat(4,1fr)}
+}
 </style>
 </head>
 <body>
@@ -465,6 +567,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
     <!-- CONVIDADOS -->
     <div class="pg on" id="pg-convidados">
       <div class="stats" id="guest-stats"></div>
+      <div class="view-row" id="guest-view"></div>
       <div class="chips" id="guest-filter"></div>
       <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
@@ -483,6 +586,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
         <button class="btn-save" onclick="saveGuest()">Salvar convidado</button>
       </div>
       <div id="guest-list"></div>
+      <div id="guest-tree" style="display:none"></div>
     </div>
 
     <!-- CHECKLIST -->
@@ -577,25 +681,11 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div class="card" id="gift-list" style="padding:4px 12px"></div>
     </div>
 
-    <!-- ESTILO / INSPIRAÇÕES -->
+    <!-- FOTOS & ESTILO -->
     <div class="pg" id="pg-estilo">
-      <div class="sec-hdr"><span class="sec-ttl">Estilo &amp; Inspirações</span><div class="sec-act"><button class="btn-sm" onclick="openExport('refs')">⤓ Exportar</button></div></div>
-      <div class="mood-grid">
-        <div class="mood-card"><div class="mood-icon">🌸</div><div class="mood-nm">Decoração floral</div><div class="mood-sub">Rosas brancas e bouvardia</div></div>
-        <div class="mood-card"><div class="mood-icon">🌅</div><div class="mood-nm">Paleta de cores</div><div style="margin-top:8px;display:flex;gap:4px;justify-content:center"><div style="width:14px;height:14px;border-radius:50%;background:#7F77DD"></div><div style="width:14px;height:14px;border-radius:50%;background:#D4537E"></div><div style="width:14px;height:14px;border-radius:50%;background:#F4C0D1"></div><div style="width:14px;height:14px;border-radius:50%;background:#EEEDFE"></div></div><div class="mood-sub" style="margin-top:5px">Lilás, rosa e off-white</div></div>
-        <div class="mood-card"><div class="mood-icon">📸</div><div class="mood-nm">Vestido</div><div class="mood-sub">Modelo princesa, renda e cauda</div><div style="margin-top:6px"><span class="tag">Prova 1: ✓</span><span class="tag">Prova 2: Ago</span></div></div>
-        <div class="mood-card"><div class="mood-icon">👑</div><div class="mood-nm">Terno e sapatos</div><div class="mood-sub">Terno grafite, gravata lilás</div><div style="margin-top:6px"><span class="tag">Aluguel</span><span class="tag">Oxford preto</span></div></div>
-        <div class="mood-card"><div class="mood-icon">🎵</div><div class="mood-nm">Música e clima</div><div class="mood-sub">Pop romântico + samba</div><div style="margin-top:6px"><span class="tag">DJ</span><span class="tag">Playlist criada</span></div></div>
-        <div class="mood-card"><div class="mood-icon">🍽️</div><div class="mood-nm">Cardápio</div><div class="mood-sub">Buffet jantar + open bar</div><div style="margin-top:6px"><span class="tag">Vegetariano</span><span class="tag">Sem glúten</span></div></div>
-      </div>
-      <div style="margin-top:14px">
-        <div class="sec-ttl" style="margin-bottom:10px">Referências salvas</div>
-        <div id="ref-list"></div>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <input class="f-inp" id="ref-inp" placeholder="Colar link (Pinterest, Instagram...)" style="margin:0;flex:1">
-          <button class="btn-sm" onclick="addRef()">Salvar</button>
-        </div>
-      </div>
+      <div class="sec-hdr"><span class="sec-ttl">Fotos &amp; Estilo</span><div class="sec-act"><button class="btn-sm" onclick="openExport('estilo')">⤓ Exportar</button></div></div>
+      <div class="chips" id="estilo-tabs"></div>
+      <div id="estilo-body"></div>
     </div>
 
     <!-- ESPAÇO -->
@@ -788,7 +878,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
 <div class="sheet-ov" id="export-ov" onclick="closeExport()"></div>
 <div class="sheet" id="export-sheet" aria-label="Exportar">
   <div class="sheet-ttl" id="export-ttl">Exportar</div>
-  <div id="export-scope" style="display:none;margin-bottom:6px"><div class="f-lbl">Quais convidados?</div><div class="chips" id="export-scope-chips"></div></div>
+  <div id="export-scope" style="display:none;margin-bottom:6px"><div class="f-lbl">Quais convidados?</div><div class="chips" id="export-scope-chips"></div><div class="f-lbl">Formato</div><div class="chips" id="export-layout-chips"></div></div>
   <button class="btn-save" onclick="doExport('pdf')">📄 Baixar PDF</button>
   <button class="btn-save" style="background:#1D9E75" onclick="doExport('xlsx')">📊 Baixar Excel (.xlsx)</button>
   <div id="export-status" style="display:none;font-size:12px;margin-top:10px;line-height:1.5"></div>
@@ -906,6 +996,7 @@ var defaultState = {
     {nome:"Lua de mel contribuição",preco:500,cat:"Viagem",dado:false}
   ],
   refs:[],
+  estilo:defaultEstilo(),
   espaco:{nome:'',end:'',cap:'',hora:'',contrato:'Em negociação',obs:''},
   evento:{civil:'',religioso:'2027-03-14'},
   meta:{v2:true}
@@ -933,6 +1024,7 @@ function normalizeState(s){
     tables:    Array.isArray(s.tables)    ? s.tables    : clone(defaultState.tables),
     gifts:     Array.isArray(s.gifts)     ? s.gifts     : clone(defaultState.gifts),
     refs:      Array.isArray(s.refs)      ? s.refs      : [],
+    estilo:    normalizeEstilo(s.estilo),
     espaco:    (s.espaco&&typeof s.espaco==='object') ? s.espaco : clone(defaultState.espaco),
     evento:    (s.evento&&typeof s.evento==='object') ? {civil:s.evento.civil||'',religioso:s.evento.religioso||''} : {civil:'',religioso:'2027-03-14'},
     meta:      (s.meta&&typeof s.meta==='object') ? s.meta : {}
@@ -1215,7 +1307,7 @@ function importLegacy(){
 // ═══════════════════════════════════════════════════
 function showSplash(msg,withLogout){
   document.getElementById('login-screen').style.display='none';
-  document.getElementById('main-app').style.display='none';
+  document.getElementById('main-app').style.display='none';document.body.classList.remove('in-app');
   document.getElementById('boot-splash').style.display='flex';
   document.getElementById('boot-msg').textContent=msg||'Carregando…';
   document.getElementById('boot-logout').style.display=withLogout?'block':'none';
@@ -1368,6 +1460,34 @@ function getExport(key,opts){
       return {title:'Lista de presentes',sheet:'Presentes',cols:[{h:'Presente',t:'text',w:40},{h:'Categoria',t:'text',w:15},{h:'Preço',t:'money',w:15},{h:'Situação',t:'text',w:14}],
         rows:S.gifts.map(function(x){return [x.nome,x.cat,x.preco,x.dado?'Recebido':'Pendente']}),
         foot:S.gifts.length?['Total',  '',sumBy(S.gifts,function(x){return x.preco}),'Recebidos: '+S.gifts.filter(function(x){return x.dado}).length+' de '+S.gifts.length]:null};
+    case 'estilo_paletas':
+      var pe=E().paletas;
+      return {title:'Estilo - Paletas de cores',sheet:'Paletas',cols:[{h:'Grupo',t:'text',w:26},{h:'Cores',t:'text',w:44},{h:'Observações',t:'text',w:50}],
+        rows:pe.map(function(p){return [p.nome,p.cores.map(function(c){return c.toUpperCase()}).join('  '),p.obs]}),foot:null,
+        swatch:{col:1,colors:pe.map(function(p){return p.cores})}};
+    case 'estilo_musicas':
+      var me=E(); rows=me.musicas.map(function(m){return [m.momento,m.musica,m.link]});
+      if(me.musicaObs) rows.push(['Estilo geral / não tocar',me.musicaObs,'']);
+      return {title:'Estilo - Músicas',sheet:'Músicas',cols:[{h:'Momento',t:'text',w:30},{h:'Música / artista',t:'text',w:44},{h:'Link',t:'text',w:50}],rows:rows,foot:null};
+    case 'estilo_cardapio':
+      var ce=E(); rows=ce.cardapio.map(function(c){return [c.secao,c.itens.replace(/\s*\n\s*/g,' / '),c.obs]});
+      if(ce.cardapioObs) rows.push(['Observações gerais',ce.cardapioObs,'']);
+      return {title:'Estilo - Cardápio',sheet:'Cardápio',cols:[{h:'Etapa',t:'text',w:26},{h:'Itens',t:'text',w:64},{h:'Observações',t:'text',w:36}],rows:rows,foot:null};
+    case 'estilo_detalhes':
+      return {title:'Estilo - Detalhes',sheet:'Detalhes',cols:[{h:'Item',t:'text',w:30},{h:'Descrição',t:'text',w:90}],rows:E().detalhes.map(function(d){return [(d.titulo||''),d.desc]}),foot:null};
+    case 'guests_tree':
+      var tb=treeBranches(opts.scope||'todos',!!opts.group), tt=tb.reduce(function(a,b){return a+b.count},0);
+      rows=[['Willians & Poliana ('+tt+')','','','','']];
+      tb.forEach(function(b,bi){
+        var lastB=bi===tb.length-1, p1=lastB?'   ':'│  ';
+        rows.push([(lastB?'└─ ':'├─ ')+b.label+' ('+b.count+')','','','','']);
+        b.groups.forEach(function(gr,gi){
+          var base=p1, lastG=gi===b.groups.length-1;
+          if(gr.nome){ rows.push([base+(lastG?'└─ ':'├─ ')+gr.nome+' ('+gr.items.length+')','','','','']); base+=(lastG?'   ':'│  '); }
+          gr.items.forEach(function(x,k){ rows.push([base+(k===gr.items.length-1?'└─ ':'├─ ')+x.g.nome,x.g.cat||'',x.g.rsvp||'',x.g.mesa||'',x.g.rest||'']); });
+        });
+      });
+      return {title:'Árvore de convidados',sheet:'Árvore',cols:[{h:'Árvore',t:'text',w:56},{h:'Categoria',t:'text',w:14},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26}],rows:rows,foot:null};
     case 'refs':
       return {title:'Estilo e referências',sheet:'Referências',cols:[{h:'Link de referência',t:'text',w:90}],rows:S.refs.map(function(r){return [r]}),foot:null};
     case 'espaco':
@@ -1411,6 +1531,17 @@ function buildPDF(keys,opts){
       alternateRowStyles:{fillColor:[247,246,255]},
       styles:{fontSize:9,cellPadding:4,overflow:'linebreak',textColor:[40,40,60]},
       columnStyles:colStyles,
+      didParseCell:function(d){
+        if(sec.swatch&&d.section==='body'&&d.column.index===sec.swatch.col&&(sec.swatch.colors[d.row.index]||[]).length) d.cell.styles.cellPadding={top:22,right:4,bottom:4,left:4};
+      },
+      didDrawCell:function(d){
+        if(sec.swatch&&d.section==='body'&&d.column.index===sec.swatch.col){
+          (sec.swatch.colors[d.row.index]||[]).forEach(function(c,k){
+            var r=hexRGB(c); doc.setFillColor(r[0],r[1],r[2]); doc.setDrawColor(200,200,210); doc.setLineWidth(0.5);
+            doc.roundedRect(d.cell.x+4+k*18,d.cell.y+4,14,14,2,2,'FD');
+          });
+        }
+      },
       margin:{left:40,right:40,bottom:42}
     });
   });
@@ -1451,8 +1582,14 @@ function buildXLSX(keys,opts){
 
 // ─── interface (folha "Exportar") ───
 var exportKey=null, exportScope='todos', _exportFile=null;
-var EXPORT_TITLES={guests:'Convidados',tasks:'Checklist',fin:'Financeiro',suppliers:'Fornecedores',tables:'Mesas',gifts:'Presentes',refs:'Estilo e referências',espaco:'Salão e espaço',logs:'Histórico',all:'Relatório completo'};
-function exportKeys(){ return exportKey==='all'?['resumo','guests','tasks','fin','suppliers','tables','gifts','refs','espaco','logs']:[exportKey] }
+
+var EXPORT_TITLES={guests:'Convidados',tasks:'Checklist',fin:'Financeiro',suppliers:'Fornecedores',tables:'Mesas',gifts:'Presentes',refs:'Estilo e referências',estilo:'Fotos e estilo',espaco:'Salão e espaço',logs:'Histórico',all:'Relatório completo'};
+var ESTILO_KEYS=['estilo_paletas','estilo_musicas','estilo_cardapio','estilo_detalhes','refs'];
+function exportKeys(){
+  if(exportKey==='all') return ['resumo','guests','tasks','fin','suppliers','tables','gifts'].concat(ESTILO_KEYS,['espaco','logs']);
+  if(exportKey==='estilo') return ESTILO_KEYS;
+  return [exportKey];
+}
 function exportStatus(msg,ok){
   var el=document.getElementById('export-status'); if(!el) return;
   el.textContent=msg; el.style.display=msg?'block':'none';
@@ -1465,10 +1602,14 @@ function renderExportScope(){
   document.getElementById('export-scope-chips').innerHTML=[['todos','Todos'],['noiva','💗 Lista da noiva'],['noivo','💙 Lista do noivo']].map(function(x){
     return '<button class="chip'+(exportScope===x[0]?' on':'')+'" onclick="setExportScope(\''+x[0]+'\')">'+x[1]+'</button>';
   }).join('');
+  document.getElementById('export-layout-chips').innerHTML=[['lista','☰ Lista (tabela)'],['arvore','🌳 Árvore']].map(function(x){
+    return '<button class="chip'+(exportLayout===x[0]?' on':'')+'" onclick="setExportLayout(\''+x[0]+'\')">'+x[1]+'</button>';
+  }).join('')+(exportLayout==='arvore'?'<button class="chip'+(treeGroup?' on':'')+'" onclick="toggleTreeGroup();renderExportScope()">Agrupar por categoria</button>':'');
 }
 function setExportScope(s){ exportScope=s; renderExportScope(); }
 function openExport(key){
   exportKey=key; _exportFile=null;
+  exportLayout=(key==='guests'&&guestView==='arvore')?'arvore':'lista';
   exportScope=(key==='guests'&&(guestFilter==='noiva'||guestFilter==='noivo'))?guestFilter:'todos';
   document.getElementById('export-ttl').textContent='Exportar — '+(EXPORT_TITLES[key]||'');
   renderExportScope(); exportStatus('');
@@ -1484,8 +1625,9 @@ function closeExport(){
 }
 function exportFileName(fmt){
   var d=new Date(), p=function(n){return String(n).padStart(2,'0')};
-  var base={all:'completo',guests:'convidados',tasks:'checklist',fin:'financeiro',suppliers:'fornecedores',tables:'mesas',gifts:'presentes',refs:'referencias',espaco:'espaco',logs:'historico'}[exportKey]||'dados';
+  var base={all:'completo',guests:'convidados',tasks:'checklist',fin:'financeiro',suppliers:'fornecedores',tables:'mesas',gifts:'presentes',refs:'referencias',estilo:'estilo',espaco:'espaco',logs:'historico'}[exportKey]||'dados';
   if(exportKey==='guests'&&exportScope!=='todos') base+='-'+exportScope;
+  if(exportKey==='guests'&&exportLayout==='arvore') base+='-arvore';
   return 'casamento-WP_'+base+'_'+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'.'+fmt;
 }
 function doExport(fmt){
@@ -1493,7 +1635,8 @@ function doExport(fmt){
   document.getElementById('export-save').style.display='none';
   var go=function(){
     try{
-      var blob=fmt==='pdf'?buildPDF(exportKeys(),{scope:exportScope}):buildXLSX(exportKeys(),{scope:exportScope});
+      var tree=(exportKey==='guests'&&exportLayout==='arvore'), o={scope:exportScope,group:treeGroup};
+      var blob=fmt==='pdf'?(tree?buildTreePDF(o):buildPDF(exportKeys(),o)):buildXLSX(tree?['guests_tree']:exportKeys(),o);
       deliverFile(blob,exportFileName(fmt));
     }catch(e){ console.error(e); exportStatus('Erro ao gerar o arquivo: '+((e&&e.message)||e),false); }
   };
@@ -1765,7 +1908,7 @@ window.onAuthChanged=function(profile){
     currentUser=null; cloudLoaded=false; appEntered=false; defGuestsList=null; _lastSent={};
     state=clone(defaultState); logs=[];
     closeProfile(); closeOv('edit-profile-modal');
-    document.getElementById('main-app').style.display='none';
+    document.getElementById('main-app').style.display='none';document.body.classList.remove('in-app');
     hideSplash();
     document.getElementById('login-screen').style.display='flex';
     ['li-email','li-senha','ri-nome','ri-email','ri-senha','ri-senha2'].forEach(function(id){document.getElementById(id).value=''});
@@ -1804,6 +1947,7 @@ function enterApp(){
   document.getElementById('login-screen').style.display='none';
   var mainApp=document.getElementById('main-app');
   mainApp.style.display='flex';
+  document.body.classList.add('in-app');
   mainApp.style.flexDirection='column';
   mainApp.style.minHeight='100vh';
   updateHeader();
@@ -2170,6 +2314,347 @@ function _startDrag(box,cfg,item,handle,e){
 }
 
 // ═══════════════════════════════════════════════════
+//  CONVIDADOS — VISÃO EM ÁRVORE
+// ═══════════════════════════════════════════════════
+var guestView='lista', treeGroup=false;
+try{ guestView=localStorage.getItem('wp_guest_view')==='arvore'?'arvore':'lista' }catch(e){}
+function setGuestView(x){ guestView=x; try{localStorage.setItem('wp_guest_view',x)}catch(e){} renderGuests() }
+function toggleTreeGroup(){ treeGroup=!treeGroup; renderGuests() }
+function treeBranches(scope,group){
+  var defs=[['noiva','Lista da noiva','💗'],['noivo','Lista do noivo','💙'],['sem','Sem lista','👥']], out=[];
+  defs.forEach(function(d){
+    if(scope!=='todos'&&scope!==d[0]) return;
+    var items=[]; state.guests.forEach(function(g,i){ if((ladoOf(g)||'sem')===d[0]) items.push({g:g,i:i}) });
+    if(d[0]==='sem'&&!items.length) return;
+    var groups;
+    if(group){
+      var order=['Família','Amigos','Trabalho'], m={};
+      items.forEach(function(x){ var c=x.g.cat||'Outros'; (m[c]=m[c]||[]).push(x) });
+      Object.keys(m).forEach(function(c){ if(order.indexOf(c)<0) order.push(c) });
+      groups=order.filter(function(c){return m[c]}).map(function(c){return {nome:c,items:m[c]}});
+    } else groups=[{nome:null,items:items}];
+    out.push({key:d[0],label:d[1],icon:d[2],count:items.length,groups:groups});
+  });
+  return out;
+}
+function treeNodeHTML(x){
+  var g=x.g, cls=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait';
+  var sub=[g.rsvp,g.mesa?'Mesa '+g.mesa:'',g.rest||''].filter(Boolean).join(' · ');
+  return '<li class="gt-li"><div class="gt-node"><span class="gt-dot '+cls+'" title="'+esc(g.rsvp)+'"></span><span class="gt-nm">'+esc(g.nome)+'</span><span class="gt-sub">'+esc(sub)+'</span>'+
+    '<button class="btn-act edit" onclick="editGuest('+x.i+')" title="Editar">✏️</button></div></li>';
+}
+function renderGuestTree(){
+  var box=document.getElementById('guest-tree'); if(!box) return;
+  var br=treeBranches(guestFilter,treeGroup), total=br.reduce(function(a,b){return a+b.count},0);
+  var h='<div class="gtree"><div class="gt-root">💍 Willians &amp; Poliana <small>'+total+' convidado'+(total===1?'':'s')+'</small></div><div class="gt-trunk"></div><div class="gt-branches">';
+  br.forEach(function(b){
+    h+='<details class="gt-br gt-'+b.key+'" open><summary>'+b.icon+' '+b.label+' <span class="bdg bdg-gray">'+b.count+'</span></summary>';
+    if(!b.count) h+='<div class="gt-empty">Nenhum convidado nesta lista.</div>';
+    else if(treeGroup) h+='<ul class="gt-ul">'+b.groups.map(function(gr){
+      return '<li class="gt-li gt-gli"><div class="gt-grp">'+esc(gr.nome)+' ('+gr.items.length+')</div><ul class="gt-ul">'+gr.items.map(treeNodeHTML).join('')+'</ul></li>';
+    }).join('')+'</ul>';
+    else h+='<ul class="gt-ul">'+b.groups[0].items.map(treeNodeHTML).join('')+'</ul>';
+    h+='</details>';
+  });
+  box.innerHTML=h+'</div></div>';
+}
+
+// ─── exportação em árvore ───
+var exportLayout='lista';
+function setExportLayout(x){ exportLayout=x; renderExportScope() }
+function hexRGB(h){ var m=/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(h||''); return m?[parseInt(m[1],16),parseInt(m[2],16),parseInt(m[3],16)]:[150,150,170] }
+function buildTreePDF(opts){
+  var J=window.jspdf.jsPDF, doc=new J({orientation:'portrait',unit:'pt',format:'a4'});
+  var W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight(), M=36, BOT=H-46, gap=14;
+  var br=treeBranches(opts.scope||'todos',!!opts.group), n=br.length;
+  var total=br.reduce(function(a,b){return a+b.count},0);
+  var cw=n?(W-2*M-gap*(n-1))/n:0;
+  var RGB={noiva:[212,83,126],noivo:[74,144,217],sem:[130,130,150]};
+  var RS={'Confirmado':[29,158,117],'Recusou':[220,80,80]};
+  function title(){
+    doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(60,52,137);
+    doc.text(pdfSafe('Willians & Poliana - Arvore de convidados'),M,44);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(110,110,130);
+    doc.text(pdfSafe(headerLine()),M,58);
+  }
+  if(!n){ title(); doc.setFontSize(11); doc.text('Nenhum convidado.',M,92); return doc.output('blob'); }
+  var cols=br.map(function(b){
+    var lines=[];
+    b.groups.forEach(function(gr){
+      if(gr.nome) lines.push({t:'g',text:gr.nome+' ('+gr.items.length+')'});
+      gr.items.forEach(function(x){ lines.push({t:'n',g:x.g,ind:gr.nome?1:0}) });
+    });
+    return {b:b,lines:lines,pos:0};
+  });
+  var first=true;
+  do{
+    if(!first) doc.addPage('a4','portrait');
+    title();
+    var y=74;
+    if(first){
+      var rw=210, rx=(W-rw)/2;
+      doc.setFillColor(127,119,221); doc.roundedRect(rx,y,rw,30,8,8,'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+      doc.text('Willians & Poliana',W/2,y+14,{align:'center'});
+      doc.setFont('helvetica','normal'); doc.setFontSize(8);
+      doc.text(total+' convidado'+(total===1?'':'s'),W/2,y+24,{align:'center'});
+      doc.setDrawColor(170,170,195); doc.setLineWidth(1);
+      var ty=y+30, my=ty+12, by=my+10, c0=M+cw/2, c1=M+(n-1)*(cw+gap)+cw/2;
+      doc.line(W/2,ty,W/2,my);
+      if(n>1) doc.line(c0,my,c1,my);
+      cols.forEach(function(c,i){ var cxm=M+i*(cw+gap)+cw/2; doc.line(cxm,n>1?my:ty,cxm,by); });
+      y=by;
+    }
+    cols.forEach(function(c,i){
+      if(!first&&c.pos>=c.lines.length) return;
+      var x0=M+i*(cw+gap), rgb=RGB[c.b.key];
+      doc.setFillColor(rgb[0],rgb[1],rgb[2]); doc.roundedRect(x0,y,cw,24,5,5,'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+      doc.text(pdfSafe(c.b.label+' ('+c.b.count+')'+(first?'':' - cont.')),x0+cw/2,y+15.5,{align:'center'});
+      var yy=y+34, lineX=x0+8, startY=y+24, lastMid=null;
+      if(!c.lines.length){ doc.setFont('helvetica','italic'); doc.setFontSize(8.5); doc.setTextColor(140,140,160); doc.text('Nenhum convidado.',x0+8,yy+6); return; }
+      while(c.pos<c.lines.length){
+        var ln=c.lines[c.pos], jx=lineX+(ln.ind?12:0), tx=jx+(ln.t==='g'?13:22), avail=x0+cw-tx-2, nameL, subL=null, hgt;
+        if(ln.t==='g'){ nameL=[pdfSafe(ln.text)]; hgt=16; }
+        else{
+          doc.setFont('helvetica','bold'); doc.setFontSize(9);
+          nameL=doc.splitTextToSize(pdfSafe(ln.g.nome),avail);
+          var sub=[ln.g.rsvp,ln.g.mesa?'Mesa '+ln.g.mesa:'',ln.g.rest||''].filter(Boolean).join(' - ');
+          subL=sub?doc.splitTextToSize(pdfSafe(sub),avail):null;
+          hgt=nameL.length*10.5+(subL?subL.length*9.5:0)+5;
+        }
+        if(yy+hgt>BOT) break;
+        var mid=yy+6;
+        doc.setDrawColor(190,190,205); doc.setLineWidth(0.8); doc.line(lineX,mid,jx+10,mid);
+        if(ln.t==='g'){
+          doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(60,52,137); doc.text(nameL[0],jx+13,mid+3);
+        } else {
+          var rc=RS[ln.g.rsvp]||[200,140,30]; doc.setFillColor(rc[0],rc[1],rc[2]); doc.circle(jx+16,mid,2.4,'F');
+          doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(40,40,60);
+          nameL.forEach(function(t,k){ doc.text(t,tx,yy+9+k*10.5) });
+          if(subL){ doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(120,120,140);
+            subL.forEach(function(t,k){ doc.text(t,tx,yy+9+nameL.length*10.5-1+k*9.5) }); }
+        }
+        lastMid=mid; yy+=hgt; c.pos++;
+      }
+      if(lastMid!==null){ doc.setDrawColor(190,190,205); doc.setLineWidth(0.8); doc.line(lineX,startY,lineX,lastMid); }
+    });
+    first=false;
+  } while(cols.some(function(c){return c.pos<c.lines.length}));
+  var pages=doc.internal.getNumberOfPages();
+  for(var p=1;p<=pages;p++){
+    doc.setPage(p);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(140,140,160);
+    doc.text('Casamento Willians & Poliana',M,H-22);
+    doc.text('Pagina '+p+' de '+pages,W-M,H-22,{align:'right'});
+  }
+  return doc.output('blob');
+}
+
+// ═══════════════════════════════════════════════════
+//  FOTOS & ESTILO  (paletas, músicas, cardápio, detalhes, referências)
+// ═══════════════════════════════════════════════════
+function defaultEstilo(){
+  return {
+    paletas:[
+      {nome:'Casamento (geral)',cores:['#7F77DD','#D4537E','#F4C0D1','#EEEDFE'],obs:''},
+      {nome:'Padrinhos',cores:[],obs:''},
+      {nome:'Madrinhas',cores:[],obs:''},
+      {nome:'Damas de honra',cores:[],obs:''},
+      {nome:'Pajens',cores:[],obs:''},
+      {nome:'Daminhas',cores:[],obs:''}
+    ],
+    musicas:['Entrada do noivo','Entrada dos padrinhos','Entrada da noiva','Assinatura / cerimônia','Saída dos noivos','Entrada na festa','Valsa dos noivos','Dança pai e filha','Dança mãe e filho','Corte do bolo','Buquê','Abertura da pista'].map(function(m){return {momento:m,musica:'',link:''}}),
+    musicaObs:'',
+    cardapio:['Recepção / coquetel','Entrada','Prato principal','Acompanhamentos','Sobremesas e doces','Bolo','Bebidas','Ceia / madrugada'].map(function(c){return {secao:c,itens:'',obs:''}}),
+    cardapioObs:'',
+    detalhes:[['🌸','Decoração e flores'],['👗','Vestido da noiva'],['🤵','Traje do noivo e sapatos'],['💌','Convites e papelaria'],['🎁','Lembrancinhas']].map(function(d){return {icone:d[0],titulo:d[1],desc:''}})
+  };
+}
+function hexOk(c){ return /^#[0-9a-f]{6}$/i.test(c||'')?String(c):'#9b97bc' }
+function safeUrl(u){ u=String(u==null?'':u).trim(); if(!u) return ''; return /^https?:\/\//i.test(u)?u:'https://'+u }
+function normalizeEstilo(e){
+  var d=defaultEstilo();
+  if(!e||typeof e!=='object') return d;
+  var A=function(x,def){return Array.isArray(x)?x:def};
+  var T=function(x){return x==null?'':String(x)};
+  return {
+    paletas:A(e.paletas,d.paletas).map(function(p){p=p||{};return {nome:T(p.nome),cores:A(p.cores,[]).map(hexOk).slice(0,8),obs:T(p.obs)}}),
+    musicas:A(e.musicas,d.musicas).map(function(m){m=m||{};return {momento:T(m.momento),musica:T(m.musica),link:T(m.link)}}),
+    musicaObs:T(e.musicaObs),
+    cardapio:A(e.cardapio,d.cardapio).map(function(c){c=c||{};return {secao:T(c.secao),itens:T(c.itens),obs:T(c.obs)}}),
+    cardapioObs:T(e.cardapioObs),
+    detalhes:A(e.detalhes,d.detalhes).map(function(x){x=x||{};return {icone:T(x.icone),titulo:T(x.titulo),desc:T(x.desc)}})
+  };
+}
+
+var estiloTab='paletas';
+var ESTILO_TABS=[['paletas','🎨 Paletas'],['musicas','🎵 Músicas'],['cardapio','🍽️ Cardápio'],['detalhes','✨ Detalhes'],['refs','📌 Referências']];
+function E(){ if(!state.estilo) state.estilo=defaultEstilo(); return state.estilo }
+function setEstiloTab(t){ estiloTab=t; renderEstilo(true) }
+function estiloEditing(){
+  var ae=document.activeElement, b=document.getElementById('estilo-body');
+  return !!(ae&&b&&b.contains(ae)&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName));
+}
+function renderEstilo(force){
+  var body=document.getElementById('estilo-body'); if(!body) return;
+  if(!force&&estiloEditing()) return;
+  document.getElementById('estilo-tabs').innerHTML=ESTILO_TABS.map(function(t){
+    return '<button class="chip'+(estiloTab===t[0]?' on':'')+'" onclick="setEstiloTab(\''+t[0]+'\')">'+t[1]+'</button>';
+  }).join('');
+  var e=E(), h='';
+  if(estiloTab==='paletas') h=estiloPaletasHTML(e);
+  else if(estiloTab==='musicas') h=estiloMusicasHTML(e);
+  else if(estiloTab==='cardapio') h=estiloCardapioHTML(e);
+  else if(estiloTab==='detalhes') h=estiloDetalhesHTML(e);
+  else h=estiloRefsHTML();
+  body.innerHTML=h;
+  if(estiloTab==='refs') renderRefs();
+}
+
+// ─── Paletas ───
+function palStrip(cores){
+  return cores.length
+    ? '<div class="pal-strip">'+cores.map(function(c){return '<span style="background:'+esc(c)+'"></span>'}).join('')+'</div>'
+    : '<div class="pal-strip empty-strip">Nenhuma cor definida ainda</div>';
+}
+function estiloPaletasHTML(e){
+  var h='<div class="est-hint">Defina as cores de cada grupo: toque numa bolinha para escolher a cor, em <b>+</b> para incluir outra e no <b>×</b> para remover. Você pode renomear os grupos ou criar novos.</div><div class="est-grid">';
+  e.paletas.forEach(function(p,i){
+    h+='<div class="card" style="margin-bottom:0">'+
+      '<div class="card-row"><input class="f-inp" style="margin:0;font-weight:600" value="'+esc(p.nome)+'" placeholder="Nome do grupo" onchange="palNome('+i+',this.value)">'+
+      '<button class="btn-act del" title="Excluir paleta" onclick="palDel('+i+')">×</button></div>'+
+      palStrip(p.cores)+
+      '<div class="pal-sw">'+p.cores.map(function(c,j){
+        return '<div class="sw"><input type="color" value="'+esc(c)+'" onchange="palCor('+i+','+j+',this.value)" aria-label="Cor '+(j+1)+'">'+
+          '<button class="sw-x" onclick="palDelCor('+i+','+j+')" title="Remover cor">×</button><span class="sw-hex">'+esc(c)+'</span></div>';
+      }).join('')+(p.cores.length<8?'<button class="sw-add" onclick="palAddCor('+i+')" title="Adicionar cor">+</button>':'')+'</div>'+
+      '<input class="f-inp" style="margin:0" placeholder="Observações (ex.: terno azul-marinho, gravata lilás)" value="'+esc(p.obs)+'" onchange="palObs('+i+',this.value)">'+
+    '</div>';
+  });
+  h+='</div><div class="est-add"><input class="f-inp" id="pal-new" style="margin:0;flex:1" placeholder="Novo grupo (ex.: Mães, Cerimonialista)"><button class="btn-sm" onclick="palAdd()">+ Adicionar</button></div>';
+  return h;
+}
+function palNome(i,val){ E().paletas[i].nome=val.trim(); saveState() }
+function palObs(i,val){ E().paletas[i].obs=val.trim(); saveState() }
+function palCor(i,j,val){ E().paletas[i].cores[j]=hexOk(val); saveState(); renderEstilo(true) }
+function palAddCor(i){ var p=E().paletas[i]; if(p.cores.length>=8) return; p.cores.push('#9b97bc'); saveState(); renderEstilo(true) }
+function palDelCor(i,j){ E().paletas[i].cores.splice(j,1); saveState(); renderEstilo(true) }
+function palAdd(){
+  var n=v('pal-new').trim(); if(!n) return;
+  E().paletas.push({nome:n,cores:[],obs:''}); addLog('add','Paleta criada',n); saveState(); renderEstilo(true);
+}
+function palDel(i){
+  var p=E().paletas[i];
+  if(!confirm('Excluir a paleta "'+(p.nome||'sem nome')+'"?')) return;
+  addLog('del','Paleta removida',p.nome||'—'); E().paletas.splice(i,1); saveState(); renderEstilo(true);
+}
+
+// ─── Músicas ───
+function estiloMusicasHTML(e){
+  var h='<div class="est-hint">Cadastre a música de cada momento da cerimônia e da festa. O link (Spotify, YouTube…) é opcional.</div><div class="est-grid">';
+  e.musicas.forEach(function(m,i){
+    h+='<div class="card" style="margin-bottom:0">'+
+      '<div class="card-row" style="margin-bottom:8px"><input class="f-inp" style="margin:0;font-weight:600" value="'+esc(m.momento)+'" placeholder="Momento" onchange="musSet('+i+',\'momento\',this.value)">'+
+      '<button class="btn-act del" onclick="musDel('+i+')" title="Remover">×</button></div>'+
+      '<input class="f-inp" placeholder="Música — artista" value="'+esc(m.musica)+'" onchange="musSet('+i+',\'musica\',this.value)">'+
+      '<input class="f-inp" style="margin-bottom:'+(m.link?'6px':'0')+'" placeholder="Link (opcional)" value="'+esc(m.link)+'" onchange="musSet('+i+',\'link\',this.value)">'+
+      (m.link?'<a class="mus-link" href="'+esc(safeUrl(m.link))+'" target="_blank" rel="noopener">▶ Abrir link</a>':'')+
+    '</div>';
+  });
+  h+='</div><div class="est-add"><input class="f-inp" id="mus-new" style="margin:0;flex:1" placeholder="Novo momento (ex.: Chegada dos convidados)"><button class="btn-sm" onclick="musAdd()">+ Adicionar</button></div>'+
+    '<div class="card" style="margin-top:14px"><div class="nm" style="margin-bottom:8px">🎧 Estilo geral e o que não tocar</div>'+
+    '<textarea class="f-ta" style="margin:0" placeholder="Gêneros que vocês querem (pop romântico, samba…) e o que NÃO deve tocar" onchange="musObs(this.value)">'+esc(e.musicaObs)+'</textarea></div>';
+  return h;
+}
+function musSet(i,k,val){ E().musicas[i][k]=val.trim(); saveState(); if(k==='link') renderEstilo(true) }
+function musObs(val){ E().musicaObs=val.trim(); saveState() }
+function musAdd(){
+  var n=v('mus-new').trim(); if(!n) return;
+  E().musicas.push({momento:n,musica:'',link:''}); addLog('add','Momento musical adicionado',n); saveState(); renderEstilo(true);
+}
+function musDel(i){
+  var m=E().musicas[i];
+  if(!confirm('Remover "'+(m.momento||'este momento')+'"?')) return;
+  addLog('del','Momento musical removido',m.momento||'—'); E().musicas.splice(i,1); saveState(); renderEstilo(true);
+}
+
+// ─── Cardápio ───
+function restricoesConvidados(){
+  var map={}, order=[];
+  state.guests.forEach(function(g){
+    var r=String(g.rest||'').trim(); if(!r) return;
+    var k=r.toLowerCase(); if(!map[k]){ map[k]={label:r,nomes:[]}; order.push(k) }
+    map[k].nomes.push(g.nome);
+  });
+  return order.map(function(k){return map[k]});
+}
+function estiloCardapioHTML(e){
+  var h='<div class="est-hint">Monte o cardápio por etapa da festa e anote observações para o buffet.</div><div class="est-grid">';
+  e.cardapio.forEach(function(c,i){
+    h+='<div class="card" style="margin-bottom:0">'+
+      '<div class="card-row" style="margin-bottom:8px"><input class="f-inp" style="margin:0;font-weight:600" value="'+esc(c.secao)+'" placeholder="Etapa (ex.: Prato principal)" onchange="cardSet('+i+',\'secao\',this.value)">'+
+      '<button class="btn-act del" onclick="cardDel('+i+')" title="Remover">×</button></div>'+
+      '<textarea class="f-ta" placeholder="Pratos / itens (um por linha)" onchange="cardSet('+i+',\'itens\',this.value)">'+esc(c.itens)+'</textarea>'+
+      '<input class="f-inp" style="margin:0" placeholder="Observações (opcional)" value="'+esc(c.obs)+'" onchange="cardSet('+i+',\'obs\',this.value)">'+
+    '</div>';
+  });
+  h+='</div><div class="est-add"><input class="f-inp" id="card-new" style="margin:0;flex:1" placeholder="Nova etapa (ex.: Mesa de frios)"><button class="btn-sm" onclick="cardAdd()">+ Adicionar</button></div>';
+  h+='<div class="card" style="margin-top:14px"><div class="nm" style="margin-bottom:8px">📝 Observações gerais do cardápio</div>'+
+    '<textarea class="f-ta" style="margin:0" placeholder="Open bar, horário de cada serviço, degustação…" onchange="cardObs(this.value)">'+esc(e.cardapioObs)+'</textarea></div>';
+  var rs=restricoesConvidados();
+  h+='<div class="card" style="margin-top:8px"><div class="nm" style="margin-bottom:2px">🥗 Restrições alimentares dos convidados</div>'+
+    '<div class="sub" style="margin-bottom:8px">Vem automaticamente da lista de convidados.</div>'+
+    (rs.length?rs.map(function(r){
+      return '<div class="rst-row"><div><b>'+esc(r.label)+'</b><div class="sub">'+esc(r.nomes.join(', '))+'</div></div><span class="bdg bdg-purple">'+r.nomes.length+'</span></div>';
+    }).join(''):'<div style="font-size:12px;color:var(--txt3)">Nenhuma restrição cadastrada.</div>')+'</div>';
+  return h;
+}
+function cardSet(i,k,val){ E().cardapio[i][k]=(k==='itens')?val.replace(/\s+$/,''):val.trim(); saveState() }
+function cardObs(val){ E().cardapioObs=val.trim(); saveState() }
+function cardAdd(){
+  var n=v('card-new').trim(); if(!n) return;
+  E().cardapio.push({secao:n,itens:'',obs:''}); addLog('add','Etapa do cardápio adicionada',n); saveState(); renderEstilo(true);
+}
+function cardDel(i){
+  var c=E().cardapio[i];
+  if(!confirm('Remover "'+(c.secao||'esta etapa')+'"?')) return;
+  addLog('del','Etapa do cardápio removida',c.secao||'—'); E().cardapio.splice(i,1); saveState(); renderEstilo(true);
+}
+
+// ─── Detalhes (decoração, vestido, traje…) ───
+function estiloDetalhesHTML(e){
+  var h='<div class="est-hint">Anote as decisões de cada item: modelo, fornecedor, datas de prova, referências…</div><div class="est-grid">';
+  e.detalhes.forEach(function(d,i){
+    h+='<div class="card" style="margin-bottom:0">'+
+      '<div class="card-row" style="margin-bottom:8px;gap:8px"><input class="f-inp est-ico" style="margin:0" value="'+esc(d.icone)+'" maxlength="4" onchange="detSet('+i+',\'icone\',this.value)" aria-label="Ícone">'+
+      '<input class="f-inp" style="margin:0;font-weight:600;flex:1" value="'+esc(d.titulo)+'" placeholder="Título" onchange="detSet('+i+',\'titulo\',this.value)">'+
+      '<button class="btn-act del" onclick="detDel('+i+')" title="Remover">×</button></div>'+
+      '<textarea class="f-ta" style="margin:0" placeholder="Descrição, decisões, fornecedor, datas…" onchange="detSet('+i+',\'desc\',this.value)">'+esc(d.desc)+'</textarea>'+
+    '</div>';
+  });
+  h+='</div><div class="est-add"><input class="f-inp" id="det-new" style="margin:0;flex:1" placeholder="Novo item (ex.: Lua de mel, Fotos do ensaio)"><button class="btn-sm" onclick="detAdd()">+ Adicionar</button></div>';
+  return h;
+}
+function detSet(i,k,val){ E().detalhes[i][k]=(k==='desc')?val.replace(/\s+$/,''):val.trim(); saveState() }
+function detAdd(){
+  var n=v('det-new').trim(); if(!n) return;
+  E().detalhes.push({icone:'✨',titulo:n,desc:''}); addLog('add','Item de estilo adicionado',n); saveState(); renderEstilo(true);
+}
+function detDel(i){
+  var d=E().detalhes[i];
+  if(!confirm('Remover "'+(d.titulo||'este item')+'"?')) return;
+  addLog('del','Item de estilo removido',d.titulo||'—'); E().detalhes.splice(i,1); saveState(); renderEstilo(true);
+}
+
+// ─── Referências (links e fotos) ───
+function estiloRefsHTML(){
+  return '<div class="est-hint">Cole links do Pinterest, Instagram ou de fotos de referência. Links de imagem (.jpg, .png…) aparecem com miniatura.</div>'+
+    '<div id="ref-list"></div>'+
+    '<div class="est-add"><input class="f-inp" id="ref-inp" placeholder="Colar link (Pinterest, Instagram...)" style="margin:0;flex:1"><button class="btn-sm" onclick="addRef()">Salvar</button></div>';
+}
+
+// ═══════════════════════════════════════════════════
 //  CONVIDADOS
 // ═══════════════════════════════════════════════════
 function isDefGuest(nome){
@@ -2208,8 +2693,13 @@ function renderGuests(){
 
   var defNames=getDefGuests().map(function(dg){ return dg.nome; });
   var vis=state.guests.map(function(g,i){return {g:g,i:i}}).filter(function(x){return guestMatches(x.g)});
+  var vw=document.getElementById('guest-view');
+  if(vw) vw.innerHTML='<button class="chip'+(guestView==='lista'?' on':'')+'" onclick="setGuestView(\'lista\')">☰ Lista</button><button class="chip'+(guestView==='arvore'?' on':'')+'" onclick="setGuestView(\'arvore\')">🌳 Árvore</button>'+(guestView==='arvore'?'<button class="chip'+(treeGroup?' on':'')+'" onclick="toggleTreeGroup()">Agrupar por categoria</button>':'');
+  document.getElementById('guest-list').style.display=guestView==='arvore'?'none':'block';
+  document.getElementById('guest-tree').style.display=guestView==='arvore'?'block':'none';
 
-  if(!vis.length){
+  if(guestView==='arvore'){ renderGuestTree(); }
+  else if(!vis.length){
     document.getElementById('guest-list').innerHTML='<div class="empty">'+(c?'Nenhum convidado nesta lista.':'Nenhum convidado cadastrado.')+'</div>';
   } else {
     document.getElementById('guest-list').innerHTML=vis.map(function(x){
@@ -2491,9 +2981,12 @@ function addRef(){
   state.refs.push(val);setVal('ref-inp','');saveState();renderRefs();
 }
 function renderRefs(){
-  document.getElementById('ref-list').innerHTML=state.refs.map(function(r,i){
+  var el=document.getElementById('ref-list'); if(!el) return;
+  el.innerHTML=state.refs.map(function(r,i){
+    var u=safeUrl(r), img=/\.(png|jpe?g|gif|webp|avif)(\?|#|$)/i.test(u);
     return '<div class="ref-link" data-i="'+i+'"><span class="drag-handle" title="Segure e arraste para reordenar">⠿</span>'+
-      '<a href="'+r+'" target="_blank" style="flex:1;min-width:0;word-break:break-all">'+r+'</a>'+
+      (img?'<a href="'+esc(u)+'" target="_blank" rel="noopener"><img class="ref-thumb" src="'+esc(u)+'" alt="" loading="lazy"></a>':'')+
+      '<a href="'+esc(u)+'" target="_blank" rel="noopener" style="flex:1;min-width:0;word-break:break-all">'+esc(r)+'</a>'+
       '<button class="btn-act del" onclick="delRef('+i+')">×</button></div>';
   }).join('')||'<div style="font-size:12px;color:var(--txt3)">Nenhuma referência salva.</div>';
   initSortable('ref-list','.ref-link',function(){return state.refs},function(){saveState();renderRefs()});
@@ -2550,7 +3043,7 @@ function syncDefGuests(){
 function renderAll(){
   if(_dragActive){ _pendingRender=true; return }
   if(syncDefGuests()) saveState();
-  renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderLogs();loadEspaco();renderEvento();
+  renderGuests();renderTasks();renderFin();renderSuppliers();renderTables();renderGifts();renderRefs();renderEstilo();renderLogs();loadEspaco();renderEvento();
 }
 
 // ═══════════════════════════════════════════════════
