@@ -15,24 +15,20 @@ service cloud.firestore {
       //   && request.auth.token.email in ['email1@gmail.com', 'email2@gmail.com'];
     }
 
-    // Respostas do convite (página pública convite.html)
-    // Convidados (sem login) só podem CRIAR uma resposta válida.
-    // Só quem tem login no app pode ler ou apagar.
+    // Respostas do convite (página pública convite.html): uma resposta por pessoa.
+    // Convidados (sem login) só podem CRIAR; só quem tem login no app lê e apaga.
     match /rsvps/{id} {
       allow create: if request.resource.data.keys().hasOnly(
-                         ['nome','status','acompanhantes','acompanhantesNomes','origem','restricao','mensagem','createdAt'])
+                         ['nome','status','lado','crianca','titular','grupo','restricao','mensagem','createdAt'])
                     && request.resource.data.nome is string
                     && request.resource.data.nome.size() >= 3
                     && request.resource.data.nome.size() <= 80
                     && request.resource.data.status in ['Confirmado','Recusou']
-                    && request.resource.data.acompanhantes is int
-                    && request.resource.data.acompanhantes >= 0
-                    && request.resource.data.acompanhantes <= 10
-                    && (!('acompanhantesNomes' in request.resource.data)
-                        || (request.resource.data.acompanhantesNomes is string
-                            && request.resource.data.acompanhantesNomes.size() <= 700))
-                    && (!('origem' in request.resource.data)
-                        || request.resource.data.origem in ['cartao','virtual','link'])
+                    && request.resource.data.lado in ['noiva','noivo']
+                    && request.resource.data.crianca is bool
+                    && request.resource.data.titular is bool
+                    && request.resource.data.grupo is string
+                    && request.resource.data.grupo.size() <= 40
                     && request.resource.data.restricao is string
                     && request.resource.data.restricao.size() <= 200
                     && request.resource.data.mensagem is string
