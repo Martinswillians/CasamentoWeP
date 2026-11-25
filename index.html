@@ -1043,7 +1043,7 @@ var logs = [];
 // ═══════════════════════════════════════════════════
 function clone(o){return JSON.parse(JSON.stringify(o))}
 
-var cloudLoaded=false, appEntered=false, _defRemoved=false;
+var cloudLoaded=false, appEntered=false, _defRemoved=false, _serverSynced=false;
 var _saveTimer=null, _inflight=0, _lastSent={}, _waitTimer=null, _lastPush=Promise.resolve();
 
 function normalizeState(s){
@@ -1179,6 +1179,85 @@ function setSync(s){
 window.addEventListener('online', function(){ setSync((_inflight||_saveTimer)?'saving':'ok') });
 window.addEventListener('offline',function(){ setSync('offline') });
 
+// ═══════════════════════════════════════════════════
+//  SINCRONIZAÇÃO SEGURA (vários aparelhos ao mesmo tempo)
+//  - cada item (convidado, tarefa…) tem um id fixo
+//  - ao salvar, o app lê a versão atual da nuvem e MESCLA a sua mudança (em vez de sobrescrever a lista toda)
+//  - só salva depois que o servidor confirmou os dados (nunca a partir de cópia antiga do aparelho)
+// ═══════════════════════════════════════════════════
+var ID_KEYS=['guests','tasks','fin','suppliers','tables','gifts'];
+function hashStr(s){ var h=5381; for(var i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return (h>>>0).toString(36) }
+function newId(){ return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7) }
+function idsArr(arr,legacy){
+  var ch=false, occ={};
+  (arr||[]).forEach(function(it){
+    if(!it||typeof it!=='object'||it.id) return;
+    if(legacy){ var h=hashStr(JSON.stringify(it)); occ[h]=(occ[h]||0)+1; it.id='L'+h+'-'+occ[h]; }
+    else it.id=newId();
+    ch=true;
+  });
+  return ch;
+}
+function ensureIds(st,legacy){ var ch=false; ID_KEYS.forEach(function(k){ if(idsArr(st[k],legacy)) ch=true }); return ch }
+function J(x){ return JSON.stringify(x) }
+function isIdArr(a){ return Array.isArray(a)&&a.every(function(x){return x&&typeof x==='object'&&x.id}) }
+function mapById(a){ var m={}; a.forEach(function(x){m[x.id]=x}); return m }
+function mergeItem(b,l,r){
+  var o=Object.assign({},r);
+  Object.keys(l).forEach(function(k){ if(J(l[k])!==J(b[k])) o[k]=l[k] });
+  Object.keys(b).forEach(function(k){ if(!(k in l)) delete o[k] });
+  return o;
+}
+function orderDiffers(a,b){
+  var bi=b.map(function(x){return x.id}), ai=a.map(function(x){return x.id}).filter(function(id){return bi.indexOf(id)>=0});
+  return J(ai)!==J(bi.filter(function(id){return ai.indexOf(id)>=0}));
+}
+function mergeById(B,L,R){
+  var bm=mapById(B), lm=mapById(L), used={}, out=[];
+  R.forEach(function(r){
+    var b=bm[r.id], l=lm[r.id];
+    if(b&&!l) return;                                        // eu apaguei
+    out.push((b&&l&&J(l)!==J(b))?mergeItem(b,l,r):r); used[r.id]=1;   // eu editei (campo a campo) ou ficou o do servidor
+  });
+  L.forEach(function(l){ if(!used[l.id]&&!bm[l.id]){ out.push(l); used[l.id]=1 } });   // itens novos meus
+  if(orderDiffers(L,B)&&!orderDiffers(R,B)){                 // só eu reordenei
+    var pos={}; L.forEach(function(x,i){pos[x.id]=i});
+    out=out.map(function(x,i){return {x:x,i:i}}).sort(function(p,q){
+      var a=pos[p.x.id], c=pos[q.x.id];
+      return (a===undefined||c===undefined)?(p.i-q.i):(a-c);
+    }).map(function(p){return p.x});
+  }
+  return out;
+}
+function mergeSet(B,L,R){
+  var out=R.filter(function(x){ return !(B.indexOf(x)>=0&&L.indexOf(x)<0) });
+  L.forEach(function(x){ if(B.indexOf(x)<0&&out.indexOf(x)<0) out.push(x) });
+  return out;
+}
+function merge3(base,local,remote){
+  if(remote===undefined||remote===null) return local;
+  if(J(remote)===J(base)) return local;
+  if(J(local)===J(base)) return remote;
+  if(J(local)===J(remote)) return local;
+  if(Array.isArray(local)&&Array.isArray(remote)){
+    var b=Array.isArray(base)?base.map(function(x){return (x&&typeof x==='object')?Object.assign({},x):x}):[];
+    idsArr(b,true);
+    if(isIdArr(local)&&isIdArr(remote)&&isIdArr(b)) return mergeById(b,local,remote);
+    if(local.concat(remote,b).every(function(x){return typeof x!=='object'})) return mergeSet(b,local,remote);
+    return local;
+  }
+  if(local&&remote&&typeof local==='object'&&typeof remote==='object'&&!Array.isArray(local)&&!Array.isArray(remote)){
+    var bb=(base&&typeof base==='object'&&!Array.isArray(base))?base:{}, out=Object.assign({},remote), keys={};
+    Object.keys(local).concat(Object.keys(bb)).forEach(function(k){keys[k]=1});
+    Object.keys(keys).forEach(function(k){
+      if(J(local[k])===J(bb[k])) return;
+      if(local[k]===undefined) delete out[k]; else out[k]=merge3(bb[k],local[k],remote[k]);
+    });
+    return out;
+  }
+  return local;
+}
+
 // ─── Salvar: agenda envio (debounce) e manda só as seções que mudaram ───
 function saveState(){
   setSync('saving');
@@ -1188,24 +1267,49 @@ function saveState(){
 function pushCloud(){
   _saveTimer=null;
   if(!currentUser||!cloudLoaded||!window.FB) return;
-  var patch={state:{}}, sent={}, changed=false;
+  var offline=(navigator.onLine===false);
+  ensureIds(state,false);
+  var patch={state:{}}, sent={}, base={}, changed=false;
   Object.keys(state).forEach(function(k){
-    var j=JSON.stringify(state[k]);
-    if(_lastSent['s.'+k]!==j){patch.state[k]=JSON.parse(j);sent['s.'+k]=j;changed=true}
+    var j=JSON.stringify(state[k]), old=_lastSent['s.'+k];
+    if(old!==j){patch.state[k]=JSON.parse(j);sent['s.'+k]=j;base[k]=(old===undefined)?undefined:JSON.parse(old);changed=true}
   });
-  var lj=JSON.stringify(logs);
-  if(_lastSent.logs!==lj){patch.logs=JSON.parse(lj);sent.logs=lj;changed=true}
+  var lj=JSON.stringify(logs), logsChanged=(_lastSent.logs!==lj);
+  if(logsChanged){patch.logs=JSON.parse(lj);sent.logs=lj;changed=true}
   if(!changed){ if(!_inflight) setSync('ok'); return }
   var prev={};
   Object.keys(sent).forEach(function(k){prev[k]=_lastSent[k];_lastSent[k]=sent[k]});
   _inflight++; setSync('saving');
-  var p=FB.saveData(patch).then(function(){
-    _inflight--; if(!_inflight&&!_saveTimer) setSync('ok');
+  var useMerge=!offline&&!!FB.saveMerged;
+  var req=useMerge
+    ? FB.saveMerged(patch.state,function(k,remote){ try{ return JSON.parse(JSON.stringify(merge3(base[k],patch.state[k],remote))) }catch(e){ console.warn('merge',k,e); return patch.state[k] } },logsChanged?patch.logs:null,mergeLogs)
+    : FB.saveData(patch);
+  var p=req.then(function(res){
+    _inflight--;
+    try{
+      if(useMerge&&res&&res.state){
+        var again=false;
+        Object.keys(res.state).forEach(function(k){
+          var mj=JSON.stringify(res.state[k]);
+          if(mj!==sent['s.'+k]&&JSON.stringify(state[k])===sent['s.'+k]){ state[k]=res.state[k]; _lastSent['s.'+k]=mj; again=true; }
+        });
+        if(again){ renderAll(); }
+      }
+    }catch(e){ console.warn('pós-salvar:',e); }
+    if(!_inflight&&!_saveTimer) setSync('ok');
+  },function(err){
+    // se a gravação com mesclagem falhar por outro motivo que não permissão, tenta a gravação simples
+    if(useMerge&&!(err&&err.code==='permission-denied')){
+      console.warn('Mesclagem falhou, gravando direto:',err);
+      return FB.saveData(patch).then(function(){ _inflight--; if(!_inflight&&!_saveTimer) setSync('ok'); });
+    }
+    throw err;
   }).catch(function(err){
     _inflight--;
     Object.keys(prev).forEach(function(k){ if(_lastSent[k]===sent[k]) _lastSent[k]=prev[k] });
     setSync('error'); console.error('Falha ao salvar:',err);
     if(err&&err.code==='permission-denied') alert('Sem permissão para salvar no Firestore. Verifique as regras de segurança do banco.');
+    else setTimeout(function(){ if(!_saveTimer) saveState() },4000);
   });
   _lastPush=Promise.all([_lastPush,p]).catch(function(){});
   return p;
@@ -1237,17 +1341,21 @@ window.onCloudData=function(data,meta){
     seedCloud(); return;
   }
   var prevMax=maxTs(logs), wasLoaded=cloudLoaded;
+  var wasSynced=_serverSynced; if(!meta.fromCache) _serverSynced=true;
+  if(_serverSynced&&!wasSynced) setTimeout(function(){ saveState(); loadRsvps(true); },400);
   var st=normalizeState(data.state);
   var lg=Array.isArray(data.logs)?data.logs:[];
 
   // "Último estado conhecido da nuvem" (base para enviar só o que mudar)
-  var sent={};
-  Object.keys(st).forEach(function(k){sent['s.'+k]=JSON.stringify(st[k])});
+  var sent={}, faltando=false, raw=(data.state&&typeof data.state==='object')?data.state:{};
+  Object.keys(st).forEach(function(k){ if(raw[k]!==undefined) sent['s.'+k]=JSON.stringify(st[k]); else faltando=true; });
   sent.logs=JSON.stringify(lg);
 
   // ajuste de versão (uma vez): datas de exemplo + lista noiva/noivo
   var migrated=false;
   if(!st.meta||!st.meta.v2){ migrated=migrateState(st); }
+  if(ensureIds(st,true)) migrated=true;
+  if(faltando) migrated=true;   // seções que não existem na nuvem são gravadas uma vez (assim nada "volta ao padrão")
 
   if(wasLoaded){
     // Preserva o que EU alterei e ainda não foi enviado; o resto vem da nuvem
@@ -3535,7 +3643,7 @@ import {
 import {
   initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
   doc, getDoc, setDoc, onSnapshot, serverTimestamp,
-  collection, getDocs, query, orderBy, deleteDoc, updateDoc, deleteField
+  collection, getDocs, query, orderBy, deleteDoc, updateDoc, deleteField, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -3650,6 +3758,20 @@ window.FB = {
   resetPassword(email) { return sendPasswordResetEmail(auth, email); },
   logout() { return signOut(auth); },
   getToken() { return auth.currentUser ? auth.currentUser.getIdToken() : Promise.reject(new Error('sem login')); },
+  async saveMerged(localState, mergeFn, localLogs, mergeLogsFn) {
+    return runTransaction(db, async (tx) => {
+      const snap = await tx.get(dataRef);
+      const cur = snap.exists() ? snap.data() : {};
+      const curState = (cur.state && typeof cur.state === "object") ? cur.state : {};
+      const outState = {};
+      for (const k of Object.keys(localState)) outState[k] = mergeFn(k, curState[k]);
+      const payload = { state: outState, updatedAt: serverTimestamp(), updatedBy: auth.currentUser ? auth.currentUser.uid : null };
+      let outLogs = null;
+      if (localLogs) { outLogs = mergeLogsFn(localLogs, Array.isArray(cur.logs) ? cur.logs : []); payload.logs = outLogs; }
+      tx.set(dataRef, payload, { merge: true });
+      return { state: outState, logs: outLogs };
+    });
+  },
   saveData(patch) {
     return setDoc(dataRef, {
       ...patch,
