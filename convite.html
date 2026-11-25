@@ -44,7 +44,7 @@ h2{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:
 .hint{position:absolute;bottom:-44px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mute)}
 
 /* ===== CAPA ===== */
-.cover{text-align:center;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 20px}
+.cover{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 20px}
 .arch{position:relative;width:100%;padding:56px 24px 48px;background:linear-gradient(180deg,#fffaf1,#f3e9d6);border-radius:220px 220px 22px 22px;box-shadow:0 0 0 7px #fff8ea,0 0 0 8px var(--line),0 0 0 15px #f6efe3,0 0 0 16px var(--line),0 24px 50px rgba(120,90,40,.18)}
 .arch .eyebrow{max-width:210px;margin:0 auto 22px}
 .logo{width:104px;display:block;margin:-6px auto 10px}
@@ -95,18 +95,14 @@ form{max-width:340px;margin:18px auto 0;text-align:left;background:var(--paper);
 label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mute);margin:14px 0 5px}
 input[type=text],select,textarea{width:100%;padding:11px 12px;border:1px solid rgba(184,147,74,.5);border-radius:4px;background:#fff;color:var(--ink);font:400 14px 'Montserrat',sans-serif;outline:none}
 input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,74,.18)}
+.chk{display:flex!important;align-items:center;gap:9px;margin-top:12px;font-size:13px;cursor:pointer;letter-spacing:0;text-transform:none}
+.chk input{width:18px!important;height:18px;margin:0;flex:none;display:inline-block}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
 .opts label{margin:0;padding:12px 8px;text-align:center;border:1px solid rgba(184,147,74,.5);border-radius:4px;cursor:pointer;font-size:11px;letter-spacing:1px;color:var(--brown2);background:#fff}
 .opts input{display:none}
 .opts input:checked+span{font-weight:600}
 .opts label:has(input:checked){background:var(--brown);color:#fff8ea;border-color:var(--brown)}
 .hp{position:absolute;left:-9999px;opacity:0}
-.chk{display:flex!important;gap:10px;align-items:center;text-transform:none!important;letter-spacing:0!important;font-size:12.5px!important;color:var(--ink)!important;margin:12px 0 0!important;cursor:pointer}
-.chk input{width:18px;height:18px;accent-color:var(--brown)}
-.crow{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:8px}
-.crow .chk{margin:0!important;font-size:11px!important;white-space:nowrap}
-.crow .x{border:0;background:none;color:var(--mute);font-size:18px;cursor:pointer;padding:4px 6px}
-.btn.sm{margin:4px 0 0;padding:8px 14px;font-size:10px}
 .msg{margin-top:12px;font-size:12.5px;text-align:center;color:#a33}
 .ok{max-width:340px;margin:18px auto 0;padding:26px 18px;background:var(--paper);border:1px solid var(--line);border-radius:6px}
 .ok .big{font-size:40px}
@@ -193,23 +189,23 @@ footer .serif{font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#
         <label><input type="radio" name="status" value="Recusou"><span>Não poderei ir</span></label>
       </div>
       <label for="nome">Seu nome completo</label>
-      <input type="text" id="nome" maxlength="80" placeholder="Ex.: Maria Silva">
-      <label>Você é convidado(a) de…</label>
+      <input type="text" id="nome" maxlength="80" required placeholder="Ex.: Maria Silva">
+      <label>Você é convidado(a) de</label>
       <div class="opts">
-        <label><input type="radio" name="lado" value="noiva"><span>💗 Poliana (noiva)</span></label>
-        <label><input type="radio" name="lado" value="noivo"><span>💙 Willians (noivo)</span></label>
+        <label><input type="radio" name="lado" value="noiva"><span>💗 Noiva (Poliana)</span></label>
+        <label><input type="radio" name="lado" value="noivo"><span>💙 Noivo (Willians)</span></label>
       </div>
-      <label class="chk"><input type="checkbox" id="crianca"> 👶 Sou criança (até 8 anos)</label>
+      <label class="chk" for="kid"><input type="checkbox" id="kid"><span>👶 Sou criança (até 8 anos)</span></label>
       <div id="boxAcomp">
-        <label>Acompanhantes</label>
-        <div id="comp"></div>
-        <button type="button" class="btn sm" id="addComp">+ Adicionar acompanhante</button>
+        <label for="acomp">Acompanhantes (além de você)</label>
+        <select id="acomp"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+        <div id="boxNomes" class="hide"></div>
         <label for="rest">Restrição alimentar (opcional)</label>
         <input type="text" id="rest" maxlength="200" placeholder="Alergia, vegetariano…">
       </div>
       <label for="msg">Recado para os noivos (opcional)</label>
       <textarea id="msg" rows="3" maxlength="500" placeholder="Deixe um carinho 💌"></textarea>
-      <input class="hp" type="checkbox" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input class="hp" type="text" id="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="msg hide" id="err"></div>
       <button class="btn solid" id="send" type="submit" style="margin-top:18px">Enviar resposta</button>
     </form>
@@ -218,7 +214,6 @@ footer .serif{font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#
       <div class="big" id="okIco">💍</div>
       <h2 id="okTit" style="margin-top:6px"></h2>
       <p id="okTxt" style="font-size:13px"></p>
-      <button class="btn" id="again" type="button">Confirmar outra pessoa</button>
     </div>
   </section>
 
@@ -241,7 +236,7 @@ const CONFIG = {
     endereco: "SMPW Quadra 05, Conjunto 3, Lote 3 · Park Way, Brasília – DF",
     mapa: ""                     // opcional: link do Google Maps (vazio = busca pelo endereço)
   },
-  confirmarAte: "2027-02-14",    // prazo para confirmar (vazio = não mostrar)
+  confirmarAte: "2027-02-01",    // prazo para confirmar: 01/02/2027 (vazio = não mostrar)
   presentesUrl: "",              // opcional: link da lista de presentes
   programacao: [
     ["15:30","Cerimônia"],["16:30","Coquetel"],["18:00","Recepção"],["19:30","Jantar"],["21:30","Festa"]  // ← ajuste os horários após a cerimônia
@@ -259,6 +254,7 @@ const FIREBASE = {apiKey:"AIzaSyBdwhHAC92TQa66by0jlXnL4UUSjYZzxik",authDomain:"c
 /* ══════════════════════════════════════════════════ */
 
 const $=id=>document.getElementById(id);
+const ORIGEM=(()=>{const o=new URLSearchParams(location.search).get("o");return o==="cartao"||o==="virtual"?o:"link"})();
 const C=CONFIG;
 const dt=new Date(C.data+"T"+C.hora+":00");
 const mes=["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"][dt.getMonth()];
@@ -272,7 +268,7 @@ $("mapBtn").href=C.local.mapa||"https://www.google.com/maps/search/?api=1&query=
 $("prog").innerHTML=C.programacao.map(p=>`<li><b>${p[0]}</b><span>${p[1]}</span></li>`).join("");
 $("tips").innerHTML=C.dicas.map(d=>`<div class="tip rv"><div class="e">${d[0]}</div><div><h4>${d[1]}</h4><p>${d[2]}</p></div></div>`).join("");
 if(C.presentesUrl){const g=$("giftBtn");g.href=C.presentesUrl;g.classList.remove("hide")}
-$("deadline").textContent=C.confirmarAte?"Por favor, responda até "+new Date(C.confirmarAte+"T12:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"})+".":"Sua resposta é muito importante para nós.";
+$("deadline").innerHTML=C.confirmarAte?"Por favor, confirme sua presença até <b>"+C.confirmarAte.split("-").reverse().join("/")+"</b>.":"Sua resposta é muito importante para nós.";
 
 /* contagem regressiva */
 function tick(){
@@ -305,77 +301,72 @@ function reveal(){
 }
 
 /* RSVP */
-const f=$("f"), comp=$("comp");
+const f=$("f");
 f.querySelectorAll("input[name=status]").forEach(r=>r.addEventListener("change",()=>{
-  $("boxAcomp").classList.toggle("hide",f.status.value==="Recusou");
+  $("boxAcomp").classList.toggle("hide",(f.querySelector("input[name=status]:checked")||{value:"Confirmado"}).value==="Recusou");
 }));
-function addComp(){
-  if(comp.children.length>=9)return;
-  const d=document.createElement("div");d.className="crow";
-  d.innerHTML='<input type="text" maxlength="80" placeholder="Nome e sobrenome"><label class="chk"><input type="checkbox"> 👶 até 8 anos</label><button type="button" class="x" aria-label="Remover">✕</button>';
-  d.querySelector(".x").onclick=()=>d.remove();
-  comp.appendChild(d);d.querySelector("input").focus();
+/* nome de cada acompanhante */
+function nomesAcomp(){
+  const n=parseInt($("acomp").value,10)||0, box=$("boxNomes");
+  const oldN=[...box.querySelectorAll(".ac")].map(i=>i.value), oldK=[...box.querySelectorAll(".ack")].map(i=>i.checked);
+  box.classList.toggle("hide",n===0);
+  box.innerHTML=Array.from({length:n},(_,i)=>`<label for="ac${i}">Nome completo do acompanhante ${n>1?i+1:""}</label><input type="text" id="ac${i}" class="ac" maxlength="70" autocomplete="off" placeholder="Nome e sobrenome"><label class="chk" for="ak${i}"><input type="checkbox" id="ak${i}" class="ack"><span>👶 Criança (até 8 anos)</span></label>`).join("");
+  box.querySelectorAll(".ac").forEach((el,i)=>el.value=oldN[i]||"");
+  box.querySelectorAll(".ack").forEach((el,i)=>el.checked=!!oldK[i]);
 }
-$("addComp").onclick=addComp;
-function showErr(t){const e=$("err");e.textContent=t;e.classList.remove("hide");e.scrollIntoView({block:"center",behavior:"smooth"})}
-function showDone(status,pessoas){
-  f.classList.add("hide");$("ok").classList.remove("hide");
-  const yes=status==="Confirmado",first=pessoas[0].nome.split(" ")[0];
+$("acomp").addEventListener("change",nomesAcomp);
+const limpa=t=>t.trim().replace(/\s+/g," ").replace(/[|]/g,"");
+function showDone(status,nome,acs){
+  f.classList.add("hide"); $("ok").classList.remove("hide");
+  const yes=status==="Confirmado", first=nome.split(" ")[0];
   $("okIco").textContent=yes?"💍":"💌";
   $("okTit").textContent=yes?"Presença confirmada!":"Obrigado por avisar";
-  $("okTxt").textContent=yes
-    ?(pessoas.length>1?first+" e acompanhantes ("+(pessoas.length-1)+"), ":first+", ")+"mal podemos esperar para celebrar com vocês!"
-    :first+", sentiremos sua falta, mas agradecemos o carinho.";
+  $("okTxt").textContent=yes?first+", mal podemos esperar para celebrar com você!"+(acs&&acs.length?" Confirmados também: "+acs.map(a=>a.replace(/\s*\[criança\]$/i," (criança)")).join(", ")+".":""):first+", sentiremos sua falta, mas agradecemos o carinho.";
+  let again=$("again");
+  if(!again){again=document.createElement("button");again.id="again";again.className="btn";again.type="button";again.textContent="Corrigir ou enviar nova resposta";again.style.marginTop="14px";$("ok").appendChild(again)}
+  again.onclick=()=>{try{localStorage.removeItem("rsvp_done")}catch(e){} $("ok").classList.add("hide"); f.classList.remove("hide"); $("send").disabled=false; $("send").textContent="Enviar resposta"};
 }
-$("again").onclick=()=>{
-  f.reset();comp.innerHTML="";$("boxAcomp").classList.remove("hide");
-  $("ok").classList.add("hide");f.classList.remove("hide");
-  $("send").disabled=false;$("send").textContent="Enviar resposta";
-  f.scrollIntoView({behavior:"smooth",block:"start"});
-};
-let fbMods=null;
-async function fb(){
-  if(!fbMods){
-    const [a,b]=await Promise.all([
-      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
-      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")]);
-    const app=a.getApps().find(x=>x.name==="convite")||a.initializeApp(FIREBASE,"convite");
-    fbMods={b,db:b.getFirestore(app)};
-  }
-  return fbMods;
-}
+try{const prev=JSON.parse(localStorage.getItem("rsvp_done")||"null");if(prev)showDone(prev.status,prev.nome,prev.acs)}catch(e){}
+
 f.addEventListener("submit",async ev=>{
   ev.preventDefault();
-  $("err").classList.add("hide");
-  if($("hp").checked) return;                       // robô
-  const status=f.status.value, lado=f.lado.value;
+  const err=$("err"); err.classList.add("hide");
+  if($("hp").value) return;                       // robô
   const nome=$("nome").value.trim().replace(/\s+/g," ");
-  if(nome.split(" ").length<2){showErr("Informe seu nome e sobrenome.");return}
-  if(!lado){showErr("Escolha se você é convidado(a) da Poliana (noiva) ou do Willians (noivo).");return}
-  const msg=$("msg").value.trim();
-  const pessoas=[{nome,crianca:$("crianca").checked,titular:true,restricao:status==="Confirmado"?$("rest").value.trim():"",mensagem:msg}];
-  if(status==="Confirmado"){
-    for(const row of comp.children){
-      const n=row.querySelector("input[type=text]").value.trim().replace(/\s+/g," ");
-      if(!n&&!row.querySelector("input[type=checkbox]").checked)continue;
-      if(n.length<3){showErr("Preencha o nome de cada acompanhante (ou remova a linha).");return}
-      pessoas.push({nome:n,crianca:row.querySelector("input[type=checkbox]").checked,titular:false,restricao:"",mensagem:""});
-    }
-  }
-  const btn=$("send");btn.disabled=true;btn.textContent="Enviando…";
+  if(nome.split(" ").length<2){err.textContent="Por favor, informe nome e sobrenome.";err.classList.remove("hide");return}
+  const status=(f.querySelector("input[name=status]:checked")||{value:"Confirmado"}).value, btn=$("send");
+  const lado=(f.querySelector("input[name=lado]:checked")||{}).value||"";
+  if(!lado){err.textContent="Informe se você é convidado(a) da noiva ou do noivo.";err.classList.remove("hide");return}
+  const crianca=$("kid").checked;
+  const nAc=status==="Confirmado"?(parseInt($("acomp").value,10)||0):0;
+  const ks=[...f.querySelectorAll(".ack")].map(i=>i.checked);
+  const acs=nAc?[...f.querySelectorAll(".ac")].slice(0,nAc).map((i,k)=>limpa(i.value)+(ks[k]?" [criança]":"")):[];
+  if(acs.some(x=>x.replace(/\s*\[criança\]$/i,"").length<3)){err.textContent="Informe o nome completo de cada acompanhante.";err.classList.remove("hide");return}
+  btn.disabled=true; btn.textContent="Enviando…";
   try{
-    const {b,db}=await fb();
-    const batch=b.writeBatch(db),col=b.collection(db,"rsvps");
-    const grupo=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-    pessoas.forEach(p=>batch.set(b.doc(col),{
-      nome:p.nome,status,lado,crianca:p.crianca,titular:p.titular,grupo,
-      restricao:p.restricao,mensagem:p.mensagem,createdAt:b.serverTimestamp()}));
-    await batch.commit();
-    showDone(status,pessoas);
+    const [{initializeApp,getApps},{getFirestore,collection,addDoc,serverTimestamp}]=await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")]);
+    /* reaproveita o app já criado (evita erro "duplicate-app" ao reenviar) */
+    const app=getApps().find(a=>a.name==="convite")||initializeApp(FIREBASE,"convite");
+    const col=collection(getFirestore(app),"rsvps");
+    const rest=status==="Confirmado"?$("rest").value.trim():"", msg=$("msg").value.trim();
+    try{
+      await addDoc(col,{nome,status,acompanhantes:nAc,acompanhantesNomes:acs.join(" | "),lado,crianca,origem:ORIGEM,restricao:rest,mensagem:msg,createdAt:serverTimestamp()});
+    }catch(e1){
+      /* modo compatível: se as regras do Firestore ainda não foram atualizadas, envia no formato antigo
+         (lado, criança e acompanhantes vão no início do recado e o app lê de lá) */
+      if(!(e1&&e1.code==="permission-denied"))throw e1;
+      const meta="[lado:"+lado+"]"+(crianca?"[criança]":"")+(acs.length?"[acomp:"+acs.map(a=>a.replace(/ \[criança\]$/," (criança)")).join("|")+"]":"")+" ";
+      await addDoc(col,{nome,status,acompanhantes:nAc,restricao:rest,mensagem:(meta+msg).slice(0,500),createdAt:serverTimestamp()});
+    }
+    try{localStorage.setItem("rsvp_done",JSON.stringify({status,nome,acs}))}catch(e){}
+    showDone(status,nome,acs);
   }catch(e){
     console.error(e);
-    showErr("Não foi possível enviar agora ("+(e&&e.code?e.code:"erro")+"). Verifique a internet e tente de novo.");
-    btn.disabled=false;btn.textContent="Enviar resposta";
+    err.textContent="Não foi possível enviar agora. Verifique a internet e tente novamente."+(e&&e.code?" ("+e.code+")":"");
+    err.classList.remove("hide");
+    btn.disabled=false; btn.textContent="Enviar resposta";
   }
 });
 </script>
