@@ -570,7 +570,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div id="guest-buffet" style="margin:-4px 0 12px;padding:10px 14px;border:1px solid rgba(127,119,221,.35);border-radius:12px;font-size:12.5px;line-height:1.5"></div>
       <div class="view-row" id="guest-view"></div>
       <div class="chips" id="guest-filter"></div>
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" onclick="importRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-rsvps" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
         <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
         <input type="hidden" id="fg-idx" value="-1">
@@ -586,6 +586,10 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
         </div>
         <label style="display:flex;align-items:center;gap:10px;margin:12px 0 4px;font-size:13px;color:var(--txt)"><input type="checkbox" id="fg-crianca" style="width:20px;height:20px"> 👶 Criança até 8 anos <span style="color:var(--txt2);font-size:11px">(não paga buffet)</span></label>
         <button class="btn-save" onclick="saveGuest()">Salvar convidado</button>
+      </div>
+      <div class="form-panel" id="fp-rsvps">
+        <div class="form-panel-ttl"><span>📥 Respostas do convite</span><button onclick="closePanel('fp-rsvps')">×</button></div>
+        <div id="rsvp-box" style="max-height:68vh;overflow:auto"></div>
       </div>
       <div id="guest-list"></div>
       <div id="guest-tree" style="display:none"></div>
@@ -1899,7 +1903,7 @@ window.onAuthChanged=function(profile){
   if(!profile){
     clearTimeout(_saveTimer); _saveTimer=null;
     currentUser=null; cloudLoaded=false; appEntered=false; defGuestsList=null; _lastSent={};
-    state=clone(defaultState); logs=[];
+    state=clone(defaultState); logs=[]; rsvpTried=false; rsvpCache=null;
     closeProfile(); closeOv('edit-profile-modal');
     document.getElementById('main-app').style.display='none';document.body.classList.remove('in-app');
     hideSplash();
@@ -2661,9 +2665,16 @@ function setGuestFilter(f){ guestFilter=f; renderGuests(); }
 function guestMatches(g,f){
   f=f||guestFilter; var l=ladoOf(g);
   if(f==='crianca') return !!g.crianca;
+  if(f==='convite') return g.origem==='convite';
   return f==='todos'||(f==='sem'?l==='':l===f);
 }
 function isKid(g){ return !!(g&&g.crianca) }
+function origemBadge(g){
+  if(!g||g.rsvp==='Aguardando') return '';
+  return g.origem==='convite'
+    ? '<span class="lado" style="background:rgba(93,202,165,.15);color:#5dcaa5">📩 Convite</span>'
+    : '<span class="lado" style="background:rgba(160,160,180,.15);color:#b4b2a9">✍️ Individual</span>';
+}
 
 function renderGuests(){
   var c=state.guests.length,
@@ -2674,7 +2685,8 @@ function renderGuests(){
       pay=state.guests.filter(function(g){return !isKid(g)&&g.rsvp!=='Recusou'}).length,
       payConf=state.guests.filter(function(g){return !isKid(g)&&g.rsvp==='Confirmado'}).length;
   var bf=document.getElementById('guest-buffet');
-  if(bf) bf.innerHTML='🍽️ <b>Pagam buffet:</b> '+pay+' adulto(s) <span style="opacity:.7">('+payConf+' confirmado(s))</span><br>👶 <b>Crianças até 8 anos:</b> '+kids+' <span style="opacity:.7">(isentas, não entram na conta do buffet)</span>';
+  if(bf) bf.innerHTML='🍽️ <b>Pagam buffet:</b> '+pay+' adulto(s) <span style="opacity:.7">('+payConf+' confirmado(s))</span><br>👶 <b>Crianças até 8 anos:</b> '+kids+' <span style="opacity:.7">(isentas, não entram na conta do buffet)</span>'+
+    '<br>✅ <b>Já responderam:</b> '+state.guests.filter(function(g){return g.rsvp!=='Aguardando'&&g.origem==='convite'}).length+' via convite 📩 · '+state.guests.filter(function(g){return g.rsvp!=='Aguardando'&&g.origem!=='convite'}).length+' individual ✍️';
   document.getElementById('guest-stats').innerHTML=
     '<div class="sc"><div class="sc-n">'+c+'</div><div class="sc-l">Total</div></div>'+
     '<div class="sc"><div class="sc-n">'+conf+'</div><div class="sc-l">Confirmados</div></div>'+
@@ -2682,12 +2694,14 @@ function renderGuests(){
     '<div class="sc"><div class="sc-n">'+rec+'</div><div class="sc-l">Recusaram</div></div>';
 
   // filtro por lista (noiva / noivo)
-  var cnt={todos:c,noiva:0,noivo:0,sem:0,crianca:kids};
+  var cnt={todos:c,noiva:0,noivo:0,sem:0,crianca:kids,convite:state.guests.filter(function(g){return g.origem==='convite'}).length};
   state.guests.forEach(function(g){ cnt[ladoOf(g)||'sem']++ });
   if(guestFilter==='sem'&&!cnt.sem) guestFilter='todos';
   var chips=[['todos','Todos'],['noiva','💗 Noiva'],['noivo','💙 Noivo']];
   if(cnt.sem) chips.push(['sem','Sem lista']);
   if(kids) chips.push(['crianca','👶 Crianças']);
+  if(cnt.convite) chips.push(['convite','📩 Via convite']);
+  if(guestFilter==='convite'&&!cnt.convite) guestFilter='todos';
   if(guestFilter==='crianca'&&!kids) guestFilter='todos';
   document.getElementById('guest-filter').innerHTML=chips.map(function(x){
     return '<button class="chip'+(guestFilter===x[0]?' on':'')+'" onclick="setGuestFilter(\''+x[0]+'\')">'+x[1]+' ('+cnt[x[0]]+')</button>';
@@ -2714,7 +2728,7 @@ function renderGuests(){
         '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">'+
         '<div class="av '+avClass(realIdx)+'">'+ini+'</div>'+
         '<div style="min-width:0"><div class="nm" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">'+g.nome+
-        ladoChip(ladoOf(g))+(isKid(g)?'<span class="lado" style="background:rgba(250,199,117,.15);color:#fac775">👶 Criança</span>':'')+(isPinned?'<span class="guest-default-badge">padrão</span>':'')+'</div>'+
+        ladoChip(ladoOf(g))+(isKid(g)?'<span class="lado" style="background:rgba(250,199,117,.15);color:#fac775">👶 Criança</span>':'')+origemBadge(g)+(isPinned?'<span class="guest-default-badge">padrão</span>':'')+'</div>'+
         '<div class="sub">'+g.cat+(g.mesa?' · Mesa '+g.mesa:'')+(g.rest?' · '+g.rest:'')+'</div></div></div>'+
         '<div class="act-group"><span class="bdg '+rsvpBadge(g.rsvp)+'">'+g.rsvp+'</span>'+
         '<button class="btn-act edit" onclick="editGuest('+realIdx+')" title="Editar">✏️</button>'+
@@ -2724,6 +2738,7 @@ function renderGuests(){
     initSortable('guest-list','.card',function(){return state.guests},function(){saveState();renderGuests()});
   }
 
+  if(!rsvpTried&&window.FB&&cloudLoaded){ rsvpTried=true; loadRsvps(false); }
   var pct=Math.round(conf/Math.max(c,1)*100);
   document.getElementById('bar-rsvp').style.width=pct+'%';
   document.getElementById('pct-rsvp').textContent=pct+'%';
@@ -2737,30 +2752,134 @@ function editGuest(i){
   openPanel('fp-guest','edit');
   document.getElementById('fp-guest').scrollIntoView({behavior:'smooth',block:'start'});
 }
+// ═══════════════════════════════════════════════════
+//  RESPOSTAS DO CONVITE (ficam guardadas na nuvem; nada é apagado sozinho)
+// ═══════════════════════════════════════════════════
+var rsvpCache=null, rsvpLoading=false, rsvpErr=null, rsvpTried=false;
 function _nk(t){ return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase(); }
-function importRsvps(){
-  if(!window.FB||!FB.listRsvps){alert('Firebase ainda não carregou. Tente de novo.');return}
-  FB.listRsvps().then(function(list){
-    if(!list.length){alert('Nenhuma resposta nova do convite.');return}
-    var add=0,upd=0;
-    list.forEach(function(r){
-      var key=_nk(r.nome);
-      var g=state.guests.filter(function(x){return _nk(x.nome)===key})[0];
-      var lado=(r.lado==='noiva'||r.lado==='noivo')?r.lado:'';
-      if(g){ g.rsvp=r.status; if(lado)g.lado=lado; if(r.crianca)g.crianca=true; if(r.restricao&&!g.rest)g.rest=r.restricao; upd++ }
-      else{ state.guests.push({nome:String(r.nome).replace(/\s+/g,' ').trim(),cat:'Amigos',rsvp:r.status,mesa:'',rest:r.restricao||'',lado:lado,crianca:!!r.crianca}); add++ }
-      addLog('add','Resposta do convite',r.nome+' → '+r.status+(r.mensagem?' · "'+r.mensagem+'"':''));
-    });
-    saveState();renderGuests();
-    if(confirm(add+' novo(s) e '+upd+' atualizado(s). Apagar da nuvem as respostas já importadas?')){
-      Promise.all(list.map(function(r){return FB.deleteRsvp(r.id)}));
-    }
-  }).catch(function(e){alert('Não foi possível ler as respostas: '+(e&&e.message||e))});
+function cleanName(t){ return String(t==null?'':t).replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim().slice(0,120); }
+function _lev(a,b){ var m=[],i,j; for(i=0;i<=a.length;i++){m[i]=[i]} for(j=1;j<=b.length;j++){m[0][j]=j}
+  for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++) m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return m[a.length][b.length]; }
+function _tokEq(x,y){ if(x===y)return true; var m=Math.min(x.length,y.length);
+  if(m>=3&&(x.indexOf(y)===0||y.indexOf(x)===0))return true; return m>=5&&_lev(x,y)<=1; }
+function _toks(t){ return _nk(t).replace(/\(.*?\)/g,' ').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim().split(' ').filter(function(x){return x.length>1}); }
+function nameScore(a,b){
+  var ta=_toks(a), tb=_toks(b); if(!ta.length||!tb.length) return 0;
+  if(ta.join(' ')===tb.join(' ')) return 1;
+  var hit=0; ta.forEach(function(x){ if(tb.some(function(y){return _tokEq(x,y)})) hit++ });
+  if(!_tokEq(ta[0],tb[0])&&hit<2) return 0;
+  var sc=hit/Math.max(ta.length,tb.length);
+  return sc>=0.5?sc:0;
+}
+function similarGuests(r){
+  var out=[];
+  state.guests.forEach(function(g,i){
+    if(g.rsvpId&&g.rsvpId!==r.id) return;
+    var sc=nameScore(r.nome,g.nome); if(sc>0) out.push({i:i,s:sc});
+  });
+  out.sort(function(x,y){return y.s-x.s});
+  return out.slice(0,3);
+}
+function rsvpState(r){ return r.tratado||'pendente'; }
+function isPend(r){ return rsvpState(r)==='pendente'; }
+function rsvpGet(id){ return (rsvpCache||[]).filter(function(r){return r.id===id})[0]; }
+function guestOfRsvp(r){
+  var g=state.guests.filter(function(x){return x.rsvpId===r.id})[0];
+  if(!g&&r.guestNome) g=state.guests.filter(function(x){return _nk(x.nome)===_nk(r.guestNome)})[0];
+  return g;
+}
+function updateRsvpBtn(){
+  var b=document.getElementById('btn-rsvps'); if(!b) return;
+  var n=(rsvpCache||[]).filter(isPend).length;
+  b.textContent='📥 Convite'+(n?' ('+n+')':'');
+}
+function loadRsvps(show){
+  if(!window.FB||!FB.listRsvps){ if(show){rsvpErr='O Firebase ainda não carregou. Tente de novo.';renderRsvps();} return Promise.resolve(); }
+  rsvpLoading=true; if(show) renderRsvps();
+  return FB.listRsvps().then(function(l){ rsvpCache=l; rsvpErr=null; })
+    .catch(function(e){ rsvpErr=(e&&e.message)||String(e); })
+    .then(function(){ rsvpLoading=false; updateRsvpBtn(); if(document.getElementById('fp-rsvps').classList.contains('on')) renderRsvps(); });
+}
+function openRsvps(){ openPanel('fp-rsvps','novo'); loadRsvps(true); document.getElementById('fp-rsvps').scrollIntoView({behavior:'smooth',block:'start'}); }
+function rsvpApply(r,g){
+  g.rsvp=r.status; g.origem='convite'; g.rsvpId=r.id;
+  var l=(r.lado==='noiva'||r.lado==='noivo')?r.lado:''; if(l&&!ladoOf(g)) g.lado=l;
+  if(r.crianca) g.crianca=true;
+  if(r.restricao&&!g.rest) g.rest=cleanName(r.restricao);
+}
+function rsvpDo(r,act,idx){
+  var f=null;
+  if(act==='link'){ var g=state.guests[idx]; if(!g) return null; rsvpApply(r,g); f={tratado:'vinculado',guestNome:g.nome}; addLog('edit','Convite vinculado',cleanName(r.nome)+' → '+g.nome); }
+  else if(act==='add'){ var n={nome:cleanName(r.nome),cat:'Amigos',rsvp:r.status,mesa:'',rest:'',lado:'',crianca:false}; rsvpApply(r,n); state.guests.push(n); f={tratado:'incluido',guestNome:n.nome}; addLog('add','Convidado via convite',n.nome+' → '+r.status); }
+  else if(act==='skip'){ f={tratado:'ignorado',guestNome:''}; }
+  else if(act==='undo'){ f={tratado:'pendente',guestNome:''}; }
+  if(f) Object.assign(r,f);
+  return f;
+}
+function rsvpAfter(){ saveState(); flushPending(); renderGuests(); updateRsvpBtn(); renderRsvps(); }
+function rsvpAct(id,act,idx){
+  var r=rsvpGet(id); if(!r) return;
+  var f=rsvpDo(r,act,idx); if(!f) return;
+  rsvpAfter();
+  FB.updateRsvp(id,f).catch(function(e){ alert('A lista foi salva, mas não consegui marcar a resposta na nuvem: '+((e&&e.message)||e)); });
+}
+function rsvpAddAllNew(){
+  var todo=(rsvpCache||[]).filter(function(r){return isPend(r)&&!similarGuests(r).length});
+  if(!todo.length){ alert('Não há respostas pendentes sem nome parecido.'); return; }
+  if(!confirm('Incluir '+todo.length+' resposta(s) na lista de convidados?')) return;
+  var jobs=[];
+  todo.forEach(function(r){ var f=rsvpDo(r,'add'); if(f) jobs.push(FB.updateRsvp(r.id,f)); });
+  rsvpAfter();
+  Promise.all(jobs).catch(function(e){ alert('Lista salva, mas algumas marcações na nuvem falharam: '+((e&&e.message)||e)); });
+}
+function rsvpCard(r,pending,titName){
+  var kid=r.crianca?'<span class="lado" style="background:rgba(250,199,117,.15);color:#fac775">👶 Criança</span>':'';
+  var who=r.titular===false?(titName?'acompanhante de '+esc(titName):'acompanhante'):'respondeu por si';
+  var h='<div class="card" style="margin-bottom:8px"><div class="nm" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">'+esc(r.nome)+ladoChip(r.lado)+kid+
+    '<span class="bdg '+rsvpBadge(r.status)+'">'+esc(r.status)+'</span></div>'+
+    '<div class="sub">'+who+(r.restricao?' · '+esc(r.restricao):'')+'</div>'+
+    (r.mensagem?'<div class="sub" style="margin-top:4px;font-style:italic">💌 “'+esc(r.mensagem)+'”</div>':'');
+  var btn=function(t,fn){ return '<button class="btn-sm" style="margin:6px 6px 0 0" onclick="'+fn+'">'+t+'</button>'; };
+  var st=rsvpState(r);
+  if(pending){
+    var sim=similarGuests(r);
+    h+='<div style="margin-top:6px">';
+    if(sim.length) h+='<div class="sub" style="margin-top:6px">Nomes parecidos na sua lista:</div>';
+    sim.forEach(function(x){ var g=state.guests[x.i]; h+=btn('🔗 Vincular a '+esc(g.nome)+(x.s===1?' (idêntico)':''),"rsvpAct('"+r.id+"','link',"+x.i+")"); });
+    h+=btn('➕ Incluir na lista',"rsvpAct('"+r.id+"','add')")+btn('✖ Cancelar',"rsvpAct('"+r.id+"','skip')")+'</div>';
+  } else if(st==='ignorado'){
+    h+='<div class="sub" style="margin-top:6px">Cancelada (não entrou na lista)</div>'+btn('↩ Desfazer',"rsvpAct('"+r.id+"','undo')");
+  } else {
+    var g=guestOfRsvp(r);
+    if(g) h+='<div class="sub" style="margin-top:6px;color:#5dcaa5">✓ Na lista como “'+esc(g.nome)+'” · '+(st==='vinculado'?'vinculado':'incluído')+'</div>';
+    else h+='<div class="sub" style="margin-top:6px;color:#fac775">⚠ Esta pessoa não está mais na lista</div>'+btn('➕ Incluir de novo',"rsvpAct('"+r.id+"','add')")+btn('✖ Cancelar',"rsvpAct('"+r.id+"','skip')");
+  }
+  return h+'</div>';
+}
+function renderRsvps(){
+  var box=document.getElementById('rsvp-box'); if(!box) return;
+  if(rsvpLoading&&!rsvpCache){ box.innerHTML='<div class="empty">Carregando respostas…</div>'; return; }
+  if(rsvpErr&&!rsvpCache){ box.innerHTML='<div class="empty">Não foi possível ler as respostas: '+esc(rsvpErr)+'</div><button class="btn-sm" onclick="loadRsvps(true)">↻ Tentar de novo</button>'; return; }
+  var list=rsvpCache||[];
+  var tit={}; list.forEach(function(r){ if(r.titular&&r.grupo) tit[r.grupo]=r.nome; });
+  var order={},n=0; list.forEach(function(r){ if(!(r.grupo in order)) order[r.grupo]=n++; });
+  var srt=function(a,b){ return ((order[a.grupo]||0)-(order[b.grupo]||0))||((b.titular?1:0)-(a.titular?1:0)); };
+  var pend=list.filter(isPend).sort(srt), done=list.filter(function(r){return !isPend(r)}).sort(srt);
+  var h='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"><button class="btn-sm" onclick="loadRsvps(true)">↻ Atualizar</button>'+
+    (pend.length?'<button class="btn-sm" onclick="rsvpAddAllNew()">➕ Incluir todos sem nome parecido</button>':'')+'</div>';
+  h+='<div class="sub" style="margin-bottom:8px">As respostas ficam guardadas na nuvem e <b>nunca são apagadas automaticamente</b>. Para cada uma, vincule a um nome da lista, inclua como novo convidado ou cancele.</div>';
+  if(!list.length) h+='<div class="empty">Ninguém respondeu pelo convite ainda.</div>';
+  if(pend.length){ h+='<div class="sec-ttl" style="margin:8px 0">Aguardando decisão ('+pend.length+')</div>'+pend.map(function(r){return rsvpCard(r,true,tit[r.grupo])}).join(''); }
+  else if(list.length) h+='<div class="empty">✓ Nenhuma resposta pendente.</div>';
+  if(done.length){ h+='<details style="margin-top:10px"><summary class="sec-ttl" style="cursor:pointer;margin-bottom:8px">Já tratadas ('+done.length+')</summary>'+done.map(function(r){return rsvpCard(r,false,tit[r.grupo])}).join('')+'</details>'; }
+  box.innerHTML=h;
 }
 function saveGuest(){
   var idx=parseInt(v('fg-idx'));
   var nome=v('fg-nome').trim();if(!nome)return;
   var obj={nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest'),lado:v('fg-lado'),crianca:document.getElementById('fg-crianca').checked};
+  if(idx>=0) obj=Object.assign({},state.guests[idx],obj);
   if(idx>=0){addLog('edit','Convidado editado',state.guests[idx].nome+' → '+nome);state.guests[idx]=obj;}
   else{addLog('add','Convidado adicionado',nome);state.guests.push(obj);}
   setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');setVal('fg-lado','');document.getElementById('fg-crianca').checked=false;
@@ -3352,7 +3471,7 @@ import {
 import {
   initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
   doc, getDoc, setDoc, onSnapshot, serverTimestamp,
-  collection, getDocs, query, orderBy, deleteDoc
+  collection, getDocs, query, orderBy, deleteDoc, updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -3462,6 +3581,7 @@ window.FB = {
     const snap = await getDocs(query(collection(db, "rsvps"), orderBy("createdAt")));
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
   },
+  updateRsvp(id, fields) { return updateDoc(doc(db, "rsvps", id), fields); },
   deleteRsvp(id) { return deleteDoc(doc(db, "rsvps", id)); },
   resetPassword(email) { return sendPasswordResetEmail(auth, email); },
   logout() { return signOut(auth); },

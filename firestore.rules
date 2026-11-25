@@ -35,7 +35,12 @@ service cloud.firestore {
                     && request.resource.data.mensagem.size() <= 500
                     && request.resource.data.createdAt == request.time;
       allow read, delete: if request.auth != null;
-      allow update: if false;
+      // Os noivos (logados) só podem marcar como tratada e anotar o nome vinculado
+      allow update: if request.auth != null
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['tratado','guestNome'])
+                    && request.resource.data.tratado in ['pendente','incluido','vinculado','ignorado']
+                    && request.resource.data.guestNome is string
+                    && request.resource.data.guestNome.size() <= 120;
     }
   }
 }
