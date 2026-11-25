@@ -2894,12 +2894,29 @@ function rsvpCandidates(r){
   return state.guests.map(function(g,i){return {i:i,g:g,s:nomeScore(r.nome,g.nome)}})
     .filter(function(x){return x.s>=0.5}).sort(function(a,b){return b.s-a.s}).slice(0,3);
 }
+function guestOptionsHTML(){
+  return '<option value="">Escolher convidado da lista…</option>'+state.guests.map(function(g,i){return {g:g,i:i}})
+    .sort(function(a,b){return String(a.g.nome).localeCompare(String(b.g.nome),'pt-BR')})
+    .map(function(x){return '<option value="'+x.i+'">'+esc(x.g.nome)+(x.g.viaConvite?' ✓':'')+'</option>'}).join('');
+}
+function acompLinkedGuest(r,k,nome){
+  var key=r.id+':'+k, g=null, i=-1;
+  state.guests.forEach(function(x,ix){ if(g) return; if((x.acompIds||[]).indexOf(key)>=0||nomeKey(x.nome)===nomeKey(nome)){ g=x; i=ix } });
+  return g?{g:g,i:i,manual:(g.acompIds||[]).indexOf(key)>=0}:null;
+}
 function acompHTML(r,linked){
   var names=rsvpAcompObjs(r); if(!names.length) return r.acompanhantes?'<div class="sub">+'+r.acompanhantes+' acompanhante(s) sem nome informado</div>':'';
-  return '<div class="sub" style="margin-top:4px">Acompanhantes:</div>'+names.map(function(n,k){
-    var inList=state.guests.some(function(g){return nomeKey(g.nome)===nomeKey(n.nome)});
-    return '<div class="rst-row" style="padding:4px 0"><span>'+(n.crianca?'👶 ':'')+esc(n.nome)+'</span>'+(inList?'<span class="bdg bdg-green">✓ na lista</span>':
-      (linked?'<button class="btn-sm" onclick="addAcompGuest(\''+esc(r.id)+'\','+k+')">➕ Adicionar à lista</button>':'<span class="bdg bdg-gray">não está na lista</span>'))+'</div>';
+  var id=esc(r.id);
+  return '<div class="sub" style="margin-top:6px">Acompanhantes:</div>'+names.map(function(n,k){
+    var lk=acompLinkedGuest(r,k,n.nome), nm=(n.crianca?'👶 ':'')+esc(n.nome);
+    if(lk) return '<div class="rst-row" style="padding:5px 0"><span>'+nm+(nomeKey(lk.g.nome)!==nomeKey(n.nome)?'<div class="sub">🔗 Na lista: <b>'+esc(lk.g.nome)+'</b></div>':'')+'</span>'+
+      '<span style="text-align:right"><span class="bdg bdg-green">✓ na lista</span>'+(lk.manual?'<div><a href="#" style="font-size:11px;color:var(--purple)" onclick="unlinkAcomp(\''+id+'\','+k+');return false">Desvincular</a></div>':'')+'</span></div>';
+    if(!linked) return '<div class="rst-row" style="padding:5px 0"><span>'+nm+'</span><span class="bdg bdg-gray">não está na lista</span></div>';
+    var cand=state.guests.map(function(g,i){return {i:i,g:g,s:nomeScore(n.nome,g.nome)}}).filter(function(x){return x.s>=0.5}).sort(function(a,b){return b.s-a.s}).slice(0,3);
+    return '<div class="rst-row" style="padding:6px 0;flex-direction:column;align-items:stretch;gap:6px"><div><b>'+nm+'</b> <span class="bdg bdg-gray">não está na lista</span></div>'+
+      (cand.length?'<div style="display:flex;gap:6px;flex-wrap:wrap">'+cand.map(function(c){return '<button class="btn-sm" onclick="linkAcomp(\''+id+'\','+k+','+c.i+')">🔗 '+esc(c.g.nome)+' ('+Math.round(c.s*100)+'%)</button>'}).join('')+'</div>':'')+
+      '<div style="display:flex;gap:6px"><select class="f-sel" style="margin:0;flex:1" id="ac-sel-'+id+'-'+k+'">'+guestOptionsHTML()+'</select><button class="btn-sm" onclick="linkAcompSel(\''+id+'\','+k+')">Vincular</button></div>'+
+      '<div><button class="btn-sm" style="background:none" onclick="addAcompGuest(\''+id+'\','+k+')">➕ Não está na lista: adicionar como novo</button></div></div>';
   }).join('');
 }
 function rsvpHead(r){
@@ -2960,11 +2977,7 @@ function deleteRsvp(id){
   var r=rsvpById(id); if(!r) return;
   if(!confirm('Excluir a resposta de "'+r.nome+'" da nuvem? Isso não pode ser desfeito.')) return;
   FB.deleteRsvp(id).then(function(){
-    state.guests.forEach(function(g){
-      if((g.rsvpIds||[]).indexOf(id)<0) return;
-      g.rsvpIds=g.rsvpIds.filter(function(x){return x!==id});
-      if(!g.rsvpIds.length){ delete g.rsvpIds; delete g.viaConvite; delete g.conviteNome; delete g.conviteEm; delete g.conviteOrigem; delete g.acomp; delete g.acompN; delete g.conviteMsg; }
-    });
+    state.guests.forEach(function(g){ tiraRsvpDoGuest(g,id); });
     rsvpCache=rsvpCache.filter(function(x){return x.id!==id});
     addLog('del','Resposta do convite excluída',r.nome); afterRsvpChange();
   }).catch(function(e){alert('Não foi possível excluir: '+((e&&e.message)||e))});
@@ -2973,20 +2986,45 @@ function hideRsvp(id){ state.conviteOcultos=(state.conviteOcultos||[]).concat(id
 function unhideRsvps(){ state.conviteOcultos=[]; afterRsvpChange() }
 function unlinkRsvp(id){
   var r=rsvpById(id);
-  state.guests.forEach(function(g){
-    if((g.rsvpIds||[]).indexOf(id)<0) return;
-    g.rsvpIds=g.rsvpIds.filter(function(x){return x!==id});
-    if(!g.rsvpIds.length){ delete g.rsvpIds; delete g.viaConvite; delete g.conviteNome; delete g.conviteEm; delete g.conviteOrigem; delete g.acomp; delete g.acompN; delete g.conviteMsg; }
-  });
+  state.guests.forEach(function(g){ tiraRsvpDoGuest(g,id); });
   if(r) addLog('edit','Convite desvinculado',r.nome); afterRsvpChange();
+}
+function marcaAcomp(g,r,k,ob,main){
+  g.rsvp='Confirmado'; g.viaConvite=true; g.acompDe=main.nome; g.conviteNome=ob.nome; g.conviteEm=r.ts||Date.now();
+  if(ob.crianca) g.crianca=true;
+  g.acompIds=g.acompIds||[]; var key=r.id+':'+k; if(g.acompIds.indexOf(key)<0) g.acompIds.push(key);
 }
 function addAcompGuest(id,k){
   var r=rsvpById(id), li=rsvpLinkedTo(id); if(!r||!li.length) return;
-  var main=state.guests[li[0]], ob=rsvpAcompObjs(r)[k]; if(!ob) return; var name=ob.nome;
-  var ex=state.guests.filter(function(g){return nomeKey(g.nome)===nomeKey(name)})[0];
-  if(ex){ ex.rsvp='Confirmado'; ex.viaConvite=true; ex.acompDe=main.nome; if(ob.crianca) ex.crianca=true; }
-  else{ var ng={nome:name,cat:main.cat||'Amigos',rsvp:'Confirmado',mesa:main.mesa||'',rest:'',lado:ladoOf(main)||r.lado||'',viaConvite:true,conviteNome:name,conviteEm:r.ts||Date.now(),acompDe:main.nome}; if(ob.crianca) ng.crianca=true; state.guests.push(ng); }
-  addLog('add','Acompanhante adicionado (convite)',name+' · de '+main.nome); afterRsvpChange();
+  var main=state.guests[li[0]], ob=rsvpAcompObjs(r)[k]; if(!ob) return;
+  var ng={nome:ob.nome,cat:main.cat||'Amigos',mesa:main.mesa||'',rest:'',lado:ladoOf(main)||r.lado||''};
+  marcaAcomp(ng,r,k,ob,main); state.guests.push(ng);
+  addLog('add','Acompanhante adicionado (convite)',ob.nome+' · de '+main.nome); afterRsvpChange();
+}
+function linkAcomp(id,k,idx){
+  var r=rsvpById(id), li=rsvpLinkedTo(id), g=state.guests[idx]; if(!r||!li.length||!g) return;
+  var main=state.guests[li[0]], ob=rsvpAcompObjs(r)[k]; if(!ob) return;
+  marcaAcomp(g,r,k,ob,main);
+  addLog('edit','Acompanhante vinculado (convite)',ob.nome+' → '+g.nome); afterRsvpChange();
+}
+function linkAcompSel(id,k){
+  var el=document.getElementById('ac-sel-'+id+'-'+k); if(!el||el.value===''){ alert('Escolha um convidado da lista.'); return }
+  linkAcomp(id,k,parseInt(el.value,10));
+}
+function unlinkAcomp(id,k){
+  var key=id+':'+k;
+  state.guests.forEach(function(g){ if((g.acompIds||[]).indexOf(key)>=0){ g.acompIds=g.acompIds.filter(function(x){return x!==key}); limpaConviteGuest(g); } });
+  afterRsvpChange();
+}
+function limpaConviteGuest(g){
+  if(g.rsvpIds&&!g.rsvpIds.length) delete g.rsvpIds;
+  if(g.acompIds&&!g.acompIds.length) delete g.acompIds;
+  if(!g.rsvpIds&&!g.acompIds){ ['viaConvite','conviteNome','conviteEm','conviteOrigem','acomp','acompN','conviteMsg','acompDe'].forEach(function(p){delete g[p]}); }
+}
+function tiraRsvpDoGuest(g,id){
+  if(g.rsvpIds) g.rsvpIds=g.rsvpIds.filter(function(x){return x!==id});
+  if(g.acompIds) g.acompIds=g.acompIds.filter(function(x){return x.indexOf(id+':')!==0});
+  limpaConviteGuest(g);
 }
 function conviteLine(g){
   if(!g.viaConvite) return '';
