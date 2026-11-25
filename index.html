@@ -2792,7 +2792,8 @@ function renderConvite(){
     var cv=document.getElementById(x[0]); if(cv) drawQR(cv,conviteLink(x[1]),1200);
   });
 }
-function abrirConvite(){ window.open(conviteLink(''),'_blank','noopener') }
+// abre na mesma janela (no app instalado não há botão de voltar do navegador); o convite mostra "← Voltar ao app"
+function abrirConvite(){ location.href=conviteLink('')+'?app=1' }
 function copiarConvite(o){
   var url=conviteLink(o);
   var ok=function(){ showToast('✅ Link copiado!') };
