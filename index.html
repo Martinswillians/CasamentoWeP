@@ -1347,15 +1347,22 @@ function pushCloud(){
   var lj=JSON.stringify(logs), logsChanged=(_lastSent.logs!==lj);
   if(logsChanged){patch.logs=JSON.parse(lj);sent.logs=lj;changed=true}
   if(!changed){ if(!_inflight) setSync('ok'); return }
+  
   var prev={};
-  Object.keys(sent).forEach(function(k){prev[k]=_lastSent[k];_lastSent[k]=sent[k]});
+  Object.keys(sent).forEach(function(k){prev[k]=_lastSent[k];});
+  
   _inflight++; setSync('saving');
   var useMerge=!offline&&!!FB.saveMerged;
   var req=useMerge
     ? FB.saveMerged(patch.state,function(k,remote){ try{ return JSON.parse(JSON.stringify(merge3(base[k],patch.state[k],remote))) }catch(e){ console.warn('merge',k,e); return patch.state[k] } },logsChanged?patch.logs:null,mergeLogs)
     : FB.saveData(patch);
+    
   var p=req.then(function(res){
     _inflight--;
+    // Atualiza _lastSent APENAS após o sucesso do salvamento
+    Object.keys(sent).forEach(function(k){_lastSent[k]=sent[k];});
+    if(logsChanged) _lastSent.logs=lj;
+    
     try{
       if(useMerge&&res&&res.state){
         var again=false;
@@ -1368,17 +1375,19 @@ function pushCloud(){
     }catch(e){ console.warn('pós-salvar:',e); }
     if(!_inflight&&!_saveTimer) setSync('ok');
   },function(err){
-    // se a gravação com mesclagem falhar por outro motivo que não permissão, tenta a gravação simples
     if(useMerge&&!(err&&err.code==='permission-denied')){
-      console.warn('Mesclagem falhou, gravando direto:',err);
-      return FB.saveData(patch).then(function(){ _inflight--; if(!_inflight&&!_saveTimer) setSync('ok'); });
+      return FB.saveData(patch).then(function(){ 
+        _inflight--; 
+        Object.keys(sent).forEach(function(k){_lastSent[k]=sent[k];});
+        if(!_inflight&&!_saveTimer) setSync('ok'); 
+      });
     }
     throw err;
   }).catch(function(err){
     _inflight--;
-    Object.keys(prev).forEach(function(k){ if(_lastSent[k]===sent[k]) _lastSent[k]=prev[k] });
+    Object.keys(prev).forEach(function(k){ _lastSent[k]=prev[k]; });
     setSync('error'); console.error('Falha ao salvar:',err);
-    if(err&&err.code==='permission-denied') alert('Sem permissão para salvar no Firestore. Verifique as regras de segurança do banco.');
+    if(err&&err.code==='permission-denied') alert('Sem permissão para salvar no Firestore.');
     else setTimeout(function(){ if(!_saveTimer) saveState() },4000);
   });
   _lastPush=Promise.all([_lastPush,p]).catch(function(){});
