@@ -631,10 +631,12 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
         <div class="f-lbl">Nome completo</div><input class="f-inp" id="fg-nome" placeholder="Nome do convidado">
         <div class="f-lbl">Lista</div><select class="f-sel" id="fg-lado"><option value="">— Não informado —</option><option value="noiva">💗 Lista da noiva</option><option value="noivo">💙 Lista do noivo</option></select>
         <div class="f-grid2">
-          <div><div class="f-lbl">Parentesco com os noivos</div><input class="f-inp" id="fg-par" list="dl-par" placeholder="ex: Mãe, Irmã, Tio, Amigo"><datalist id="dl-par"><option value="Mãe"><option value="Pai"><option value="Madrasta"><option value="Padrasto"><option value="Irmã"><option value="Irmão"><option value="Avó"><option value="Avô"><option value="Tia"><option value="Tio"><option value="Prima"><option value="Primo"><option value="Madrinha"><option value="Padrinho"><option value="Dama de honra"><option value="Pajem"><option value="Daminha"><option value="Amiga"><option value="Amigo"><option value="Colega de trabalho"></datalist></div>
+          <div><div class="f-lbl">Parentesco com os noivos</div><input class="f-inp" id="fg-par" list="dl-par" placeholder="ex: Mãe, Irmã, Tio, Amigo"><datalist id="dl-par"><option value="Mãe"><option value="Pai"><option value="Madrasta"><option value="Padrasto"><option value="Irmã"><option value="Irmão"><option value="Avó"><option value="Avô"><option value="Tia"><option value="Tio"><option value="Prima"><option value="Primo"><option value="Sobrinho(a)"><option value="Madrinha"><option value="Padrinho"><option value="Dama de honra"><option value="Pajem"><option value="Daminha"><option value="Amiga"><option value="Amigo"><option value="Colega de trabalho"></datalist></div>
           <div><div class="f-lbl">Sexo (ajusta o texto)</div><select class="f-sel" id="fg-sexo"><option value="">—</option><option value="F">Feminino</option><option value="M">Masculino</option></select></div>
         </div>
         <div class="f-lbl">Casal: parceiro(a) / cônjuge</div><select class="f-sel" id="fg-parceiro"></select>
+        <div class="f-lbl">Filho de:</div>
+          <select class="f-sel" id="fg-pai"></select>
         <div class="f-lbl">Aparece abaixo de (pai, mãe, tio, irmão…)</div><select class="f-sel" id="fg-pai"></select>
         <div class="sub" style="margin:-4px 0 12px">Na árvore o casal fica lado a lado e quem está “abaixo de” alguém fica sob esse casal. Se deixar vazio, fica logo abaixo do noivo ou da noiva. O parentesco (ex.: cunhado, sobrinho) é calculado sozinho quando você não preencher.</div>
         <div class="f-grid2">
@@ -3129,7 +3131,7 @@ function editGuest(i){
   document.getElementById('fp-guest-ttl').textContent='Editar convidado';
   openPanel('fp-guest','edit');
   document.getElementById('fp-guest').scrollIntoView({behavior:'smooth',block:'start'});
-}
+
 // ═══════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════
 //  CONVITE VIRTUAL — link e QR Codes para os noivos
@@ -4147,6 +4149,5 @@ onAuthStateChanged(auth, async (user) => {
 });
 </script>
 
-   
 </body>
 </html>
