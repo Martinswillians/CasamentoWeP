@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Montserrat:wght@500&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#0f0e1a">
@@ -475,6 +477,57 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
   .mood-grid{grid-template-columns:repeat(4,1fr)}
 }
 .qr-cv{width:100%;max-width:240px;height:auto;display:block;margin:12px auto;border-radius:8px;background:#fff}
+.log-day-h{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;border-bottom:1px solid var(--border);padding:12px 2px;color:var(--txt);font-weight:600;font-size:13px;cursor:pointer;text-align:left;font-family:inherit}
+.log-chev{display:inline-block;color:var(--txt2);transition:transform .15s;width:14px}
+.log-chev.open{transform:rotate(90deg)}
+.log-day:last-child .log-day-h{border-bottom:none}
+#evento-card .f-grid2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#evento-card input[type=date]{min-width:0;width:100%;max-width:100%;box-sizing:border-box;min-height:44px;display:block;-webkit-appearance:none;appearance:none;text-align:center}
+
+.tt-top{display:flex;align-items:flex-start;justify-content:center;gap:10px;margin:2px 0 4px}
+.tt-heart{color:#f472b6;font-size:18px;margin-top:14px}
+.tt-cnt{text-align:center;font-size:11px;color:var(--txt2);margin-bottom:12px}
+.tt-sides{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
+.tt-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 8px 12px}
+.tt-card.tt-s-noivo{border-top:3px solid #4a90d9}.tt-card.tt-s-noiva{border-top:3px solid #d4537e}.tt-card.tt-s-sem{border-top:3px solid var(--txt3)}
+.tt-ttl{font-size:13px;font-weight:700;color:var(--txt);margin:0 4px 10px;display:flex;align-items:center;gap:8px}
+.tt-scroll{overflow-x:auto;padding-bottom:6px}
+.tt{display:table;margin:0 auto;text-align:center}
+.tt ul{display:flex;justify-content:center;padding:18px 0 0;margin:0;position:relative}
+.tt li{list-style:none;text-align:center;position:relative;padding:18px 6px 0;display:block}
+.tt li::before,.tt li::after{content:'';position:absolute;top:0;right:50%;width:50%;height:18px;border-top:2px solid rgba(160,155,225,.45)}
+.tt li::after{right:auto;left:50%;border-left:2px solid rgba(160,155,225,.45)}
+.tt li:only-child::before,.tt li:only-child::after{display:none}
+.tt li:only-child{padding-top:0}
+.tt li:first-child::before,.tt li:last-child::after{border:0}
+.tt li:last-child::before{border-right:2px solid rgba(160,155,225,.45)}
+.tt ul ul::before{content:'';position:absolute;top:0;left:50%;height:18px;border-left:2px solid rgba(160,155,225,.45)}
+.tt>ul{padding-top:0}.tt>ul>li{padding-top:0}.tt>ul>li::before,.tt>ul>li::after{display:none}
+.tt-unit{display:inline-flex;align-items:flex-start}
+.tt-jn{width:14px;border-top:2px solid rgba(244,114,182,.7);margin-top:22px;flex:none}
+.tt-n{width:92px;cursor:pointer;padding:0 2px;display:flex;flex-direction:column;align-items:center}
+.tt-av{position:relative;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border:2px solid;flex:none}
+.tt-av.tt-big{width:52px;height:52px;font-size:18px}
+.tt-noivo{background:rgba(74,144,217,.22);border-color:#4a90d9;color:#9cc8f5}
+.tt-noiva{background:rgba(212,83,126,.22);border-color:#d4537e;color:#f5a6c3}
+.tt-sem{background:rgba(155,151,188,.18);border-color:#9b97bc;color:#cfcde6}
+.tt-spouse{background:rgba(212,148,28,.2);border-color:#d4941c;color:#f0c675}
+.tt-child{background:rgba(78,203,160,.18);border-color:#4ecba0;color:#9be5cb}
+.tt-dot{position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg2)}
+.tt-dot.r-ok{background:#4ecba0}.tt-dot.r-wait{background:#d4941c}.tt-dot.r-no{background:#f87171}
+.tt-kid{position:absolute;left:-6px;top:-6px;font-size:13px}
+.tt-nm{font-size:11px;font-weight:600;color:var(--txt);line-height:1.2;margin-top:4px;max-width:88px;overflow-wrap:anywhere}
+.tt-rl{font-size:11px;color:var(--txt2);line-height:1.2;max-width:88px;overflow-wrap:anywhere}
+.tt-lv{padding-top:18px}
+.tt-lvh{font-size:11px;color:var(--purple);font-weight:600;margin-bottom:6px}
+.tt-lvb{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 4px;max-width:430px;border-top:1px dashed rgba(160,155,225,.35);padding-top:10px}
+@media (min-width:900px){.tt-sides{grid-template-columns:repeat(auto-fit,minmax(420px,1fr))}.tt-lvb{max-width:560px}}
+.tt-col{display:flex;flex-direction:column;align-items:center}
+.tt-sp{width:2px;height:16px;background:rgba(160,155,225,.45);flex:none}
+.tt-blk{display:flex;flex-direction:column;align-items:center;gap:10px}
+.tt-row{display:flex;justify-content:center;align-items:flex-start;gap:6px}
+.tt-blk .tt-lvh{margin:0;padding:2px 10px;border-radius:99px;background:rgba(127,119,221,.15)}
+.tt-lvb{display:none}
 </style>
 </head>
 <body>
@@ -571,12 +624,19 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div id="guest-kids" style="font-size:12px;color:var(--txt2);margin:-4px 0 12px"></div>
       <div class="view-row" id="guest-view"></div>
       <div class="chips" id="guest-filter"></div>
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-convite" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-convite" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="fillGuestLinkSelects(-1);openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
         <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
         <input type="hidden" id="fg-idx" value="-1">
         <div class="f-lbl">Nome completo</div><input class="f-inp" id="fg-nome" placeholder="Nome do convidado">
         <div class="f-lbl">Lista</div><select class="f-sel" id="fg-lado"><option value="">— Não informado —</option><option value="noiva">💗 Lista da noiva</option><option value="noivo">💙 Lista do noivo</option></select>
+        <div class="f-grid2">
+          <div><div class="f-lbl">Parentesco com os noivos</div><input class="f-inp" id="fg-par" list="dl-par" placeholder="ex: Mãe, Irmã, Tio, Amigo"><datalist id="dl-par"><option value="Mãe"><option value="Pai"><option value="Madrasta"><option value="Padrasto"><option value="Irmã"><option value="Irmão"><option value="Avó"><option value="Avô"><option value="Tia"><option value="Tio"><option value="Prima"><option value="Primo"><option value="Madrinha"><option value="Padrinho"><option value="Dama de honra"><option value="Pajem"><option value="Daminha"><option value="Amiga"><option value="Amigo"><option value="Colega de trabalho"></datalist></div>
+          <div><div class="f-lbl">Sexo (ajusta o texto)</div><select class="f-sel" id="fg-sexo"><option value="">—</option><option value="F">Feminino</option><option value="M">Masculino</option></select></div>
+        </div>
+        <div class="f-lbl">Casal: parceiro(a) / cônjuge</div><select class="f-sel" id="fg-parceiro"></select>
+        <div class="f-lbl">Aparece abaixo de (pai, mãe, tio, irmão…)</div><select class="f-sel" id="fg-pai"></select>
+        <div class="sub" style="margin:-4px 0 12px">Na árvore o casal fica lado a lado e quem está “abaixo de” alguém fica sob esse casal. Se deixar vazio, fica logo abaixo do noivo ou da noiva. O parentesco (ex.: cunhado, sobrinho) é calculado sozinho quando você não preencher.</div>
         <div class="f-grid2">
           <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fg-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
           <div><div class="f-lbl">RSVP</div><select class="f-sel" id="fg-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
@@ -621,11 +681,11 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
           <button class="btn-cancel2" onclick="copiarConvite('cartao')">📋 Copiar link</button>
         </div>
         <div class="card" style="margin-bottom:0;text-align:center">
-          <div class="nm">📱 QR Code do convite virtual</div>
-          <div class="sub">Para divulgar em telas, redes e mensagens.</div>
-          <canvas class="qr-cv" id="qr-virtual-cv" width="300" height="300"></canvas>
-          <input class="f-inp" id="cv-link-virtual" readonly style="font-size:10px;display:none">
-          <button class="btn-save" style="margin-top:0" onclick="baixarQR('virtual')">⬇ Baixar PNG</button>
+          <div class="nm">📱 Convite virtual (imagem para compartilhar)</div>
+          <div class="sub">Convite com o QR Code: quem escanear abre o convite e confirma a presença.</div>
+          <canvas class="qr-cv" id="qr-virtual-cv" width="540" height="675" style="max-width:300px"></canvas>
+          <button class="btn-save" style="margin-top:0" onclick="compartilharConvite()">📲 Compartilhar imagem</button>
+          <button class="btn-cancel2" style="margin-top:8px" onclick="baixarQR('virtual')">⬇ Baixar imagem (PNG)</button>
           <button class="btn-cancel2" onclick="copiarConvite('virtual')">📋 Copiar link</button>
         </div>
       </div>
@@ -751,6 +811,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
     <!-- HISTÓRICO -->
     <div class="pg" id="pg-historico">
       <div class="sec-hdr"><span class="sec-ttl">Histórico de Ações</span><div class="sec-act"><button class="btn-sm" onclick="openExport('logs')">⤓ Exportar</button><button class="btn-sm" onclick="clearLogs()" style="background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.2)">Limpar</button></div></div>
+      <div class="view-row"><button class="chip" onclick="logsExpandAll(true)">▾ Expandir tudo</button><button class="chip" onclick="logsExpandAll(false)">▸ Resumir tudo</button></div>
       <div class="card" id="log-list" style="padding:4px 12px"><div class="empty">📭 Nenhuma ação registrada.</div></div>
     </div>
 
@@ -761,8 +822,8 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div class="card" id="evento-card" style="margin-bottom:12px">
         <div class="nm" style="margin-bottom:10px">💍 Datas do casamento</div>
         <div class="f-grid2">
-          <div><div class="f-lbl">📜 Casamento civil</div><input class="f-inp" id="ev-civil" type="date"></div>
-          <div><div class="f-lbl">⛪ Casamento religioso</div><input class="f-inp" id="ev-religioso" type="date"></div>
+          <div><div class="f-lbl">📜 Casamento civil</div><input class="f-inp" id="ev-civil" type="date" onchange="evAuto()"></div>
+          <div><div class="f-lbl">⛪ Casamento religioso</div><input class="f-inp" id="ev-religioso" type="date" onchange="evAuto()"></div>
         </div>
         <div id="ev-count" style="font-size:12px;line-height:1.7;color:var(--txt);margin:2px 0 4px"></div>
         <button class="btn-save" onclick="saveEvento()">Salvar datas</button>
@@ -1104,12 +1165,14 @@ function updateEventUI(){
     dc.innerHTML=parts.length?parts.join('<br>'):'Toque para definir as datas do casamento';
   }
 }
+var _evShown=null;
 function renderEvento(force){
   updateEventUI();
   var ae=document.activeElement;
   if(!force&&ae&&ae.id&&ae.id.indexOf('ev-')===0) return;
-  var ev=state.evento||{};
-  setVal('ev-civil',ev.civil||''); setVal('ev-religioso',ev.religioso||'');
+  var ev=state.evento||{}, sig=JSON.stringify(ev);
+  // só preenche os campos quando a data guardada mudou — assim uma atualização da nuvem não apaga a data que você acabou de escolher
+  if(force||_evShown!==sig){ setVal('ev-civil',ev.civil||''); setVal('ev-religioso',ev.religioso||''); _evShown=sig; }
   var el=document.getElementById('ev-count'); if(!el) return;
   var h=[];
   if(ev.religioso) h.push('⛪ Religioso: '+fmtLong(ev.religioso)+' — '+countText(ev.religioso));
@@ -1118,11 +1181,18 @@ function renderEvento(force){
 }
 function saveEvento(){
   var civil=v('ev-civil'), rel=v('ev-religioso');
-  state.evento={civil:civil,religioso:rel};
+  state.evento={civil:civil,religioso:rel}; _evShown=JSON.stringify(state.evento);
   var det=[]; if(rel) det.push('religioso '+fmtDate(rel)); if(civil) det.push('civil '+fmtDate(civil));
   addLog('edit','Datas do casamento atualizadas',det.join(' · ')||'sem datas');
   renderEvento(true);
   var m=document.getElementById('ev-msg'); if(m){ m.style.display='block'; setTimeout(function(){m.style.display='none'},2500) }
+}
+// salva na hora que a data é escolhida (sem precisar tocar em "Salvar datas")
+function evAuto(){
+  state.evento={civil:v('ev-civil'),religioso:v('ev-religioso')}; _evShown=JSON.stringify(state.evento);
+  saveState(); updateEventUI();
+  var el=document.getElementById('ev-count'), ev=state.evento, h=[];
+  if(el){ if(ev.religioso) h.push('⛪ Religioso: '+fmtLong(ev.religioso)+' — '+countText(ev.religioso)); if(ev.civil) h.push('📜 Civil: '+fmtLong(ev.civil)+' — '+countText(ev.civil)); el.innerHTML=h.join('<br>')||'Nenhuma data definida ainda.'; }
 }
 function goEvento(){
   gotoPage('config');
@@ -1606,18 +1676,17 @@ function getExport(key,opts){
     case 'estilo_detalhes':
       return {title:'Estilo - Detalhes',sheet:'Detalhes',cols:[{h:'Item',t:'text',w:30},{h:'Descrição',t:'text',w:90}],rows:E().detalhes.map(function(d){return [(d.titulo||''),d.desc]}),foot:null};
     case 'guests_tree':
-      var tb=treeBranches(opts.scope||'todos',!!opts.group), tt=tb.reduce(function(a,b){return a+b.count},0);
+      var tb=treeBranches(opts.scope||'todos',false), tt=tb.reduce(function(a,b){return a+b.count},0);
       rows=[['Willians & Poliana ('+tt+')','','','','']];
-      tb.forEach(function(b,bi){
-        var lastB=bi===tb.length-1, p1=lastB?'   ':'│  ';
-        rows.push([(lastB?'└─ ':'├─ ')+b.label+' ('+b.count+')','','','','']);
-        b.groups.forEach(function(gr,gi){
-          var base=p1, lastG=gi===b.groups.length-1;
-          if(gr.nome){ rows.push([base+(lastG?'└─ ':'├─ ')+gr.nome+' ('+gr.items.length+')','','','','']); base+=(lastG?'   ':'│  '); }
-          gr.items.forEach(function(x,k){ rows.push([base+(k===gr.items.length-1?'└─ ':'├─ ')+x.g.nome,x.g.cat||'',x.g.rsvp||'',x.g.mesa||'',x.g.rest||'']); });
+      tb.forEach(function(b){
+        rows.push(['├─ '+b.label+' ('+b.count+')','','','','']);
+        b.lines.forEach(function(ln){
+          var pre=new Array((ln.depth||0)+2).join('│  ')+'├─ ';
+          if(ln.t==='g') rows.push([pre+ln.text,'','','','']);
+          else rows.push([pre+ln.name,ln.rel||'',ln.rsvp||'',ln.mesa||'',ln.rest||'']);
         });
       });
-      return {title:'Árvore de convidados',sheet:'Árvore',cols:[{h:'Árvore',t:'text',w:56},{h:'Categoria',t:'text',w:14},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26}],rows:rows,foot:null};
+      return {title:'Árvore de convidados',sheet:'Árvore',cols:[{h:'Árvore',t:'text',w:56},{h:'Parentesco',t:'text',w:26},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26}],rows:rows,foot:null};
     case 'refs':
       return {title:'Estilo e referências',sheet:'Referências',cols:[{h:'Link de referência',t:'text',w:90}],rows:S.refs.map(function(r){return [r]}),foot:null};
     case 'espaco':
@@ -1734,7 +1803,7 @@ function renderExportScope(){
   }).join('');
   document.getElementById('export-layout-chips').innerHTML=[['lista','☰ Lista (tabela)'],['arvore','🌳 Árvore']].map(function(x){
     return '<button class="chip'+(exportLayout===x[0]?' on':'')+'" onclick="setExportLayout(\''+x[0]+'\')">'+x[1]+'</button>';
-  }).join('')+(exportLayout==='arvore'?'<button class="chip'+(treeGroup?' on':'')+'" onclick="toggleTreeGroup();renderExportScope()">Agrupar por categoria</button>':'');
+  }).join('');
 }
 function setExportScope(s){ exportScope=s; renderExportScope(); }
 function openExport(key){
@@ -2301,10 +2370,38 @@ function addLog(action,entity,detail){
   if(logs.length>300) logs=logs.slice(0,300);
   saveState();
 }
-function renderLogs(){
-  if(!logs.length){document.getElementById('log-list').innerHTML='<div class="empty">📭 Nenhuma ação registrada.</div>';return}
-  document.getElementById('log-list').innerHTML=logs.map(function(l){return logItemHTML(l,false)}).join('');
+var logDays={};   // dia -> aberto (true) ou resumido (false); sem valor = só o dia mais recente fica aberto
+function logDayKey(l){
+  if(l.ts){ var d=new Date(l.ts), p=function(n){return (n<10?'0':'')+n}; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()) }
+  var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(l.time||''); return m?m[3]+'-'+m[2]+'-'+m[1]:'sem-data';
 }
+function logDayLabel(key){
+  var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(key); if(!m) return 'Sem data';
+  var d=new Date(+m[1],+m[2]-1,+m[3]), t=new Date(); t=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  var diff=Math.round((t-d)/86400000), dt=m[3]+'/'+m[2]+'/'+m[1];
+  var wd=d.toLocaleDateString('pt-BR',{weekday:'long'}); wd=wd.charAt(0).toUpperCase()+wd.slice(1);
+  return diff===0?'Hoje · '+dt:diff===1?'Ontem · '+dt:wd+' · '+dt;
+}
+function logGroups(){
+  var out=[], idx={};
+  logs.forEach(function(l){ var k=logDayKey(l); if(idx[k]===undefined){ idx[k]=out.length; out.push({key:k,items:[]}) } out[idx[k]].items.push(l) });
+  return out;
+}
+function renderLogs(){
+  var box=document.getElementById('log-list');
+  if(!logs.length){ box.innerHTML='<div class="empty">📭 Nenhuma ação registrada.</div>'; return }
+  box.innerHTML=logGroups().map(function(g,i){
+    var open=logDays[g.key]!==undefined?logDays[g.key]:i===0;
+    return '<div class="log-day"><button class="log-day-h" onclick="toggleLogDay(\''+g.key+'\')" aria-expanded="'+open+'">'+
+      '<span class="log-chev'+(open?' open':'')+'">▸</span><span style="flex:1">'+logDayLabel(g.key)+'</span><span class="bdg bdg-gray">'+g.items.length+' ação'+(g.items.length>1?'ões':'')+'</span></button>'+
+      '<div class="log-day-b" style="display:'+(open?'block':'none')+'">'+g.items.map(function(l){return logItemHTML(l,false)}).join('')+'</div></div>';
+  }).join('');
+}
+function toggleLogDay(key){
+  var gs=logGroups(), i=-1; gs.forEach(function(g,ix){ if(g.key===key) i=ix });
+  var open=logDays[key]!==undefined?logDays[key]:i===0; logDays[key]=!open; renderLogs();
+}
+function logsExpandAll(v){ logGroups().forEach(function(g){ logDays[g.key]=v }); renderLogs() }
 function clearLogs(){if(confirm('Limpar todo o histórico?')){logs=[];saveState();renderLogs()}}
 
 // ═══════════════════════════════════════════════════
@@ -2452,43 +2549,209 @@ var guestView='lista', treeGroup=false;
 try{ guestView=localStorage.getItem('wp_guest_view')==='arvore'?'arvore':'lista' }catch(e){}
 function setGuestView(x){ guestView=x; try{localStorage.setItem('wp_guest_view',x)}catch(e){} renderGuests() }
 function toggleTreeGroup(){ treeGroup=!treeGroup; renderGuests() }
-function treeBranches(scope,group){
-  var defs=[['noiva','Lista da noiva','💗'],['noivo','Lista do noivo','💙'],['sem','Sem lista','👥']], out=[];
+// ═══════════════════════════════════════════════════
+//  ÁRVORE DE CONVIDADOS — casais, filhos e parentesco com os noivos
+//  Campos do convidado: parentesco (texto), sexo (F/M), parceiroId (casal), paiId (aparece abaixo de…)
+// ═══════════════════════════════════════════════════
+var COUPLE={noivo:'Willians',noiva:'Poliana'};
+var KIND_RANK={pais:0,irmaos:1,cunhados:1.5,avos:2,tios:3,sobrinhos:3.5,primos:4,padrinhos:5,cortejo:5.2,familia:5.5,amigos:6,trabalho:7,conjuge:7.5,outro:8};
+var KIND_LABEL={pais:'Pais',irmaos:'Irmãos',cunhados:'Cunhados',avos:'Avós',tios:'Tios',sobrinhos:'Sobrinhos',primos:'Primos',padrinhos:'Padrinhos e madrinhas',cortejo:'Pajens e damas de honra',familia:'Família',amigos:'Amigos',trabalho:'Trabalho',conjuge:'Acompanhantes',outro:'Outros'};
+function semAcento(s){ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() }
+function cleanNome(n){ var r=String(n||'').replace(/\s*[-–—]\s+.+$/,'').replace(/\s*\([^)]*\)\s*$/,'').trim(); return r||String(n||'') }
+function relParsed(n){ var m=/\s*[-–—]\s+(.+)$/.exec(String(n||'')); if(m) return m[1].trim(); m=/\(([^)]+)\)\s*$/.exec(String(n||'')); return m?m[1].trim():'' }
+function firstName(n){ return cleanNome(n).split(/\s+/)[0] }
+function inic(n){ var p=cleanNome(n).split(/\s+/).filter(Boolean); return ((p[0]||'?').charAt(0)+(p.length>1?p[p.length-1].charAt(0):'')).toUpperCase() }
+function relKind(l){
+  var t=semAcento(l); if(!t) return '';
+  if(/cunhad/.test(t)) return 'cunhados';
+  if(/sobrinh/.test(t)) return 'sobrinhos';
+  if(/conjuge|espos[ao]|marido|mulher|companheir|namorad/.test(t)) return 'conjuge';
+  if(/\b(mae|pai|madrasta|madrastra|padrasto|padrastro|sogro|sogra)\b/.test(t)) return 'pais';
+  if(/\birma|\birmao/.test(t)) return 'irmaos';
+  if(/\b(avo|avos|vovo|vo|bisavo)\b/.test(t)) return 'avos';
+  if(/\b(tio|tia)\b/.test(t)) return 'tios';
+  if(/\bprim[oa]/.test(t)) return 'primos';
+  if(/pajem|pagem|dama|daminha|florist|portador|alianca/.test(t)) return 'cortejo';
+  if(/padrinho|madrinha/.test(t)) return 'padrinhos';
+  if(/amig/.test(t)) return 'amigos';
+  if(/colega|trabalh|chefe/.test(t)) return 'trabalho';
+  return 'outro';
+}
+function sideTxt(l){ return l==='noiva'?'da noiva':l==='noivo'?'do noivo':'' }
+function withSide(rel,lado){ var st=sideTxt(lado); if(!rel||!st||/noiv[ao]/.test(semAcento(rel))) return rel; return rel+' '+st }
+function sx(g,f,m,n){ return g.sexo==='F'?f:g.sexo==='M'?m:n }
+
+// monta as unidades (pessoa ou casal) e a hierarquia
+function buildForest(opts){
+  opts=opts||{}; var flat=!!opts.flat;
+  ensureIds(state,false);
+  var all=state.guests, byId={}; all.forEach(function(g){ byId[g.id]=g });
+  var partner={};
+  if(!flat) all.forEach(function(g){
+    var p=g.parceiroId&&byId[g.parceiroId];
+    if(p&&p!==g){ if(!partner[g.id]) partner[g.id]=p; if(!partner[p.id]) partner[p.id]=g; }
+  });
+  var unitOf={}, units=[];
+  all.forEach(function(g){
+    if(unitOf[g.id]) return;
+    var p=partner[g.id], mem=[g];
+    if(p&&!unitOf[p.id]&&partner[p.id]===g) mem.push(p);
+    var u={i:units.length,members:mem,children:[],parent:null,labels:{},kind:''};
+    mem.forEach(function(m){ unitOf[m.id]=u }); units.push(u);
+  });
+  function explicit(g){ return g.parentesco||relParsed(g.nome) }
+  units.forEach(function(u){
+    if(u.members.length===2&&!explicit(u.members[0])&&explicit(u.members[1])) u.members.reverse();   // quem tem parentesco informado vem primeiro
+  });
+  // hierarquia (paiId)
+  var cand={};
+  if(!flat) units.forEach(function(u){
+    u.members.forEach(function(m){
+      var pu=m.paiId&&unitOf[m.paiId]; if(pu&&pu!==u&&cand[u.i]===undefined) cand[u.i]=pu;
+    });
+  });
+  units.forEach(function(u){                       // quebra ciclos
+    var x=cand[u.i], n=0;
+    while(x&&n<300){ if(x===u){ cand[u.i]=null; break } x=cand[x.i]; n++ }
+  });
+  units.forEach(function(u){ var p=cand[u.i]; if(p){ u.parent=p; p.children.push(u) } });
+  // parentesco de cada pessoa
+  var memo={};
+  function anchor(u){ return u.members.filter(function(m){return explicit(m)})[0]||u.members[0] }
+  function labelOf(g,u){
+    if(memo[g.id]!==undefined) return memo[g.id];
+    memo[g.id]='';
+    var lab='', ex=explicit(g), A=anchor(u);
+    if(ex) lab=withSide(ex,ladoOf(g)||ladoOf(A));
+    else if(u.members.length===2&&g!==A){
+      var kA=relKind(labelOf(A,u)), nmA=firstName(A.nome), t;
+      if(kA==='irmaos') t=sx(g,'Cunhada','Cunhado','Cunhado(a)');
+      else if(kA==='tios') t=sx(g,'Tia','Tio','Tio(a)');
+      else if(kA==='primos') t=sx(g,'Prima','Primo','Primo(a)');
+      else t='Cônjuge de '+nmA;
+      lab=withSide(t,ladoOf(A)||ladoOf(g));
+    }
+    else if(u.parent){
+      var PA=anchor(u.parent), kP=relKind(labelOf(PA,u.parent)), t2;
+      if(kP==='irmaos'||kP==='cunhados') t2=sx(g,'Sobrinha','Sobrinho','Sobrinho(a)');
+      else if(kP==='tios') t2=sx(g,'Prima','Primo','Primo(a)');
+      else if(kP==='pais') t2=sx(g,'Irmã','Irmão','Irmão(ã)');
+      else if(kP==='avos') t2=sx(g,'Tia','Tio','Tio(a)');
+      else t2=sx(g,'Filha','Filho','Filho(a)')+' de '+firstName(PA.nome);
+      lab=withSide(t2,ladoOf(g)||ladoOf(PA)||ladoOf(anchor(u.parent)));
+    }
+    memo[g.id]=lab; return lab;
+  }
+  var CAT={'Família':'familia','Amigos':'amigos','Trabalho':'trabalho'};
+  units.forEach(function(u){
+    u.members.forEach(function(m){ u.labels[m.id]=labelOf(m,u) });
+    var A=anchor(u); u.anchor=A;
+    u.kind=relKind(u.labels[A.id])||CAT[A.cat]||'outro';
+    u.lado=ladoOf(A)||ladoOf(u.members[u.members.length-1])||'';
+  });
+  return {units:units,roots:units.filter(function(u){return !u.parent}),unitOf:unitOf};
+}
+function unitCount(u){ var n=u.members.length; u.children.forEach(function(c){ n+=unitCount(c) }); return n }
+function arrange(list){
+  var items=[], groups={}, order=[];
+  list.forEach(function(u){
+    var rk=KIND_RANK[u.kind]!==undefined?KIND_RANK[u.kind]:8;
+    if(u.children.length) items.push({type:'unit',u:u,rank:rk});
+    else{
+      if(!groups[u.kind]){ groups[u.kind]={type:'group',key:u.kind,label:KIND_LABEL[u.kind]||'Outros',units:[],rank:rk}; order.push(u.kind) }
+      groups[u.kind].units.push(u);
+    }
+  });
+  order.forEach(function(k){ items.push(groups[k]) });
+  return items.map(function(x,i){return {x:x,i:i}}).sort(function(a,b){return (a.x.rank-b.x.rank)||(a.i-b.i)}).map(function(o){return o.x});
+}
+// lados da árvore conforme o filtro/escopo
+function treeSides(scope){
+  var flat=(scope==='convite'||scope==='criancas');
+  var F=buildForest({flat:flat}), defs=[['noivo','Lado do noivo','💙'],['noiva','Lado da noiva','💗'],['sem','Sem lista','👥']], out=[];
   defs.forEach(function(d){
-    if(scope!=='todos'&&scope!=='convite'&&scope!=='criancas'&&scope!==d[0]) return;
-    var items=[]; state.guests.forEach(function(g,i){ if((ladoOf(g)||'sem')===d[0]&&(scope!=='convite'||g.viaConvite)&&(scope!=='criancas'||g.crianca)) items.push({g:g,i:i}) });
-    if(d[0]==='sem'&&!items.length) return;
-    var groups;
-    if(group){
-      var order=['Família','Amigos','Trabalho'], m={};
-      items.forEach(function(x){ var c=x.g.cat||'Outros'; (m[c]=m[c]||[]).push(x) });
-      Object.keys(m).forEach(function(c){ if(order.indexOf(c)<0) order.push(c) });
-      groups=order.filter(function(c){return m[c]}).map(function(c){return {nome:c,items:m[c]}});
-    } else groups=[{nome:null,items:items}];
-    out.push({key:d[0],label:d[1],icon:d[2],count:items.length,groups:groups});
+    if(scope==='noivo'||scope==='noiva'||scope==='sem'){ if(scope!==d[0]) return }
+    var roots=F.roots.filter(function(u){ return (u.lado||'sem')===d[0] });
+    if(scope==='convite') roots=roots.filter(function(u){ return u.members.some(function(m){return m.viaConvite}) });
+    if(scope==='criancas') roots=roots.filter(function(u){ return u.members.some(function(m){return m.crianca}) });
+    if(d[0]==='sem'&&!roots.length) return;
+    var count=roots.reduce(function(a,u){return a+unitCount(u)},0);
+    out.push({key:d[0],label:d[1],icon:d[2],roots:roots,count:count});
   });
   return out;
 }
-function treeNodeHTML(x){
-  var g=x.g, cls=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait';
-  var sub=[g.crianca?'👶':'',g.viaConvite?'📨':'',g.rsvp,g.mesa?'Mesa '+g.mesa:'',g.rest||''].filter(Boolean).join(' · ');
-  return '<li class="gt-li"><div class="gt-node"><span class="gt-dot '+cls+'" title="'+esc(g.rsvp)+'"></span><span class="gt-nm">'+esc(g.nome)+'</span><span class="gt-sub">'+esc(sub)+'</span>'+
-    '<button class="btn-act edit" onclick="editGuest('+x.i+')" title="Editar">✏️</button><button class="btn-act del" onclick="delGuest('+x.i+')" title="Excluir">×</button></div></li>';
+
+// ─── tela ───
+function ttColor(g,u,isChild){
+  if(u.members.length===2&&g!==u.anchor) return 'tt-spouse';
+  if(isChild) return 'tt-child';
+  var l=ladoOf(g)||u.lado; return l==='noiva'?'tt-noiva':l==='noivo'?'tt-noivo':'tt-sem';
+}
+function ttNode(g,u){
+  var idx=state.guests.indexOf(g), rel=u.labels[g.id]||'', st=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait';
+  return '<div class="tt-n" onclick="editGuest('+idx+')" title="'+esc(cleanNome(g.nome)+' · '+(g.rsvp||''))+'"><div class="tt-av '+ttColor(g,u,!!u.parent)+'">'+esc(inic(g.nome))+
+    '<span class="tt-dot '+st+'"></span>'+(g.crianca?'<span class="tt-kid">👶</span>':'')+'</div>'+
+    '<div class="tt-nm">'+esc(cleanNome(g.nome))+'</div>'+(rel?'<div class="tt-rl">'+esc(rel)+'</div>':'')+(g.viaConvite?'<div class="tt-rl">📨</div>':'')+'</div>';
+}
+function ttUnit(u){ return '<div class="tt-unit">'+u.members.map(function(m,k){ return (k?'<div class="tt-jn"></div>':'')+ttNode(m,u) }).join('')+'</div>' }
+// monta "linhas" de no máximo 2 pessoas (casal = 1 linha); cada bloco desce em coluna única
+function ttRows(units){
+  var rows=[], cur=[], n=0;
+  units.forEach(function(u){
+    var w=u.members.length;
+    if(cur.length&&n+w>2){ rows.push(cur); cur=[]; n=0 }
+    cur.push(u); n+=w;
+    if(n>=2){ rows.push(cur); cur=[]; n=0 }
+  });
+  if(cur.length) rows.push(cur);
+  return rows;
+}
+function ttBlocks(items){
+  var out=[];
+  items.forEach(function(it){
+    if(it.type==='group'){
+      out.push('<div class="tt-blk"><div class="tt-lvh">'+esc(it.label)+' · '+it.units.length+'</div>'+
+        ttRows(it.units).map(function(r){ return '<div class="tt-row">'+r.map(ttUnit).join('')+'</div>' }).join('')+'</div>');
+    } else {
+      out.push('<div class="tt-blk"><div class="tt-row">'+ttUnit(it.u)+'</div></div>');
+      out=out.concat(ttBlocks(arrange(it.u.children)));
+    }
+  });
+  return out;
+}
+function ttRoot(key){
+  if(key==='sem') return '<div class="tt-unit"><div class="tt-n"><div class="tt-av tt-sem">?</div><div class="tt-nm">Sem lista</div></div></div>';
+  return '<div class="tt-unit"><div class="tt-n"><div class="tt-av tt-big '+(key==='noiva'?'tt-noiva':'tt-noivo')+'">'+COUPLE[key].charAt(0)+'</div><div class="tt-nm">'+COUPLE[key]+'</div><div class="tt-rl">'+(key==='noiva'?'noiva':'noivo')+'</div></div></div>';
 }
 function renderGuestTree(){
   var box=document.getElementById('guest-tree'); if(!box) return;
-  var br=treeBranches(guestFilter,treeGroup), total=br.reduce(function(a,b){return a+b.count},0);
-  var h='<div class="gtree"><div class="gt-root">💍 Willians &amp; Poliana <small>'+total+' convidado'+(total===1?'':'s')+'</small></div><div class="gt-trunk"></div><div class="gt-branches">';
-  br.forEach(function(b){
-    h+='<details class="gt-br gt-'+b.key+'" open><summary>'+b.icon+' '+b.label+' <span class="bdg bdg-gray">'+b.count+'</span></summary>';
-    if(!b.count) h+='<div class="gt-empty">Nenhum convidado nesta lista.</div>';
-    else if(treeGroup) h+='<ul class="gt-ul">'+b.groups.map(function(gr){
-      return '<li class="gt-li gt-gli"><div class="gt-grp">'+esc(gr.nome)+' ('+gr.items.length+')</div><ul class="gt-ul">'+gr.items.map(treeNodeHTML).join('')+'</ul></li>';
-    }).join('')+'</ul>';
-    else h+='<ul class="gt-ul">'+b.groups[0].items.map(treeNodeHTML).join('')+'</ul>';
-    h+='</details>';
+  var sides=treeSides(guestFilter), total=sides.reduce(function(a,s){return a+s.count},0);
+  var h='<div class="gtree"><div class="tt-top"><div class="tt-n"><div class="tt-av tt-big tt-noivo">'+COUPLE.noivo.charAt(0)+'</div><div class="tt-nm">'+COUPLE.noivo+'</div></div><div class="tt-heart">♥</div><div class="tt-n"><div class="tt-av tt-big tt-noiva">'+COUPLE.noiva.charAt(0)+'</div><div class="tt-nm">'+COUPLE.noiva+'</div></div></div>'+
+    '<div class="tt-cnt">'+total+' convidado'+(total===1?'':'s')+'</div><div class="tt-sides">';
+  sides.forEach(function(s){
+    var items=arrange(s.roots);
+    h+='<div class="tt-card tt-s-'+s.key+'"><div class="tt-ttl">'+s.icon+' '+s.label+' <span class="bdg bdg-gray">'+s.count+'</span></div><div class="tt-col">'+ttRoot(s.key)+
+      (items.length?'<div class="tt-sp"></div>'+ttBlocks(items).join('<div class="tt-sp"></div>'):'')+'</div>'+(items.length?'':'<div class="gt-empty">Nenhum convidado nesta lista.</div>')+'</div>';
   });
   box.innerHTML=h+'</div></div>';
+}
+// ─── exportação (PDF / Excel): linhas com nível ───
+function treeUnitLine(u,depth){
+  var m=u.members, sub=m.map(function(x){return u.labels[x.id]}).filter(Boolean);
+  var st=m.map(function(x){return x.rsvp}).filter(Boolean)[0]||'';
+  var extra=[]; if(m.some(function(x){return x.crianca})) extra.push('criança'); if(m[0].mesa) extra.push('Mesa '+m[0].mesa);
+  return {t:'n',g:m[0],depth:depth,name:m.map(function(x){return cleanNome(x.nome)}).join(' & '),rel:sub.join(' · '),rsvp:st,mesa:m[0].mesa||'',rest:m.map(function(x){return x.rest}).filter(Boolean).join(', '),
+    sub:sub.concat(st?[st]:[],extra).join(' - ')};
+}
+function treeFlatten(items,depth,out){
+  items.forEach(function(it){
+    if(it.type==='group'){ out.push({t:'g',text:it.label+' ('+it.units.length+')',depth:depth}); it.units.forEach(function(u){ out.push(treeUnitLine(u,depth+1)) }); }
+    else{ out.push(treeUnitLine(it.u,depth)); treeFlatten(arrange(it.u.children),depth+1,out); }
+  });
+  return out;
+}
+function treeBranches(scope,group){
+  return treeSides(scope).map(function(s){ return {key:s.key,label:s.label.replace(/^Lado/,'Lista'),icon:s.icon,count:s.count,lines:treeFlatten(arrange(s.roots),0,[])} });
 }
 
 // ─── exportação em árvore ───
@@ -2511,12 +2774,7 @@ function buildTreePDF(opts){
   }
   if(!n){ title(); doc.setFontSize(11); doc.text('Nenhum convidado.',M,92); return doc.output('blob'); }
   var cols=br.map(function(b){
-    var lines=[];
-    b.groups.forEach(function(gr){
-      if(gr.nome) lines.push({t:'g',text:gr.nome+' ('+gr.items.length+')'});
-      gr.items.forEach(function(x){ lines.push({t:'n',g:x.g,ind:gr.nome?1:0}) });
-    });
-    return {b:b,lines:lines,pos:0};
+    return {b:b,lines:b.lines.slice(),pos:0};
   });
   var first=true;
   do{
@@ -2546,12 +2804,12 @@ function buildTreePDF(opts){
       var yy=y+34, lineX=x0+8, startY=y+24, lastMid=null;
       if(!c.lines.length){ doc.setFont('helvetica','italic'); doc.setFontSize(8.5); doc.setTextColor(140,140,160); doc.text('Nenhum convidado.',x0+8,yy+6); return; }
       while(c.pos<c.lines.length){
-        var ln=c.lines[c.pos], jx=lineX+(ln.ind?12:0), tx=jx+(ln.t==='g'?13:22), avail=x0+cw-tx-2, nameL, subL=null, hgt;
+        var ln=c.lines[c.pos], jx=lineX+Math.min(ln.depth||0,5)*11, tx=jx+(ln.t==='g'?13:22), avail=x0+cw-tx-2, nameL, subL=null, hgt;
         if(ln.t==='g'){ nameL=[pdfSafe(ln.text)]; hgt=16; }
         else{
           doc.setFont('helvetica','bold'); doc.setFontSize(9);
-          nameL=doc.splitTextToSize(pdfSafe(ln.g.nome),avail);
-          var sub=[ln.g.rsvp,ln.g.mesa?'Mesa '+ln.g.mesa:'',ln.g.rest||''].filter(Boolean).join(' - ');
+          nameL=doc.splitTextToSize(pdfSafe(ln.name||ln.g.nome),avail);
+          var sub=ln.sub!==undefined?ln.sub:[ln.g.rsvp,ln.g.mesa?'Mesa '+ln.g.mesa:'',ln.g.rest||''].filter(Boolean).join(' - ');
           subL=sub?doc.splitTextToSize(pdfSafe(sub),avail):null;
           hgt=nameL.length*10.5+(subL?subL.length*9.5:0)+5;
         }
@@ -2829,7 +3087,7 @@ function renderGuests(){
 
   var vis=state.guests.map(function(g,i){return {g:g,i:i}}).filter(function(x){return guestMatches(x.g)});
   var vw=document.getElementById('guest-view');
-  if(vw) vw.innerHTML='<button class="chip'+(guestView==='lista'?' on':'')+'" onclick="setGuestView(\'lista\')">☰ Lista</button><button class="chip'+(guestView==='arvore'?' on':'')+'" onclick="setGuestView(\'arvore\')">🌳 Árvore</button>'+(guestView==='arvore'?'<button class="chip'+(treeGroup?' on':'')+'" onclick="toggleTreeGroup()">Agrupar por categoria</button>':'');
+  if(vw) vw.innerHTML='<button class="chip'+(guestView==='lista'?' on':'')+'" onclick="setGuestView(\'lista\')">☰ Lista</button><button class="chip'+(guestView==='arvore'?' on':'')+'" onclick="setGuestView(\'arvore\')">🌳 Árvore</button>';
   document.getElementById('guest-list').style.display=guestView==='arvore'?'none':'block';
   document.getElementById('guest-tree').style.display=guestView==='arvore'?'block':'none';
 
@@ -2864,6 +3122,8 @@ function renderGuests(){
 
 function editGuest(i){
   var g=state.guests[i];
+  fillGuestLinkSelects(i);
+  setVal('fg-par',g.parentesco||'');setVal('fg-sexo',g.sexo||'');setVal('fg-parceiro',g.parceiroId||'');setVal('fg-pai',g.paiId||'');
   setVal('fg-idx',i);setVal('fg-nome',g.nome);setVal('fg-cat',g.cat);setVal('fg-rsvp',g.rsvp);setVal('fg-mesa',g.mesa);setVal('fg-rest',g.rest);setVal('fg-lado',ladoOf(g));document.getElementById('fg-crianca').checked=!!g.crianca;
   guestConviteInfo(g);
   document.getElementById('fp-guest-ttl').textContent='Editar convidado';
@@ -2877,10 +3137,10 @@ function editGuest(i){
 var CONVITE_URL='https://martinswillians.github.io/CasamentoWeP/convite';
 var MONO_IMG=null;
 function conviteLink(o){ return CONVITE_URL+(o?'?o='+o:'') }
-function drawQR(canvas,url,px){
+function drawQR(canvas,url,px,quiet){
   var ctx=canvas.getContext&&canvas.getContext('2d'); if(!ctx||typeof qrcode!=='function') return false;
   var qr=qrcode(0,'H'); qr.addData(url); qr.make();
-  var n=qr.getModuleCount(), q=4, tot=n+2*q, cell=Math.max(1,Math.floor(px/tot)), size=cell*tot;
+  var n=qr.getModuleCount(), q=(quiet||4), tot=n+2*q, cell=Math.max(1,Math.floor(px/tot)), size=cell*tot;
   canvas.width=size; canvas.height=size;
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,size,size); ctx.fillStyle='#3b2a24';
   for(var r=0;r<n;r++) for(var k=0;k<n;k++) if(qr.isDark(r,k)) ctx.fillRect((k+q)*cell,(r+q)*cell,cell,cell);
@@ -2892,13 +3152,65 @@ function drawQR(canvas,url,px){
   }
   return true;
 }
+var CONFIRMAR_ATE='01/02/2027';
+function conviteDataTexto(){
+  var d=(state.evento&&state.evento.religioso)||'2027-03-14', m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+  var dt=m?new Date(+m[1],+m[2]-1,+m[3]):new Date(2027,2,14);
+  var wd=dt.toLocaleDateString('pt-BR',{weekday:'long'}), mes=dt.toLocaleDateString('pt-BR',{month:'long'});
+  var h=String((state.espaco&&state.espaco.hora)||'').replace(/[^0-9:hH]/g,'').replace(/[:hH]/,'h'); if(!/^\d{1,2}h\d{0,2}$/.test(h)) h='15h30';
+  return wd.charAt(0).toUpperCase()+wd.slice(1)+', '+dt.getDate()+' de '+mes+' de '+dt.getFullYear()+' · '+h;
+}
+// convite completo para compartilhar: monograma, nomes, data e QR Code para abrir o convite e confirmar presença
+function drawConviteArt(canvas){
+  var W=1080, H=1350, c=canvas.getContext&&canvas.getContext('2d'); if(!c) return false;
+  canvas.width=W; canvas.height=H;
+  var GOLD='#b8934a', BROWN='#3b2a24', SOFT='#5a443b';
+  c.fillStyle='#f6efe3'; c.fillRect(0,0,W,H);
+  c.strokeStyle=GOLD; c.lineWidth=3; c.strokeRect(40,40,W-80,H-80); c.lineWidth=1; c.strokeRect(56,56,W-112,H-112);
+  var T=function(txt,y,font,color,sp){
+    c.font=font; c.fillStyle=color; c.textBaseline='alphabetic';
+    if(!sp){ c.textAlign='center'; c.fillText(txt,W/2,y); return }
+    c.textAlign='left'; var w=0, i; for(i=0;i<txt.length;i++) w+=c.measureText(txt[i]).width+sp; w-=sp;
+    var x=(W-w)/2; for(i=0;i<txt.length;i++){ c.fillText(txt[i],x,y); x+=c.measureText(txt[i]).width+sp }
+  };
+  if(MONO_IMG&&MONO_IMG.complete&&MONO_IMG.naturalWidth){ var mw=150, mh=mw*MONO_IMG.naturalHeight/MONO_IMG.naturalWidth; c.drawImage(MONO_IMG,(W-mw)/2,88,mw,mh); }
+  T('CONVITE DE CASAMENTO',266,'500 20px Montserrat, Arial, sans-serif','#8a7a70',6);
+  T('POLIANA',362,'600 80px "Cormorant Garamond", Georgia, serif',BROWN,8);
+  T('&',420,'italic 400 58px "Cormorant Garamond", Georgia, serif',GOLD);
+  T('WILLIANS',500,'600 80px "Cormorant Garamond", Georgia, serif',BROWN,8);
+  T(conviteDataTexto(),566,'italic 400 32px "Cormorant Garamond", Georgia, serif',SOFT);
+  var q=document.createElement('canvas'); drawQR(q,conviteLink('virtual'),520,2);
+  var pad=22, box=q.width+pad*2, bx=(W-box)/2, by=600;
+  c.fillStyle='#fff'; c.fillRect(bx,by,box,box); c.strokeStyle=GOLD; c.lineWidth=3; c.strokeRect(bx,by,box,box);
+  c.drawImage(q,bx+pad,by+pad);
+  var y=by+box+38;
+  T('Aponte a câmera do celular para abrir',y,'italic 400 32px "Cormorant Garamond", Georgia, serif',SOFT);
+  T('o convite e confirmar sua presença',y+40,'italic 400 32px "Cormorant Garamond", Georgia, serif',SOFT);
+  T('CONFIRME ATÉ '+CONFIRMAR_ATE,y+92,'500 20px Montserrat, Arial, sans-serif',GOLD,4);
+  return true;
+}
 function renderConvite(){
   var set=function(id,val){ var e=document.getElementById(id); if(e) e.value=val };
   set('cv-link-ver',conviteLink('')); set('cv-link-env',conviteLink('virtual')); set('cv-link-cartao',conviteLink('cartao'));
   if(!MONO_IMG){ MONO_IMG=new Image(); MONO_IMG.onload=renderConvite; MONO_IMG.src=MONO_B64; }
   [['qr-cartao-cv','cartao'],['qr-virtual-cv','virtual']].forEach(function(x){
-    var cv=document.getElementById(x[0]); if(cv) drawQR(cv,conviteLink(x[1]),1200);
+    var cv=document.getElementById(x[0]); if(!cv) return;
+    if(x[1]==='virtual') drawConviteArt(cv); else drawQR(cv,conviteLink(x[1]),1200);
   });
+  if(!window._cvFontsAsked&&document.fonts&&document.fonts.load){
+    window._cvFontsAsked=true;
+    Promise.all(['600 80px "Cormorant Garamond"','italic 400 32px "Cormorant Garamond"','500 20px Montserrat'].map(function(f){return document.fonts.load(f)}))
+      .then(function(){ renderConvite() }).catch(function(){});
+  }
+}
+function compartilharConvite(){
+  var cv=document.getElementById('qr-virtual-cv'); if(!cv||!cv.toBlob){ alert('Não foi possível gerar a imagem neste navegador.'); return }
+  cv.toBlob(function(b){
+    if(!b) return;
+    var f; try{ f=new File([b],'convite-poliana-willians.png',{type:'image/png'}) }catch(e){ f=null }
+    if(f&&navigator.canShare&&navigator.canShare({files:[f]})) navigator.share({files:[f],title:'Convite de casamento',text:'Convite de casamento Poliana & Willians 💍\nConfirme sua presença até '+CONFIRMAR_ATE+':\n'+conviteLink('virtual')}).catch(function(){});
+    else downloadBlob(b,'convite-poliana-willians.png');
+  },'image/png');
 }
 // abre na mesma janela (no app instalado não há botão de voltar do navegador); o convite mostra "← Voltar ao app"
 function abrirConvite(){ location.href=conviteLink('')+'?app=1' }
@@ -2914,7 +3226,7 @@ function zapConvite(){
 }
 function baixarQR(o){
   var cv=document.getElementById(o==='cartao'?'qr-cartao-cv':'qr-virtual-cv'); if(!cv||!cv.toBlob){ alert('Não foi possível gerar a imagem neste navegador.'); return }
-  cv.toBlob(function(b){ if(b) downloadBlob(b,'qr-convite-'+o+'.png') },'image/png');
+  cv.toBlob(function(b){ if(b) downloadBlob(b,o==='virtual'?'convite-virtual-com-qr.png':'qr-convite-'+o+'.png') },'image/png');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3154,11 +3466,31 @@ function guestConviteInfo(g){
     (g.conviteMsg?'<div class="sub" style="margin:-4px 0 10px;font-style:italic">“'+esc(g.conviteMsg)+'”</div>':'');
 }
 
+function fillGuestLinkSelects(ex){
+  ensureIds(state,false);
+  var opts='<option value="">— nenhum —</option>'+state.guests.map(function(g,i){return {g:g,i:i}}).filter(function(x){return x.i!==ex})
+    .sort(function(a,b){return String(a.g.nome).localeCompare(String(b.g.nome),'pt-BR')}).map(function(x){return '<option value="'+x.g.id+'">'+esc(x.g.nome)+'</option>'}).join('');
+  var p=document.getElementById('fg-parceiro'), q=document.getElementById('fg-pai');
+  if(p) p.innerHTML=opts; if(q) q.innerHTML=opts.replace('— nenhum —','— direto dos noivos —');
+  setVal('fg-par','');setVal('fg-sexo','');setVal('fg-parceiro','');setVal('fg-pai','');
+}
 function saveGuest(){
   var idx=parseInt(v('fg-idx'));
   var nome=v('fg-nome').trim();if(!nome)return;
   var obj=Object.assign({},idx>=0?state.guests[idx]:{},{nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest'),lado:v('fg-lado')});
   if(document.getElementById('fg-crianca').checked) obj.crianca=true; else delete obj.crianca;
+  var _par=v('fg-par').trim(), _sx=v('fg-sexo'), _np=v('fg-parceiro'), _pai=v('fg-pai'), _op=(idx>=0&&state.guests[idx].parceiroId)||'';
+  if(_par) obj.parentesco=_par; else delete obj.parentesco;
+  if(_sx) obj.sexo=_sx; else delete obj.sexo;
+  if(_pai) obj.paiId=_pai; else delete obj.paiId;
+  if(_np) obj.parceiroId=_np; else delete obj.parceiroId;
+  if(!obj.id) obj.id=newId();
+  state.guests.forEach(function(o){                       // casal sempre nos dois lados
+    if(o===obj) return;
+    if(_op&&o.id===_op&&_op!==_np&&o.parceiroId===obj.id) delete o.parceiroId;
+    if(_np&&o.id!==_np&&o.parceiroId===_np) delete o.parceiroId;
+    if(_np&&o.id===_np) o.parceiroId=obj.id;
+  });
   if(idx>=0){addLog('edit','Convidado editado',state.guests[idx].nome+' → '+nome);state.guests[idx]=obj;}
   else{addLog('add','Convidado adicionado',nome);state.guests.push(obj);}
   setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');setVal('fg-lado','');document.getElementById('fg-crianca').checked=false;guestConviteInfo(null);
@@ -3169,7 +3501,9 @@ function delGuest(i){
   if(!confirm('Excluir o convidado '+state.guests[i].nome+'?'))return;
   var gg=state.guests[i], ids=(gg.rsvpIds||[]).slice();
   addLog('del','Convidado removido',gg.nome);
-  state.guests.splice(i,1);saveState();renderGuests();
+  state.guests.splice(i,1);
+  state.guests.forEach(function(o){ if(o.parceiroId===gg.id) delete o.parceiroId; if(o.paiId===gg.id) delete o.paiId; });
+  saveState();renderGuests();
   if(ids.length&&window.FB&&FB.deleteRsvp&&confirm('Esse convidado respondeu pelo convite.\nExcluir também a resposta dele da nuvem?\n(OK = excluir · Cancelar = manter a resposta em “📥 Convite”)')){
     Promise.all(ids.map(function(id){return FB.deleteRsvp(id)})).then(function(){
       rsvpCache=rsvpCache.filter(function(r){return ids.indexOf(r.id)<0}); updateConviteBtn();
