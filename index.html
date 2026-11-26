@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,viewport-fit=cover">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Montserrat:wght@500&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#0f0e1a">
@@ -405,6 +403,33 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .gt-sub{font-size:10px;color:var(--txt2);text-align:right;max-width:42%}
 .gt-empty{font-size:11px;color:var(--txt3);padding:4px 0 2px}
 
+/* árvore genealógica de convidados (modelo A) */
+.fx-scroll{overflow-x:auto;padding:4px 2px 14px;-webkit-overflow-scrolling:touch}
+.fv-kids{margin-left:18px}
+.fv-kid{position:relative;padding:12px 0 0 16px}
+.fv-kid::before{content:'';position:absolute;left:0;top:0;bottom:0;border-left:2px solid var(--border2)}
+.fv-kid::after{content:'';position:absolute;left:0;top:62px;width:14px;border-top:2px solid var(--border2)}
+.fv-kid:last-child::before{bottom:auto;height:62px}
+.fv-root{margin-top:14px}
+.fv-row{display:flex;align-items:flex-start}
+.fv-row .fx-cw+.fx-cw{margin-left:8px}
+.fv-row .fx-link+.fx-cw{margin-left:0}
+.fx-unit{display:flex;align-items:flex-start}
+.fx-link{width:14px;height:2px;background:#f0be6c;margin-top:52px;flex:none}
+.fx-cw{display:flex;flex-direction:column;align-items:center}
+.fx-card{--c:#8b84e6;width:90px;box-sizing:border-box;padding:12px 3px 8px;border-radius:39px 39px 10px 10px;text-align:center;position:relative;cursor:pointer;background:var(--bg3);border:1.5px solid var(--c)}
+.fx-card.noivo{--c:#8fbdf2;background:#1f2d4a}.fx-card.noiva{--c:#f2a2c0;background:#3a2336}
+.fx-card.root{width:104px;cursor:default;padding-top:14px}
+.fx-av{width:34px;height:34px;border-radius:50%;background:var(--bg);border:1.5px solid var(--c);margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--txt)}
+.fx-nm{font-size:11px;font-weight:700;line-height:1.2;color:var(--txt);overflow-wrap:anywhere}
+.fx-rl{font-size:10px;color:var(--txt2);margin-top:1px}
+.fx-dot{position:absolute;top:7px;right:13px;width:8px;height:8px;border-radius:50%}
+.fx-dot.r-ok{background:#4ecba0}.fx-dot.r-wait{background:#d4941c}.fx-dot.r-no{background:#f87171}
+.fx-dim{opacity:.28}
+.fx-mv{display:flex;gap:6px;margin-top:5px}
+.fx-mv button{border:1px solid var(--border2);background:var(--bg2);color:var(--txt);border-radius:6px;font-size:11px;padding:3px 9px;cursor:pointer}
+.fx-hint{font-size:11px;color:var(--txt2);text-align:center;margin:0 0 10px}
+
 /* ═══════════════════════════════════════════
    FOTOS & ESTILO
 ═══════════════════════════════════════════ */
@@ -477,57 +502,6 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
   .mood-grid{grid-template-columns:repeat(4,1fr)}
 }
 .qr-cv{width:100%;max-width:240px;height:auto;display:block;margin:12px auto;border-radius:8px;background:#fff}
-.log-day-h{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;border-bottom:1px solid var(--border);padding:12px 2px;color:var(--txt);font-weight:600;font-size:13px;cursor:pointer;text-align:left;font-family:inherit}
-.log-chev{display:inline-block;color:var(--txt2);transition:transform .15s;width:14px}
-.log-chev.open{transform:rotate(90deg)}
-.log-day:last-child .log-day-h{border-bottom:none}
-#evento-card .f-grid2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-#evento-card input[type=date]{min-width:0;width:100%;max-width:100%;box-sizing:border-box;min-height:44px;display:block;-webkit-appearance:none;appearance:none;text-align:center}
-
-.tt-top{display:flex;align-items:flex-start;justify-content:center;gap:10px;margin:2px 0 4px}
-.tt-heart{color:#f472b6;font-size:18px;margin-top:14px}
-.tt-cnt{text-align:center;font-size:11px;color:var(--txt2);margin-bottom:12px}
-.tt-sides{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
-.tt-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 8px 12px}
-.tt-card.tt-s-noivo{border-top:3px solid #4a90d9}.tt-card.tt-s-noiva{border-top:3px solid #d4537e}.tt-card.tt-s-sem{border-top:3px solid var(--txt3)}
-.tt-ttl{font-size:13px;font-weight:700;color:var(--txt);margin:0 4px 10px;display:flex;align-items:center;gap:8px}
-.tt-scroll{overflow-x:auto;padding-bottom:6px}
-.tt{display:table;margin:0 auto;text-align:center}
-.tt ul{display:flex;justify-content:center;padding:18px 0 0;margin:0;position:relative}
-.tt li{list-style:none;text-align:center;position:relative;padding:18px 6px 0;display:block}
-.tt li::before,.tt li::after{content:'';position:absolute;top:0;right:50%;width:50%;height:18px;border-top:2px solid rgba(160,155,225,.45)}
-.tt li::after{right:auto;left:50%;border-left:2px solid rgba(160,155,225,.45)}
-.tt li:only-child::before,.tt li:only-child::after{display:none}
-.tt li:only-child{padding-top:0}
-.tt li:first-child::before,.tt li:last-child::after{border:0}
-.tt li:last-child::before{border-right:2px solid rgba(160,155,225,.45)}
-.tt ul ul::before{content:'';position:absolute;top:0;left:50%;height:18px;border-left:2px solid rgba(160,155,225,.45)}
-.tt>ul{padding-top:0}.tt>ul>li{padding-top:0}.tt>ul>li::before,.tt>ul>li::after{display:none}
-.tt-unit{display:inline-flex;align-items:flex-start}
-.tt-jn{width:14px;border-top:2px solid rgba(244,114,182,.7);margin-top:22px;flex:none}
-.tt-n{width:92px;cursor:pointer;padding:0 2px;display:flex;flex-direction:column;align-items:center}
-.tt-av{position:relative;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;border:2px solid;flex:none}
-.tt-av.tt-big{width:52px;height:52px;font-size:18px}
-.tt-noivo{background:rgba(74,144,217,.22);border-color:#4a90d9;color:#9cc8f5}
-.tt-noiva{background:rgba(212,83,126,.22);border-color:#d4537e;color:#f5a6c3}
-.tt-sem{background:rgba(155,151,188,.18);border-color:#9b97bc;color:#cfcde6}
-.tt-spouse{background:rgba(212,148,28,.2);border-color:#d4941c;color:#f0c675}
-.tt-child{background:rgba(78,203,160,.18);border-color:#4ecba0;color:#9be5cb}
-.tt-dot{position:absolute;right:-2px;bottom:-2px;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg2)}
-.tt-dot.r-ok{background:#4ecba0}.tt-dot.r-wait{background:#d4941c}.tt-dot.r-no{background:#f87171}
-.tt-kid{position:absolute;left:-6px;top:-6px;font-size:13px}
-.tt-nm{font-size:11px;font-weight:600;color:var(--txt);line-height:1.2;margin-top:4px;max-width:88px;overflow-wrap:anywhere}
-.tt-rl{font-size:11px;color:var(--txt2);line-height:1.2;max-width:88px;overflow-wrap:anywhere}
-.tt-lv{padding-top:18px}
-.tt-lvh{font-size:11px;color:var(--purple);font-weight:600;margin-bottom:6px}
-.tt-lvb{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 4px;max-width:430px;border-top:1px dashed rgba(160,155,225,.35);padding-top:10px}
-@media (min-width:900px){.tt-sides{grid-template-columns:repeat(auto-fit,minmax(420px,1fr))}.tt-lvb{max-width:560px}}
-.tt-col{display:flex;flex-direction:column;align-items:center}
-.tt-sp{width:2px;height:16px;background:rgba(160,155,225,.45);flex:none}
-.tt-blk{display:flex;flex-direction:column;align-items:center;gap:10px}
-.tt-row{display:flex;justify-content:center;align-items:flex-start;gap:6px}
-.tt-blk .tt-lvh{margin:0;padding:2px 10px;border-radius:99px;background:rgba(127,119,221,.15)}
-.tt-lvb{display:none}
 </style>
 </head>
 <body>
@@ -624,19 +598,12 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div id="guest-kids" style="font-size:12px;color:var(--txt2);margin:-4px 0 12px"></div>
       <div class="view-row" id="guest-view"></div>
       <div class="chips" id="guest-filter"></div>
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-convite" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="fillGuestLinkSelects(-1);openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-convite" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
         <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
         <input type="hidden" id="fg-idx" value="-1">
         <div class="f-lbl">Nome completo</div><input class="f-inp" id="fg-nome" placeholder="Nome do convidado">
         <div class="f-lbl">Lista</div><select class="f-sel" id="fg-lado"><option value="">— Não informado —</option><option value="noiva">💗 Lista da noiva</option><option value="noivo">💙 Lista do noivo</option></select>
-        <div class="f-grid2">
-          <div><div class="f-lbl">Parentesco com os noivos</div><input class="f-inp" id="fg-par" list="dl-par" placeholder="ex: Mãe, Irmã, Tio, Amigo"><datalist id="dl-par"><option value="Mãe"><option value="Pai"><option value="Madrasta"><option value="Padrasto"><option value="Irmã"><option value="Irmão"><option value="Avó"><option value="Avô"><option value="Tia"><option value="Tio"><option value="Prima"><option value="Primo"><option value="Madrinha"><option value="Padrinho"><option value="Dama de honra"><option value="Pajem"><option value="Daminha"><option value="Amiga"><option value="Amigo"><option value="Colega de trabalho"></datalist></div>
-          <div><div class="f-lbl">Sexo (ajusta o texto)</div><select class="f-sel" id="fg-sexo"><option value="">—</option><option value="F">Feminino</option><option value="M">Masculino</option></select></div>
-        </div>
-        <div class="f-lbl">Casal: parceiro(a) / cônjuge</div><select class="f-sel" id="fg-parceiro"></select>
-        <div class="f-lbl">Aparece abaixo de (pai, mãe, tio, irmão…)</div><select class="f-sel" id="fg-pai"></select>
-        <div class="sub" style="margin:-4px 0 12px">Na árvore o casal fica lado a lado e quem está “abaixo de” alguém fica sob esse casal. Se deixar vazio, fica logo abaixo do noivo ou da noiva. O parentesco (ex.: cunhado, sobrinho) é calculado sozinho quando você não preencher.</div>
         <div class="f-grid2">
           <div><div class="f-lbl">Categoria</div><select class="f-sel" id="fg-cat"><option>Família</option><option>Amigos</option><option>Trabalho</option></select></div>
           <div><div class="f-lbl">RSVP</div><select class="f-sel" id="fg-rsvp"><option>Aguardando</option><option>Confirmado</option><option>Recusou</option></select></div>
@@ -645,6 +612,12 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
           <div><div class="f-lbl">Mesa nº</div><input class="f-inp" id="fg-mesa" placeholder="ex: 3"></div>
           <div><div class="f-lbl">Restrição alimentar</div><input class="f-inp" id="fg-rest" placeholder="ex: Vegetariano"></div>
         </div>
+        <div class="f-grid2">
+          <div><div class="f-lbl">Parentesco</div><select class="f-sel" id="fg-par" onchange="onParChange()"><option value="">— Não informado —</option><option>Pai</option><option>Mãe</option><option>Padrasto</option><option>Madrasta</option><option>Irmão(ã)</option><option>Marido</option><option>Esposa</option><option>Companheiro(a)</option><option>Filho(a)</option><option>Enteado(a)</option><option>Avô/Avó</option><option>Tio(a)</option><option>Primo(a)</option><option>Amigo(a)</option><option>Outro</option></select></div>
+          <div><div class="f-lbl">Posição na árvore</div><select class="f-sel" id="fg-vt" onchange="fillVinc(curSelfId(),'')"><option value="">Direto sob o noivo/noiva</option><option value="casal">É companheiro(a) de…</option><option value="filho">É filho(a) de…</option></select></div>
+        </div>
+        <div id="fg-vc-wrap" style="display:none"><div class="f-lbl">Quem? (só convidados já cadastrados)</div><select class="f-sel" id="fg-vc"></select></div>
+        <div id="fg-vc-hint" style="display:none;font-size:11px;color:var(--amber);margin:-4px 0 10px"></div>
         <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);margin-bottom:12px;cursor:pointer"><input type="checkbox" id="fg-crianca" style="width:18px;height:18px;flex:none"><span>👶 Criança até 8 anos <span style="color:var(--txt2)">— entra na lista, mas não conta no buffet</span></span></label>
         <div id="fg-convite-info" style="display:none"></div>
         <button class="btn-save" onclick="saveGuest()">Salvar convidado</button>
@@ -681,11 +654,11 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
           <button class="btn-cancel2" onclick="copiarConvite('cartao')">📋 Copiar link</button>
         </div>
         <div class="card" style="margin-bottom:0;text-align:center">
-          <div class="nm">📱 Convite virtual (imagem para compartilhar)</div>
-          <div class="sub">Convite com o QR Code: quem escanear abre o convite e confirma a presença.</div>
-          <canvas class="qr-cv" id="qr-virtual-cv" width="540" height="675" style="max-width:300px"></canvas>
-          <button class="btn-save" style="margin-top:0" onclick="compartilharConvite()">📲 Compartilhar imagem</button>
-          <button class="btn-cancel2" style="margin-top:8px" onclick="baixarQR('virtual')">⬇ Baixar imagem (PNG)</button>
+          <div class="nm">📱 QR Code do convite virtual</div>
+          <div class="sub">Para divulgar em telas, redes e mensagens.</div>
+          <canvas class="qr-cv" id="qr-virtual-cv" width="300" height="300"></canvas>
+          <input class="f-inp" id="cv-link-virtual" readonly style="font-size:10px;display:none">
+          <button class="btn-save" style="margin-top:0" onclick="baixarQR('virtual')">⬇ Baixar PNG</button>
           <button class="btn-cancel2" onclick="copiarConvite('virtual')">📋 Copiar link</button>
         </div>
       </div>
@@ -811,7 +784,6 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
     <!-- HISTÓRICO -->
     <div class="pg" id="pg-historico">
       <div class="sec-hdr"><span class="sec-ttl">Histórico de Ações</span><div class="sec-act"><button class="btn-sm" onclick="openExport('logs')">⤓ Exportar</button><button class="btn-sm" onclick="clearLogs()" style="background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.2)">Limpar</button></div></div>
-      <div class="view-row"><button class="chip" onclick="logsExpandAll(true)">▾ Expandir tudo</button><button class="chip" onclick="logsExpandAll(false)">▸ Resumir tudo</button></div>
       <div class="card" id="log-list" style="padding:4px 12px"><div class="empty">📭 Nenhuma ação registrada.</div></div>
     </div>
 
@@ -822,8 +794,8 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div class="card" id="evento-card" style="margin-bottom:12px">
         <div class="nm" style="margin-bottom:10px">💍 Datas do casamento</div>
         <div class="f-grid2">
-          <div><div class="f-lbl">📜 Casamento civil</div><input class="f-inp" id="ev-civil" type="date" onchange="evAuto()"></div>
-          <div><div class="f-lbl">⛪ Casamento religioso</div><input class="f-inp" id="ev-religioso" type="date" onchange="evAuto()"></div>
+          <div><div class="f-lbl">📜 Casamento civil</div><input class="f-inp" id="ev-civil" type="date"></div>
+          <div><div class="f-lbl">⛪ Casamento religioso</div><input class="f-inp" id="ev-religioso" type="date"></div>
         </div>
         <div id="ev-count" style="font-size:12px;line-height:1.7;color:var(--txt);margin:2px 0 4px"></div>
         <button class="btn-save" onclick="saveEvento()">Salvar datas</button>
@@ -831,6 +803,11 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       </div>
 
       <!-- BACKUP -->
+      <div class="sec-ttl" style="margin-bottom:6px">🩺 Diagnóstico de salvamento</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">Se alguma informação não estiver ficando salva, toque abaixo: o app grava cada parte separadamente, confere na nuvem e mostra onde está o problema.</div>
+      <button class="btn-save" style="margin-bottom:10px" onclick="runDiag()">Testar salvamento</button>
+      <div id="diag-out"></div>
+      <div class="divider" style="margin:16px 0"></div>
       <div class="sec-ttl" style="margin-bottom:10px">📦 Backup de dados</div>
 
       <div class="card" style="margin-bottom:10px">
@@ -1104,7 +1081,7 @@ var logs = [];
 // ═══════════════════════════════════════════════════
 function clone(o){return JSON.parse(JSON.stringify(o))}
 
-var cloudLoaded=false, appEntered=false, _defRemoved=false, _serverSynced=false;
+var cloudLoaded=false, appEntered=false, _defRemoved=false;
 var _saveTimer=null, _inflight=0, _lastSent={}, _waitTimer=null, _lastPush=Promise.resolve();
 
 function normalizeState(s){
@@ -1165,14 +1142,12 @@ function updateEventUI(){
     dc.innerHTML=parts.length?parts.join('<br>'):'Toque para definir as datas do casamento';
   }
 }
-var _evShown=null;
 function renderEvento(force){
   updateEventUI();
   var ae=document.activeElement;
   if(!force&&ae&&ae.id&&ae.id.indexOf('ev-')===0) return;
-  var ev=state.evento||{}, sig=JSON.stringify(ev);
-  // só preenche os campos quando a data guardada mudou — assim uma atualização da nuvem não apaga a data que você acabou de escolher
-  if(force||_evShown!==sig){ setVal('ev-civil',ev.civil||''); setVal('ev-religioso',ev.religioso||''); _evShown=sig; }
+  var ev=state.evento||{};
+  setVal('ev-civil',ev.civil||''); setVal('ev-religioso',ev.religioso||'');
   var el=document.getElementById('ev-count'); if(!el) return;
   var h=[];
   if(ev.religioso) h.push('⛪ Religioso: '+fmtLong(ev.religioso)+' — '+countText(ev.religioso));
@@ -1181,18 +1156,11 @@ function renderEvento(force){
 }
 function saveEvento(){
   var civil=v('ev-civil'), rel=v('ev-religioso');
-  state.evento={civil:civil,religioso:rel}; _evShown=JSON.stringify(state.evento);
+  state.evento={civil:civil,religioso:rel};
   var det=[]; if(rel) det.push('religioso '+fmtDate(rel)); if(civil) det.push('civil '+fmtDate(civil));
   addLog('edit','Datas do casamento atualizadas',det.join(' · ')||'sem datas');
   renderEvento(true);
   var m=document.getElementById('ev-msg'); if(m){ m.style.display='block'; setTimeout(function(){m.style.display='none'},2500) }
-}
-// salva na hora que a data é escolhida (sem precisar tocar em "Salvar datas")
-function evAuto(){
-  state.evento={civil:v('ev-civil'),religioso:v('ev-religioso')}; _evShown=JSON.stringify(state.evento);
-  saveState(); updateEventUI();
-  var el=document.getElementById('ev-count'), ev=state.evento, h=[];
-  if(el){ if(ev.religioso) h.push('⛪ Religioso: '+fmtLong(ev.religioso)+' — '+countText(ev.religioso)); if(ev.civil) h.push('📜 Civil: '+fmtLong(ev.civil)+' — '+countText(ev.civil)); el.innerHTML=h.join('<br>')||'Nenhuma data definida ainda.'; }
 }
 function goEvento(){
   gotoPage('config');
@@ -1249,150 +1217,165 @@ function setSync(s){
 window.addEventListener('online', function(){ setSync((_inflight||_saveTimer)?'saving':'ok') });
 window.addEventListener('offline',function(){ setSync('offline') });
 
-// ═══════════════════════════════════════════════════
-//  SINCRONIZAÇÃO SEGURA (vários aparelhos ao mesmo tempo)
-//  - cada item (convidado, tarefa…) tem um id fixo
-//  - ao salvar, o app lê a versão atual da nuvem e MESCLA a sua mudança (em vez de sobrescrever a lista toda)
-//  - só salva depois que o servidor confirmou os dados (nunca a partir de cópia antiga do aparelho)
-// ═══════════════════════════════════════════════════
-var ID_KEYS=['guests','tasks','fin','suppliers','tables','gifts'];
-function hashStr(s){ var h=5381; for(var i=0;i<s.length;i++) h=((h<<5)+h+s.charCodeAt(i))|0; return (h>>>0).toString(36) }
-function newId(){ return 'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,7) }
-function idsArr(arr,legacy){
-  var ch=false, occ={};
-  (arr||[]).forEach(function(it){
-    if(!it||typeof it!=='object'||it.id) return;
-    if(legacy){ var h=hashStr(JSON.stringify(it)); occ[h]=(occ[h]||0)+1; it.id='L'+h+'-'+occ[h]; }
-    else it.id=newId();
-    ch=true;
-  });
-  return ch;
-}
-function ensureIds(st,legacy){ var ch=false; ID_KEYS.forEach(function(k){ if(idsArr(st[k],legacy)) ch=true }); return ch }
-function J(x){ return JSON.stringify(x) }
-function isIdArr(a){ return Array.isArray(a)&&a.every(function(x){return x&&typeof x==='object'&&x.id}) }
-function mapById(a){ var m={}; a.forEach(function(x){m[x.id]=x}); return m }
-function mergeItem(b,l,r){
-  var o=Object.assign({},r);
-  Object.keys(l).forEach(function(k){ if(J(l[k])!==J(b[k])) o[k]=l[k] });
-  Object.keys(b).forEach(function(k){ if(!(k in l)) delete o[k] });
-  return o;
-}
-function orderDiffers(a,b){
-  var bi=b.map(function(x){return x.id}), ai=a.map(function(x){return x.id}).filter(function(id){return bi.indexOf(id)>=0});
-  return J(ai)!==J(bi.filter(function(id){return ai.indexOf(id)>=0}));
-}
-function mergeById(B,L,R){
-  var bm=mapById(B), lm=mapById(L), used={}, out=[];
-  R.forEach(function(r){
-    var b=bm[r.id], l=lm[r.id];
-    if(b&&!l) return;                                        // eu apaguei
-    out.push((b&&l&&J(l)!==J(b))?mergeItem(b,l,r):r); used[r.id]=1;   // eu editei (campo a campo) ou ficou o do servidor
-  });
-  L.forEach(function(l){ if(!used[l.id]&&!bm[l.id]){ out.push(l); used[l.id]=1 } });   // itens novos meus
-  if(orderDiffers(L,B)&&!orderDiffers(R,B)){                 // só eu reordenei
-    var pos={}; L.forEach(function(x,i){pos[x.id]=i});
-    out=out.map(function(x,i){return {x:x,i:i}}).sort(function(p,q){
-      var a=pos[p.x.id], c=pos[q.x.id];
-      return (a===undefined||c===undefined)?(p.i-q.i):(a-c);
-    }).map(function(p){return p.x});
-  }
-  return out;
-}
-function mergeSet(B,L,R){
-  var out=R.filter(function(x){ return !(B.indexOf(x)>=0&&L.indexOf(x)<0) });
-  L.forEach(function(x){ if(B.indexOf(x)<0&&out.indexOf(x)<0) out.push(x) });
-  return out;
-}
-function merge3(base,local,remote){
-  if(remote===undefined||remote===null) return local;
-  if(J(remote)===J(base)) return local;
-  if(J(local)===J(base)) return remote;
-  if(J(local)===J(remote)) return local;
-  if(Array.isArray(local)&&Array.isArray(remote)){
-    var b=Array.isArray(base)?base.map(function(x){return (x&&typeof x==='object')?Object.assign({},x):x}):[];
-    idsArr(b,true);
-    if(isIdArr(local)&&isIdArr(remote)&&isIdArr(b)) return mergeById(b,local,remote);
-    if(local.concat(remote,b).every(function(x){return typeof x!=='object'})) return mergeSet(b,local,remote);
-    return local;
-  }
-  if(local&&remote&&typeof local==='object'&&typeof remote==='object'&&!Array.isArray(local)&&!Array.isArray(remote)){
-    var bb=(base&&typeof base==='object'&&!Array.isArray(base))?base:{}, out=Object.assign({},remote), keys={};
-    Object.keys(local).concat(Object.keys(bb)).forEach(function(k){keys[k]=1});
-    Object.keys(keys).forEach(function(k){
-      if(J(local[k])===J(bb[k])) return;
-      if(local[k]===undefined) delete out[k]; else out[k]=merge3(bb[k],local[k],remote[k]);
-    });
-    return out;
-  }
-  return local;
-}
-
 // ─── Salvar: agenda envio (debounce) e manda só as seções que mudaram ───
 function saveState(){
   setSync('saving');
   clearTimeout(_saveTimer);
   _saveTimer=setTimeout(pushCloud,500);
 }
+
+// ═══════════════════════════════════════════════════
+//  CONVIDADOS: cada um é um documento próprio (wedding/guest_<id>)
+//  Assim uma gravação antiga ou de outro aparelho nunca apaga a lista inteira.
+// ═══════════════════════════════════════════════════
+var allowShrinkOnce=false, guestsLoaded=false, _gSent={}, _gDirty={}, _gWatch=false, _gMigrating=false, _gLast=null;
+function _fnv(t){ var h=2166136261; for(var i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619) } return (h>>>0).toString(36) }
+function _gOrd(a,b){ return (a.ord===undefined?1e9:a.ord)-(b.ord===undefined?1e9:b.ord) }
+function _gStrip(d){ var g=Object.assign({},d); delete g.kind; delete g.uby; delete g.at; return g }
+function guestMode(){ return !!(state.meta&&state.meta.guestsDocs) }
+function startGuestWatch(){
+  if(_gWatch||!window.FB||!FB.watchGuests) return; _gWatch=true;
+  FB.watchGuests(onGuestsData,function(e){ console.error('Convidados:',e); showSaveError([{name:'convidados',err:e}]); });
+}
+function migrateGuests(map){
+  _gMigrating=true;
+  var jobs=[];
+  state.guests.forEach(function(g,i){
+    if(!g.id) g.id='m'+_fnv(_nk(g.nome))+'_'+i;   // id previsível: dois aparelhos migrando ao mesmo tempo não duplicam
+    g.ord=i;
+    if(!map[g.id]) jobs.push(Promise.resolve().then(function(){ return FB.saveGuest(g) }));
+  });
+  Promise.all(jobs).then(function(){
+    state.meta=(state.meta&&typeof state.meta==='object')?state.meta:{}; state.meta.guestsDocs=true;
+    saveState(); _gMigrating=false;
+    if(_gLast) onGuestsData(_gLast.list,_gLast.meta);
+  }).catch(function(e){ _gMigrating=false; console.error('Migração de convidados:',e); showSaveError([{name:'convidados',err:e}]); });
+}
+function onGuestsData(list,meta){
+  meta=meta||{}; _gLast={list:list,meta:meta};
+  var cloud=list.map(_gStrip).filter(function(g){return g.id}).sort(_gOrd), map={};
+  cloud.forEach(function(g){ map[g.id]=g });
+  if(!guestMode()){
+    if(!meta.fromCache&&!_gMigrating&&cloudLoaded) migrateGuests(map);
+    return;
+  }
+  var out=[], used={};
+  cloud.forEach(function(g){
+    if(_gDirty[g.id]==='DEL') return;                       // apagado aqui, aguardando confirmação
+    used[g.id]=1;
+    if(_gDirty[g.id]!==undefined){ var lg=state.guests.filter(function(x){return x.id===g.id})[0]; out.push(lg||g); } else out.push(g);
+  });
+  state.guests.forEach(function(g){
+    if(!g.id){ out.push(g); return }
+    if(used[g.id]) return;
+    if(_gDirty[g.id]!==undefined||!_gSent[g.id]) out.push(g);   // novo aqui e ainda não gravado
+  });
+  out.sort(_gOrd);
+  _gSent={}; cloud.forEach(function(g){ _gSent[g.id]=_canon(g) });
+  var changed=_canon(out)!==_canon(state.guests);
+  state.guests=out; var first=!guestsLoaded; guestsLoaded=true;
+  if(changed||first){ if(appEntered) renderAll(); }
+}
+function pushGuests(){
+  if(!guestsLoaded||!guestMode()) return null;
+  var gs=state.guests, jobs=[], cur={};
+  gs.forEach(function(g,i){ if(!g.id) g.id=newGid(); if(g.ord!==i) g.ord=i; });
+  gs.forEach(function(g){ var j=_canon(g); cur[g.id]=1; if(_gSent[g.id]!==j && _gDirty[g.id]!==j) jobs.push({id:g.id,op:'set',g:g,json:j}); });
+  var removed=Object.keys(_gSent).filter(function(id){ return !cur[id] && _gDirty[id]!=='DEL' });
+  var total=Object.keys(_gSent).length;
+  if(removed.length>=3&&removed.length*2>=total&&!allowShrinkOnce){
+    var hidden=(document.visibilityState==='hidden');
+    var ok=!hidden&&confirm('⚠ Esta alteração apagaria '+removed.length+' de '+total+' convidados de uma só vez.\n\nSe foi você que apagou de propósito, toque em OK.\nSe NÃO foi, toque em Cancelar para manter a lista.');
+    if(!ok){
+      if(!hidden&&_gLast){ state.guests=[]; var lst=_gLast.list.map(_gStrip).filter(function(g){return g.id}).sort(_gOrd); state.guests=lst; renderAll(); }
+      removed=[]; jobs=jobs.filter(function(x){ return !!cur[x.id] });
+      if(hidden) return null;
+    }
+  }
+  allowShrinkOnce=false;
+  removed.forEach(function(id){ jobs.push({id:id,op:'del'}) });
+  if(!jobs.length) return null;
+  jobs.forEach(function(x){ _gDirty[x.id]=(x.op==='del')?'DEL':x.json });
+  return Promise.all(jobs.map(function(x){
+    return Promise.resolve().then(function(){ return x.op==='set'?FB.saveGuest(x.g):FB.deleteGuest(x.id) })
+      .then(function(){ if(x.op==='set'){ _gSent[x.id]=x.json } else { delete _gSent[x.id] } if(_gDirty[x.id]===(x.op==='del'?'DEL':x.json)) delete _gDirty[x.id]; return null },
+            function(err){ console.error('Falha ao salvar convidado:',err); return {name:'convidados',err:err} });
+  })).then(function(r){ return r.filter(Boolean) });
+}
+
+var SEC_NOMES={convidados:'Convidados',guests:'Convidados',tasks:'Checklist',fin:'Financeiro',suppliers:'Fornecedores',tables:'Mesas',gifts:'Presentes',refs:'Referências',conviteOcultos:'Convites ocultos',estilo:'Foto e estilo',espaco:'Salão/espaço',evento:'Datas do casamento',meta:'Configurações',logs:'Histórico'};
+var _retryT=null,_permAlerted=false,_dirty={},_healTried=false,_heal={};
+function secPatch(k,j){ if(k==='logs') return {logs:JSON.parse(j)}; var o={}; o[k]=JSON.parse(j); return {state:o}; }
 function pushCloud(){
   _saveTimer=null;
   if(!currentUser||!cloudLoaded||!window.FB) return;
-  var offline=(navigator.onLine===false);
-  ensureIds(state,false);
-  var patch={state:{}}, sent={}, base={}, changed=false;
+  var gdoc=guestMode(), jobs=[];
   Object.keys(state).forEach(function(k){
-    var j=JSON.stringify(state[k]), old=_lastSent['s.'+k];
-    if(old!==j){patch.state[k]=JSON.parse(j);sent['s.'+k]=j;base[k]=(old===undefined)?undefined:JSON.parse(old);changed=true}
+    if(k==='guests'&&gdoc) return;                      // convidados têm documentos próprios
+    var j=JSON.stringify(state[k]);
+    if(_lastSent['s.'+k]!==j) jobs.push({key:'s.'+k,name:k,json:j});
   });
-  var lj=JSON.stringify(logs), logsChanged=(_lastSent.logs!==lj);
-  if(logsChanged){patch.logs=JSON.parse(lj);sent.logs=lj;changed=true}
-  if(!changed){ if(!_inflight) setSync('ok'); return }
-  
-  var prev={};
-  Object.keys(sent).forEach(function(k){prev[k]=_lastSent[k];});
-  
+  var lj=JSON.stringify(logs);
+  if(_lastSent.logs!==lj) jobs.push({key:'logs',name:'logs',json:lj});
+  var gp=pushGuests();
+  if(!jobs.length&&!gp){ if(!_inflight&&!Object.keys(_dirty).length&&!Object.keys(_gDirty).length) setSync('ok'); return }
+  var prevs={}; jobs.forEach(function(x){ prevs[x.key]=_lastSent[x.key]; _lastSent[x.key]=x.json; _dirty[x.key]=x.json; });
   _inflight++; setSync('saving');
-  var useMerge=!offline&&!!FB.saveMerged;
-  var req=useMerge
-    ? FB.saveMerged(patch.state,function(k,remote){ try{ return JSON.parse(JSON.stringify(merge3(base[k],patch.state[k],remote))) }catch(e){ console.warn('merge',k,e); return patch.state[k] } },logsChanged?patch.logs:null,mergeLogs)
-    : FB.saveData(patch);
-    
-  var p=req.then(function(res){
-    _inflight--;
-    // Atualiza _lastSent APENAS após o sucesso do salvamento
-    Object.keys(sent).forEach(function(k){_lastSent[k]=sent[k];});
-    if(logsChanged) _lastSent.logs=lj;
-    
-    try{
-      if(useMerge&&res&&res.state){
-        var again=false;
-        Object.keys(res.state).forEach(function(k){
-          var mj=JSON.stringify(res.state[k]);
-          if(mj!==sent['s.'+k]&&JSON.stringify(state[k])===sent['s.'+k]){ state[k]=res.state[k]; _lastSent['s.'+k]=mj; again=true; }
-        });
-        if(again){ renderAll(); }
-      }
-    }catch(e){ console.warn('pós-salvar:',e); }
-    if(!_inflight&&!_saveTimer) setSync('ok');
-  },function(err){
-    if(useMerge&&!(err&&err.code==='permission-denied')){
-      return FB.saveData(patch).then(function(){ 
-        _inflight--; 
-        Object.keys(sent).forEach(function(k){_lastSent[k]=sent[k];});
-        if(!_inflight&&!_saveTimer) setSync('ok'); 
+  var p=Promise.all(jobs.map(function(x){
+    return Promise.resolve().then(function(){ return FB.saveData(secPatch(x.name,x.json)); })
+      .then(function(){ if(_dirty[x.key]===x.json) delete _dirty[x.key]; return null },function(err){
+        if(_lastSent[x.key]===x.json) _lastSent[x.key]=prevs[x.key];
+        console.error('Falha ao salvar '+x.name+':',err);
+        return {name:x.name,err:err};
       });
-    }
-    throw err;
-  }).catch(function(err){
+  }).concat([gp||Promise.resolve([])])).then(function(res){
     _inflight--;
-    Object.keys(prev).forEach(function(k){ _lastSent[k]=prev[k]; });
-    setSync('error'); console.error('Falha ao salvar:',err);
-    if(err&&err.code==='permission-denied') alert('Sem permissão para salvar no Firestore.');
-    else setTimeout(function(){ if(!_saveTimer) saveState() },4000);
+    var gres=res.pop()||[], bad=res.filter(Boolean).concat(gres);
+    if(bad.length){ setSync('error'); showSaveError(bad); if(!_retryT) _retryT=setTimeout(function(){ _retryT=null; pushCloud() },15000); }
+    else { clearSaveError(); if(!_inflight&&!_saveTimer) setSync('ok'); }
   });
   _lastPush=Promise.all([_lastPush,p]).catch(function(){});
   return p;
 }
+var _saveErrInfo=[];
+function showSaveError(bad){
+  _saveErrInfo=bad.map(function(b){ return (SEC_NOMES[b.name]||b.name)+' → '+((b.err&&b.err.code)?b.err.code+': ':'')+((b.err&&b.err.message)||b.err) });
+  var el=document.getElementById('save-err');
+  if(!el){ el=document.createElement('div'); el.id='save-err';
+    el.style.cssText='position:fixed;left:8px;right:8px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:99999;background:#7f1d1d;color:#fff;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.4;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer';
+    el.onclick=function(){ alert('Não consegui gravar na nuvem:\n\n'+_saveErrInfo.join('\n\n')+'\n\nVou tentar de novo sozinho. Em Menu › Configurações há um teste de salvamento.') };
+    document.body.appendChild(el); }
+  el.textContent='⚠️ Não consegui salvar: '+bad.map(function(b){return SEC_NOMES[b.name]||b.name}).join(', ')+' ('+((bad[0].err&&bad[0].err.code)||'erro')+'). Toque para ver detalhes.';
+  if(!_permAlerted&&bad.some(function(b){return b.err&&b.err.code==='permission-denied'})){ _permAlerted=true; alert('Sem permissão para salvar no Firestore. Verifique as regras de segurança do banco.'); }
+}
+function clearSaveError(){ var el=document.getElementById('save-err'); if(el) el.remove(); }
+
+// ─── Diagnóstico de salvamento (Configurações) ───
+function _canon(v){ if(Array.isArray(v)) return '['+v.map(_canon).join(',')+']'; if(v&&typeof v==='object') return '{'+Object.keys(v).sort().map(function(k){return JSON.stringify(k)+':'+_canon(v[k])}).join(',')+'}'; return JSON.stringify(v===undefined?null:v); }
+function runDiag(){
+  var out=document.getElementById('diag-out'); if(!out) return;
+  if(!currentUser||!window.FB){ out.innerHTML='<div class="empty">Entre na conta primeiro.</div>'; return; }
+  out.innerHTML='<div class="empty">Testando… (nada é apagado)</div>';
+  var items=Object.keys(state).map(function(k){return {k:k,v:state[k]}}).concat([{k:'logs',v:logs}]), rows=[], total=0, chain=Promise.resolve();
+  items.forEach(function(it){
+    var j=JSON.stringify(it.v), bytes=new Blob([j]).size; total+=bytes;
+    chain=chain.then(function(){
+      return Promise.resolve().then(function(){ return FB.saveData(secPatch(it.k,j)); })
+        .then(function(){ rows.push({k:it.k,kb:bytes/1024,ok:true,c:_canon(JSON.parse(j))}) },
+              function(e){ rows.push({k:it.k,kb:bytes/1024,ok:false,msg:((e&&e.code)?e.code+': ':'')+((e&&e.message)||e)}) });
+    });
+  });
+  chain.then(function(){ return FB.readMain(); }).then(function(doc){
+    rows.forEach(function(r){ if(!r.ok) return; var sv=(r.k==='logs')?(doc&&doc.logs):(doc&&doc.state&&doc.state[r.k]); r.conf=(_canon(sv)===r.c); });
+    var cloudKeys=Object.keys((doc&&doc.state)||{}), miss=Object.keys(state).filter(function(k){return cloudKeys.indexOf(k)<0});
+    var bad=rows.filter(function(r){return !r.ok||!r.conf}).length;
+    out.innerHTML='<div class="card" style="padding:10px 12px;margin-top:8px">'+
+      '<div style="font-size:13px;font-weight:700;margin-bottom:6px">'+(bad?'⚠️ '+bad+' problema(s) encontrado(s)':'✅ Tudo gravou e foi conferido na nuvem')+'</div>'+
+      rows.map(function(r){ return '<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)">'+(r.ok?(r.conf?'✅':'⚠️'):'❌')+' <b>'+(SEC_NOMES[r.k]||r.k)+'</b> <span style="color:var(--txt2)">'+r.kb.toFixed(1)+' KB</span>'+(r.ok?(r.conf?'':'<div style="color:#f0be6c">Gravou, mas o servidor devolveu um valor diferente.</div>'):'<div style="color:#f87171;word-break:break-word">'+esc(r.msg)+'</div>')+'</div>' }).join('')+
+      '<div style="font-size:11px;color:var(--txt2);margin-top:8px">Seções na nuvem: '+(cloudKeys.join(', ')||'nenhuma')+(miss.length?' · <b style="color:#f87171">faltando: '+miss.join(', ')+'</b>':'')+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Convidados: '+state.guests.length+' no app · '+Object.keys(_gSent).length+' na nuvem (um documento cada)'+(guestMode()?'':' · <b>modo antigo</b>')+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Tamanho total ≈ '+(total/1024).toFixed(0)+' KB de 1024 KB (limite do Firestore para o documento).'+(total>900*1024?' <b style="color:#f87171">Perto do limite!</b>':'')+'</div></div>';
+  }).catch(function(e){ out.innerHTML='<div class="empty">Falha no teste: '+esc((e&&e.message)||e)+'</div>'; });
+}
+
 function flushPending(){
   if(_saveTimer){clearTimeout(_saveTimer);pushCloud()}
   return _lastPush;
@@ -1412,6 +1395,7 @@ function mergeLogs(a,b){
   return out.slice(0,300);
 }
 
+function wasLoadedEarly(){ return cloudLoaded }
 window.onCloudData=function(data,meta){
   meta=meta||{};
   if(!data){
@@ -1420,31 +1404,37 @@ window.onCloudData=function(data,meta){
     seedCloud(); return;
   }
   var prevMax=maxTs(logs), wasLoaded=cloudLoaded;
-  var wasSynced=_serverSynced; if(!meta.fromCache) _serverSynced=true;
-  if(_serverSynced&&!wasSynced) setTimeout(function(){ saveState(); loadRsvps(true); },400);
   var st=normalizeState(data.state);
+  if(st.meta&&st.meta.guestsDocs) st.guests=state.guests||[];
   var lg=Array.isArray(data.logs)?data.logs:[];
 
   // "Último estado conhecido da nuvem" (base para enviar só o que mudar)
-  var sent={}, faltando=false, raw=(data.state&&typeof data.state==='object')?data.state:{};
-  Object.keys(st).forEach(function(k){ if(raw[k]!==undefined) sent['s.'+k]=JSON.stringify(st[k]); else faltando=true; });
+  var sent={};
+  Object.keys(st).forEach(function(k){sent['s.'+k]=JSON.stringify(st[k])});
   sent.logs=JSON.stringify(lg);
 
+  // seções que ainda não existem no banco: serão criadas (uma vez por sessão)
+  var missing=[];
+  var cs=(data.state&&typeof data.state==='object')?data.state:{};
+  if(!_healTried&&!wasLoadedEarly()){ _healTried=true; Object.keys(st).forEach(function(k){ if(k==='guests'&&st.meta&&st.meta.guestsDocs) return; if(cs[k]===undefined){ missing.push(k); _heal[k]=true } }); }
+  Object.keys(_heal).forEach(function(k){ if(cs[k]!==undefined) delete _heal[k]; else delete sent['s.'+k]; });
   // ajuste de versão (uma vez): datas de exemplo + lista noiva/noivo
   var migrated=false;
   if(!st.meta||!st.meta.v2){ migrated=migrateState(st); }
-  if(ensureIds(st,true)) migrated=true;
-  if(faltando) migrated=true;   // seções que não existem na nuvem são gravadas uma vez (assim nada "volta ao padrão")
 
   if(wasLoaded){
     // Preserva o que EU alterei e ainda não foi enviado; o resto vem da nuvem
     Object.keys(st).forEach(function(k){
       var key='s.'+k;
+      if(k==='guests'&&st.meta&&st.meta.guestsDocs) return;
       if(_lastSent[key]!==undefined && JSON.stringify(state[k])!==_lastSent[key]){
         st[k]=state[k]; sent[key]=_lastSent[key];
+      } else if(_dirty[key]!==undefined && JSON.stringify(state[k])===_dirty[key]){
+        // gravação em andamento (ou recusada): a tela não pode voltar para a versão antiga da nuvem
+        st[k]=state[k]; sent[key]=_lastSent[key]!==undefined?_lastSent[key]:sent[key];
       }
     });
-    if(JSON.stringify(logs)!==_lastSent.logs){ lg=mergeLogs(logs,lg); sent.logs=_lastSent.logs; }
+    if(JSON.stringify(logs)!==_lastSent.logs||(_dirty.logs!==undefined&&JSON.stringify(logs)===_dirty.logs)){ lg=mergeLogs(logs,lg); sent.logs=_lastSent.logs; }
     if(JSON.stringify([st,lg])===JSON.stringify([state,logs])){ _lastSent=sent; return; }
   }
 
@@ -1452,6 +1442,7 @@ window.onCloudData=function(data,meta){
   // limpeza única: apaga da nuvem o campo antigo dos convidados padrão
   if(data.defaultGuests!==undefined&&!_defRemoved&&window.FB&&FB.removeDefaultGuests){ _defRemoved=true; FB.removeDefaultGuests().catch(function(){}); }
   cloudLoaded=true; clearTimeout(_waitTimer);
+  startGuestWatch();
   if(!appEntered){ appEntered=true; enterApp(); }
   else {
     renderAll();
@@ -1459,15 +1450,15 @@ window.onCloudData=function(data,meta){
   }
   renderBell();
   if(wasLoaded) notifyRemote(lg,prevMax);
-  if(migrated) saveState();
-  setSync('ok');
+  if(migrated||missing.length) saveState();
+  if(!_inflight&&!_saveTimer&&!Object.keys(_dirty).length) setSync('ok');
 };
 window.onCloudError=function(err){
   console.error('Firestore:',err);
   var msg=(err&&err.code==='permission-denied')
     ? 'Sem permissão para acessar os dados. Publique as regras do Firestore e entre novamente.'
     : 'Erro ao carregar os dados'+((err&&err.code)?' ('+err.code+')':'.');
-  if(appEntered){ setSync('error'); return }
+  if(appEntered){ setSync('error'); showSaveError([{name:'sincronização',err:err}]); return }
   showSplash(msg,true);
 };
 
@@ -1685,17 +1676,18 @@ function getExport(key,opts){
     case 'estilo_detalhes':
       return {title:'Estilo - Detalhes',sheet:'Detalhes',cols:[{h:'Item',t:'text',w:30},{h:'Descrição',t:'text',w:90}],rows:E().detalhes.map(function(d){return [(d.titulo||''),d.desc]}),foot:null};
     case 'guests_tree':
-      var tb=treeBranches(opts.scope||'todos',false), tt=tb.reduce(function(a,b){return a+b.count},0);
+      var tb=treeBranches(opts.scope||'todos',!!opts.group), tt=tb.reduce(function(a,b){return a+b.count},0);
       rows=[['Willians & Poliana ('+tt+')','','','','']];
-      tb.forEach(function(b){
-        rows.push(['├─ '+b.label+' ('+b.count+')','','','','']);
-        b.lines.forEach(function(ln){
-          var pre=new Array((ln.depth||0)+2).join('│  ')+'├─ ';
-          if(ln.t==='g') rows.push([pre+ln.text,'','','','']);
-          else rows.push([pre+ln.name,ln.rel||'',ln.rsvp||'',ln.mesa||'',ln.rest||'']);
+      tb.forEach(function(b,bi){
+        var lastB=bi===tb.length-1, p1=lastB?'   ':'│  ';
+        rows.push([(lastB?'└─ ':'├─ ')+b.label+' ('+b.count+')','','','','']);
+        b.groups.forEach(function(gr,gi){
+          var base=p1, lastG=gi===b.groups.length-1;
+          if(gr.nome){ rows.push([base+(lastG?'└─ ':'├─ ')+gr.nome+' ('+gr.items.length+')','','','','']); base+=(lastG?'   ':'│  '); }
+          gr.items.forEach(function(x,k){ rows.push([base+(k===gr.items.length-1?'└─ ':'├─ ')+x.g.nome,x.g.cat||'',x.g.rsvp||'',x.g.mesa||'',x.g.rest||'']); });
         });
       });
-      return {title:'Árvore de convidados',sheet:'Árvore',cols:[{h:'Árvore',t:'text',w:56},{h:'Parentesco',t:'text',w:26},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26}],rows:rows,foot:null};
+      return {title:'Árvore de convidados',sheet:'Árvore',cols:[{h:'Árvore',t:'text',w:56},{h:'Categoria',t:'text',w:14},{h:'RSVP',t:'text',w:13},{h:'Mesa',t:'text',w:8},{h:'Restrição alimentar',t:'text',w:26}],rows:rows,foot:null};
     case 'refs':
       return {title:'Estilo e referências',sheet:'Referências',cols:[{h:'Link de referência',t:'text',w:90}],rows:S.refs.map(function(r){return [r]}),foot:null};
     case 'espaco':
@@ -1812,7 +1804,7 @@ function renderExportScope(){
   }).join('');
   document.getElementById('export-layout-chips').innerHTML=[['lista','☰ Lista (tabela)'],['arvore','🌳 Árvore']].map(function(x){
     return '<button class="chip'+(exportLayout===x[0]?' on':'')+'" onclick="setExportLayout(\''+x[0]+'\')">'+x[1]+'</button>';
-  }).join('');
+  }).join('')+(exportLayout==='arvore'?'<button class="chip'+(treeGroup?' on':'')+'" onclick="toggleTreeGroup();renderExportScope()">Agrupar por categoria</button>':'');
 }
 function setExportScope(s){ exportScope=s; renderExportScope(); }
 function openExport(key){
@@ -2114,6 +2106,7 @@ window.onAuthChanged=function(profile){
   if(!profile){
     clearTimeout(_saveTimer); _saveTimer=null;
     currentUser=null; cloudLoaded=false; appEntered=false; _lastSent={};
+    _gWatch=false; guestsLoaded=false; _gSent={}; _gDirty={}; _gLast=null; _gMigrating=false;
     state=clone(defaultState); logs=[];
     closeProfile(); closeOv('edit-profile-modal');
     document.getElementById('main-app').style.display='none';document.body.classList.remove('in-app');
@@ -2379,38 +2372,30 @@ function addLog(action,entity,detail){
   if(logs.length>300) logs=logs.slice(0,300);
   saveState();
 }
-var logDays={};   // dia -> aberto (true) ou resumido (false); sem valor = só o dia mais recente fica aberto
-function logDayKey(l){
-  if(l.ts){ var d=new Date(l.ts), p=function(n){return (n<10?'0':'')+n}; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()) }
-  var m=/(\d{2})\/(\d{2})\/(\d{4})/.exec(l.time||''); return m?m[3]+'-'+m[2]+'-'+m[1]:'sem-data';
-}
-function logDayLabel(key){
-  var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(key); if(!m) return 'Sem data';
-  var d=new Date(+m[1],+m[2]-1,+m[3]), t=new Date(); t=new Date(t.getFullYear(),t.getMonth(),t.getDate());
-  var diff=Math.round((t-d)/86400000), dt=m[3]+'/'+m[2]+'/'+m[1];
-  var wd=d.toLocaleDateString('pt-BR',{weekday:'long'}); wd=wd.charAt(0).toUpperCase()+wd.slice(1);
-  return diff===0?'Hoje · '+dt:diff===1?'Ontem · '+dt:wd+' · '+dt;
-}
-function logGroups(){
-  var out=[], idx={};
-  logs.forEach(function(l){ var k=logDayKey(l); if(idx[k]===undefined){ idx[k]=out.length; out.push({key:k,items:[]}) } out[idx[k]].items.push(l) });
-  return out;
-}
+var logOpen={};
+function logDayKey(l){ return new Date(l.ts||0).toLocaleDateString('pt-BR'); }
+function logToggle(k){ var today=new Date().toLocaleDateString('pt-BR'); logOpen[k]=!((k in logOpen)?logOpen[k]:(k===today)); renderLogs(); }
+function logToggleAll(open){ logs.forEach(function(l){ logOpen[logDayKey(l)]=open }); renderLogs(); }
 function renderLogs(){
-  var box=document.getElementById('log-list');
-  if(!logs.length){ box.innerHTML='<div class="empty">📭 Nenhuma ação registrada.</div>'; return }
-  box.innerHTML=logGroups().map(function(g,i){
-    var open=logDays[g.key]!==undefined?logDays[g.key]:i===0;
-    return '<div class="log-day"><button class="log-day-h" onclick="toggleLogDay(\''+g.key+'\')" aria-expanded="'+open+'">'+
-      '<span class="log-chev'+(open?' open':'')+'">▸</span><span style="flex:1">'+logDayLabel(g.key)+'</span><span class="bdg bdg-gray">'+g.items.length+' ação'+(g.items.length>1?'ões':'')+'</span></button>'+
-      '<div class="log-day-b" style="display:'+(open?'block':'none')+'">'+g.items.map(function(l){return logItemHTML(l,false)}).join('')+'</div></div>';
-  }).join('');
+  var el=document.getElementById('log-list'); if(!el) return;
+  if(!logs.length){ el.innerHTML='<div class="empty">📭 Nenhuma ação registrada.</div>'; return; }
+  var groups=[],map={};
+  logs.forEach(function(l){ var k=logDayKey(l); if(!map[k]){ map[k]={k:k,ts:l.ts||0,items:[]}; groups.push(map[k]); } map[k].items.push(l); });
+  var today=new Date().toLocaleDateString('pt-BR'), yest=new Date(Date.now()-864e5).toLocaleDateString('pt-BR');
+  el.innerHTML='<div style="display:flex;gap:8px;padding:8px 0"><button class="btn-sm" onclick="logToggleAll(true)">Expandir tudo</button><button class="btn-sm" onclick="logToggleAll(false)">Resumir tudo</button></div>'+
+    groups.map(function(g){
+      var open=(g.k in logOpen)?logOpen[g.k]:(g.k===today);
+      var wd=new Date(g.ts).toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+      var lbl=g.k===today?'Hoje':g.k===yest?'Ontem':wd;
+      var c={add:0,edit:0,del:0}; g.items.forEach(function(l){ if(c[l.action]!==undefined) c[l.action]++ });
+      var sum=(c.add?'➕'+c.add+' ':'')+(c.edit?'✏️'+c.edit+' ':'')+(c.del?'🗑️'+c.del:'');
+      return '<div style="border-bottom:1px solid var(--border)"><div onclick="logToggle(\''+g.k+'\')" style="display:flex;align-items:center;gap:8px;padding:11px 2px;cursor:pointer">'+
+        '<span style="color:var(--purple);font-size:12px;width:12px">'+(open?'▾':'▸')+'</span>'+
+        '<span style="flex:1;font-size:13px;font-weight:700;color:var(--txt);text-transform:capitalize">'+lbl+' <span style="font-weight:500;color:var(--txt2);font-size:11px;text-transform:none">· '+g.k+'</span></span>'+
+        '<span style="font-size:11px;color:var(--txt2)">'+sum+'· '+g.items.length+(g.items.length===1?' ação':' ações')+'</span></div>'+
+        (open?'<div style="padding:0 0 4px 18px">'+g.items.map(function(l){return logItemHTML(l,false)}).join('')+'</div>':'')+'</div>';
+    }).join('');
 }
-function toggleLogDay(key){
-  var gs=logGroups(), i=-1; gs.forEach(function(g,ix){ if(g.key===key) i=ix });
-  var open=logDays[key]!==undefined?logDays[key]:i===0; logDays[key]=!open; renderLogs();
-}
-function logsExpandAll(v){ logGroups().forEach(function(g){ logDays[g.key]=v }); renderLogs() }
 function clearLogs(){if(confirm('Limpar todo o histórico?')){logs=[];saveState();renderLogs()}}
 
 // ═══════════════════════════════════════════════════
@@ -2558,209 +2543,125 @@ var guestView='lista', treeGroup=false;
 try{ guestView=localStorage.getItem('wp_guest_view')==='arvore'?'arvore':'lista' }catch(e){}
 function setGuestView(x){ guestView=x; try{localStorage.setItem('wp_guest_view',x)}catch(e){} renderGuests() }
 function toggleTreeGroup(){ treeGroup=!treeGroup; renderGuests() }
-// ═══════════════════════════════════════════════════
-//  ÁRVORE DE CONVIDADOS — casais, filhos e parentesco com os noivos
-//  Campos do convidado: parentesco (texto), sexo (F/M), parceiroId (casal), paiId (aparece abaixo de…)
-// ═══════════════════════════════════════════════════
-var COUPLE={noivo:'Willians',noiva:'Poliana'};
-var KIND_RANK={pais:0,irmaos:1,cunhados:1.5,avos:2,tios:3,sobrinhos:3.5,primos:4,padrinhos:5,cortejo:5.2,familia:5.5,amigos:6,trabalho:7,conjuge:7.5,outro:8};
-var KIND_LABEL={pais:'Pais',irmaos:'Irmãos',cunhados:'Cunhados',avos:'Avós',tios:'Tios',sobrinhos:'Sobrinhos',primos:'Primos',padrinhos:'Padrinhos e madrinhas',cortejo:'Pajens e damas de honra',familia:'Família',amigos:'Amigos',trabalho:'Trabalho',conjuge:'Acompanhantes',outro:'Outros'};
-function semAcento(s){ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() }
-function cleanNome(n){ var r=String(n||'').replace(/\s*[-–—]\s+.+$/,'').replace(/\s*\([^)]*\)\s*$/,'').trim(); return r||String(n||'') }
-function relParsed(n){ var m=/\s*[-–—]\s+(.+)$/.exec(String(n||'')); if(m) return m[1].trim(); m=/\(([^)]+)\)\s*$/.exec(String(n||'')); return m?m[1].trim():'' }
-function firstName(n){ return cleanNome(n).split(/\s+/)[0] }
-function inic(n){ var p=cleanNome(n).split(/\s+/).filter(Boolean); return ((p[0]||'?').charAt(0)+(p.length>1?p[p.length-1].charAt(0):'')).toUpperCase() }
-function relKind(l){
-  var t=semAcento(l); if(!t) return '';
-  if(/cunhad/.test(t)) return 'cunhados';
-  if(/sobrinh/.test(t)) return 'sobrinhos';
-  if(/conjuge|espos[ao]|marido|mulher|companheir|namorad/.test(t)) return 'conjuge';
-  if(/\b(mae|pai|madrasta|madrastra|padrasto|padrastro|sogro|sogra)\b/.test(t)) return 'pais';
-  if(/\birma|\birmao/.test(t)) return 'irmaos';
-  if(/\b(avo|avos|vovo|vo|bisavo)\b/.test(t)) return 'avos';
-  if(/\b(tio|tia)\b/.test(t)) return 'tios';
-  if(/\bprim[oa]/.test(t)) return 'primos';
-  if(/pajem|pagem|dama|daminha|florist|portador|alianca/.test(t)) return 'cortejo';
-  if(/padrinho|madrinha/.test(t)) return 'padrinhos';
-  if(/amig/.test(t)) return 'amigos';
-  if(/colega|trabalh|chefe/.test(t)) return 'trabalho';
-  return 'outro';
-}
-function sideTxt(l){ return l==='noiva'?'da noiva':l==='noivo'?'do noivo':'' }
-function withSide(rel,lado){ var st=sideTxt(lado); if(!rel||!st||/noiv[ao]/.test(semAcento(rel))) return rel; return rel+' '+st }
-function sx(g,f,m,n){ return g.sexo==='F'?f:g.sexo==='M'?m:n }
-
-// monta as unidades (pessoa ou casal) e a hierarquia
-function buildForest(opts){
-  opts=opts||{}; var flat=!!opts.flat;
-  ensureIds(state,false);
-  var all=state.guests, byId={}; all.forEach(function(g){ byId[g.id]=g });
-  var partner={};
-  if(!flat) all.forEach(function(g){
-    var p=g.parceiroId&&byId[g.parceiroId];
-    if(p&&p!==g){ if(!partner[g.id]) partner[g.id]=p; if(!partner[p.id]) partner[p.id]=g; }
-  });
-  var unitOf={}, units=[];
-  all.forEach(function(g){
-    if(unitOf[g.id]) return;
-    var p=partner[g.id], mem=[g];
-    if(p&&!unitOf[p.id]&&partner[p.id]===g) mem.push(p);
-    var u={i:units.length,members:mem,children:[],parent:null,labels:{},kind:''};
-    mem.forEach(function(m){ unitOf[m.id]=u }); units.push(u);
-  });
-  function explicit(g){ return g.parentesco||relParsed(g.nome) }
-  units.forEach(function(u){
-    if(u.members.length===2&&!explicit(u.members[0])&&explicit(u.members[1])) u.members.reverse();   // quem tem parentesco informado vem primeiro
-  });
-  // hierarquia (paiId)
-  var cand={};
-  if(!flat) units.forEach(function(u){
-    u.members.forEach(function(m){
-      var pu=m.paiId&&unitOf[m.paiId]; if(pu&&pu!==u&&cand[u.i]===undefined) cand[u.i]=pu;
-    });
-  });
-  units.forEach(function(u){                       // quebra ciclos
-    var x=cand[u.i], n=0;
-    while(x&&n<300){ if(x===u){ cand[u.i]=null; break } x=cand[x.i]; n++ }
-  });
-  units.forEach(function(u){ var p=cand[u.i]; if(p){ u.parent=p; p.children.push(u) } });
-  // parentesco de cada pessoa
-  var memo={};
-  function anchor(u){ return u.members.filter(function(m){return explicit(m)})[0]||u.members[0] }
-  function labelOf(g,u){
-    if(memo[g.id]!==undefined) return memo[g.id];
-    memo[g.id]='';
-    var lab='', ex=explicit(g), A=anchor(u);
-    if(ex) lab=withSide(ex,ladoOf(g)||ladoOf(A));
-    else if(u.members.length===2&&g!==A){
-      var kA=relKind(labelOf(A,u)), nmA=firstName(A.nome), t;
-      if(kA==='irmaos') t=sx(g,'Cunhada','Cunhado','Cunhado(a)');
-      else if(kA==='tios') t=sx(g,'Tia','Tio','Tio(a)');
-      else if(kA==='primos') t=sx(g,'Prima','Primo','Primo(a)');
-      else t='Cônjuge de '+nmA;
-      lab=withSide(t,ladoOf(A)||ladoOf(g));
-    }
-    else if(u.parent){
-      var PA=anchor(u.parent), kP=relKind(labelOf(PA,u.parent)), t2;
-      if(kP==='irmaos'||kP==='cunhados') t2=sx(g,'Sobrinha','Sobrinho','Sobrinho(a)');
-      else if(kP==='tios') t2=sx(g,'Prima','Primo','Primo(a)');
-      else if(kP==='pais') t2=sx(g,'Irmã','Irmão','Irmão(ã)');
-      else if(kP==='avos') t2=sx(g,'Tia','Tio','Tio(a)');
-      else t2=sx(g,'Filha','Filho','Filho(a)')+' de '+firstName(PA.nome);
-      lab=withSide(t2,ladoOf(g)||ladoOf(PA)||ladoOf(anchor(u.parent)));
-    }
-    memo[g.id]=lab; return lab;
-  }
-  var CAT={'Família':'familia','Amigos':'amigos','Trabalho':'trabalho'};
-  units.forEach(function(u){
-    u.members.forEach(function(m){ u.labels[m.id]=labelOf(m,u) });
-    var A=anchor(u); u.anchor=A;
-    u.kind=relKind(u.labels[A.id])||CAT[A.cat]||'outro';
-    u.lado=ladoOf(A)||ladoOf(u.members[u.members.length-1])||'';
-  });
-  return {units:units,roots:units.filter(function(u){return !u.parent}),unitOf:unitOf};
-}
-function unitCount(u){ var n=u.members.length; u.children.forEach(function(c){ n+=unitCount(c) }); return n }
-function arrange(list){
-  var items=[], groups={}, order=[];
-  list.forEach(function(u){
-    var rk=KIND_RANK[u.kind]!==undefined?KIND_RANK[u.kind]:8;
-    if(u.children.length) items.push({type:'unit',u:u,rank:rk});
-    else{
-      if(!groups[u.kind]){ groups[u.kind]={type:'group',key:u.kind,label:KIND_LABEL[u.kind]||'Outros',units:[],rank:rk}; order.push(u.kind) }
-      groups[u.kind].units.push(u);
-    }
-  });
-  order.forEach(function(k){ items.push(groups[k]) });
-  return items.map(function(x,i){return {x:x,i:i}}).sort(function(a,b){return (a.x.rank-b.x.rank)||(a.i-b.i)}).map(function(o){return o.x});
-}
-// lados da árvore conforme o filtro/escopo
-function treeSides(scope){
-  var flat=(scope==='convite'||scope==='criancas');
-  var F=buildForest({flat:flat}), defs=[['noivo','Lado do noivo','💙'],['noiva','Lado da noiva','💗'],['sem','Sem lista','👥']], out=[];
+function treeBranches(scope,group){
+  var defs=[['noiva','Lista da noiva','💗'],['noivo','Lista do noivo','💙'],['sem','Sem lista','👥']], out=[];
   defs.forEach(function(d){
-    if(scope==='noivo'||scope==='noiva'||scope==='sem'){ if(scope!==d[0]) return }
-    var roots=F.roots.filter(function(u){ return (u.lado||'sem')===d[0] });
-    if(scope==='convite') roots=roots.filter(function(u){ return u.members.some(function(m){return m.viaConvite}) });
-    if(scope==='criancas') roots=roots.filter(function(u){ return u.members.some(function(m){return m.crianca}) });
-    if(d[0]==='sem'&&!roots.length) return;
-    var count=roots.reduce(function(a,u){return a+unitCount(u)},0);
-    out.push({key:d[0],label:d[1],icon:d[2],roots:roots,count:count});
+    if(scope!=='todos'&&scope!=='convite'&&scope!=='criancas'&&scope!==d[0]) return;
+    var items=[]; state.guests.forEach(function(g,i){ if((ladoOf(g)||'sem')===d[0]&&(scope!=='convite'||g.viaConvite)&&(scope!=='criancas'||g.crianca)) items.push({g:g,i:i}) });
+    if(d[0]==='sem'&&!items.length) return;
+    var groups;
+    if(group){
+      var order=['Família','Amigos','Trabalho'], m={};
+      items.forEach(function(x){ var c=x.g.cat||'Outros'; (m[c]=m[c]||[]).push(x) });
+      Object.keys(m).forEach(function(c){ if(order.indexOf(c)<0) order.push(c) });
+      groups=order.filter(function(c){return m[c]}).map(function(c){return {nome:c,items:m[c]}});
+    } else groups=[{nome:null,items:items}];
+    out.push({key:d[0],label:d[1],icon:d[2],count:items.length,groups:groups});
   });
   return out;
 }
-
-// ─── tela ───
-function ttColor(g,u,isChild){
-  if(u.members.length===2&&g!==u.anchor) return 'tt-spouse';
-  if(isChild) return 'tt-child';
-  var l=ladoOf(g)||u.lado; return l==='noiva'?'tt-noiva':l==='noivo'?'tt-noivo':'tt-sem';
+function treeNodeHTML(x){
+  var g=x.g, cls=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait';
+  var sub=[g.crianca?'👶':'',g.viaConvite?'📨':'',g.rsvp,g.mesa?'Mesa '+g.mesa:'',g.rest||''].filter(Boolean).join(' · ');
+  return '<li class="gt-li"><div class="gt-node"><span class="gt-dot '+cls+'" title="'+esc(g.rsvp)+'"></span><span class="gt-nm">'+esc(g.nome)+'</span><span class="gt-sub">'+esc(sub)+'</span>'+
+    '<button class="btn-act edit" onclick="editGuest('+x.i+')" title="Editar">✏️</button><button class="btn-act del" onclick="delGuest('+x.i+')" title="Excluir">×</button></div></li>';
 }
-function ttNode(g,u){
-  var idx=state.guests.indexOf(g), rel=u.labels[g.id]||'', st=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait';
-  return '<div class="tt-n" onclick="editGuest('+idx+')" title="'+esc(cleanNome(g.nome)+' · '+(g.rsvp||''))+'"><div class="tt-av '+ttColor(g,u,!!u.parent)+'">'+esc(inic(g.nome))+
-    '<span class="tt-dot '+st+'"></span>'+(g.crianca?'<span class="tt-kid">👶</span>':'')+'</div>'+
-    '<div class="tt-nm">'+esc(cleanNome(g.nome))+'</div>'+(rel?'<div class="tt-rl">'+esc(rel)+'</div>':'')+(g.viaConvite?'<div class="tt-rl">📨</div>':'')+'</div>';
+// ─── Árvore genealógica (modelo A): casal lado a lado, filhos embaixo; só usa convidados cadastrados ───
+var treeEdit=false;
+function toggleTreeEdit(){ treeEdit=!treeEdit; renderGuests() }
+function newGid(){ return 'g'+Date.now().toString(36)+Math.random().toString(36).slice(2,7) }
+function ensureIds(){ var ch=false; state.guests.forEach(function(g){ if(!g.id){ g.id=newGid(); ch=true } }); if(ch) saveState(); return ch }
+function gMap(){ var m={}; state.guests.forEach(function(g){ if(g.id) m[g.id]=g }); return m }
+function reaches(by,fromId,targetId){
+  if(!targetId) return false; var seen={},id=fromId,n=0;
+  while(id&&by[id]&&!seen[id]&&n++<60){ if(id===targetId) return true; seen[id]=1; id=by[id].vinculoId }
+  return id===targetId;
 }
-function ttUnit(u){ return '<div class="tt-unit">'+u.members.map(function(m,k){ return (k?'<div class="tt-jn"></div>':'')+ttNode(m,u) }).join('')+'</div>' }
-// monta "linhas" de no máximo 2 pessoas (casal = 1 linha); cada bloco desce em coluna única
-function ttRows(units){
-  var rows=[], cur=[], n=0;
-  units.forEach(function(u){
-    var w=u.members.length;
-    if(cur.length&&n+w>2){ rows.push(cur); cur=[]; n=0 }
-    cur.push(u); n+=w;
-    if(n>=2){ rows.push(cur); cur=[]; n=0 }
-  });
-  if(cur.length) rows.push(cur);
-  return rows;
+function curSelfId(){ var i=parseInt(v('fg-idx')); return (i>=0&&state.guests[i])?state.guests[i].id:null }
+function fillVinc(selfId,sel){
+  var vt=v('fg-vt'), wrap=document.getElementById('fg-vc-wrap'), el=document.getElementById('fg-vc');
+  wrap.style.display=vt?'block':'none';
+  if(!vt){ el.innerHTML=''; return }
+  var by=gMap(), opts=state.guests.filter(function(o){ return o.id&&o.id!==selfId&&!reaches(by,o.id,selfId) });
+  el.innerHTML='<option value="">— escolha —</option>'+opts.map(function(o){ return '<option value="'+o.id+'">'+esc(o.nome)+(o.parentesco?' ('+esc(o.parentesco)+')':'')+'</option>' }).join('');
+  el.value=sel||'';
 }
-function ttBlocks(items){
-  var out=[];
-  items.forEach(function(it){
-    if(it.type==='group'){
-      out.push('<div class="tt-blk"><div class="tt-lvh">'+esc(it.label)+' · '+it.units.length+'</div>'+
-        ttRows(it.units).map(function(r){ return '<div class="tt-row">'+r.map(ttUnit).join('')+'</div>' }).join('')+'</div>');
-    } else {
-      out.push('<div class="tt-blk"><div class="tt-row">'+ttUnit(it.u)+'</div></div>');
-      out=out.concat(ttBlocks(arrange(it.u.children)));
-    }
-  });
-  return out;
+function loadVinc(g){
+  setVal('fg-par',(g&&g.parentesco)||''); setVal('fg-vt',(g&&g.vinculoTipo)||'');
+  fillVinc(g?g.id:null,(g&&g.vinculoId)||'');
+  var h=document.getElementById('fg-vc-hint');
+  if(g&&g.acompDe&&!g.vinculoId){ h.style.display='block'; h.textContent='Veio pelo convite como acompanhante de '+g.acompDe+'. Se for companheiro(a) ou filho(a), vincule aqui.'; }
+  else { h.style.display='none'; h.textContent=''; }
 }
-function ttRoot(key){
-  if(key==='sem') return '<div class="tt-unit"><div class="tt-n"><div class="tt-av tt-sem">?</div><div class="tt-nm">Sem lista</div></div></div>';
-  return '<div class="tt-unit"><div class="tt-n"><div class="tt-av tt-big '+(key==='noiva'?'tt-noiva':'tt-noivo')+'">'+COUPLE[key].charAt(0)+'</div><div class="tt-nm">'+COUPLE[key]+'</div><div class="tt-rl">'+(key==='noiva'?'noiva':'noivo')+'</div></div></div>';
+function onParChange(){
+  var p=v('fg-par');
+  if(!v('fg-vt')){
+    var auto={'Marido':'casal','Esposa':'casal','Companheiro(a)':'casal','Padrasto':'casal','Madrasta':'casal','Filho(a)':'filho','Enteado(a)':'filho'}[p];
+    if(auto){ setVal('fg-vt',auto); fillVinc(curSelfId(),''); }
+  }
 }
+function treeModel(){
+  var by=gMap(), idx={}; state.guests.forEach(function(g,i){ if(g.id) idx[g.id]=i });
+  function leader(g){ var n=0; while(g.vinculoTipo==='casal'&&by[g.vinculoId]&&n++<30) g=by[g.vinculoId]; return g }
+  function parentLeader(L){ return (L.vinculoTipo==='filho'&&by[L.vinculoId])?leader(by[L.vinculoId]):null }
+  var parts={}, kids={}, tops={noiva:[],noivo:[],sem:[]}, leaders=[];
+  state.guests.forEach(function(g){ var L=leader(g); if(L!==g) (parts[L.id]=parts[L.id]||[]).push(g); else leaders.push(g) });
+  function sideOf(L){ var s=ladoOf(L); if(s) return s; (parts[L.id]||[]).some(function(p){ s=ladoOf(p); return !!s }); return s||'sem' }
+  leaders.forEach(function(g){ var P=parentLeader(g); if(P&&P!==g) (kids[P.id]=kids[P.id]||[]).push(g); else tops[sideOf(g)].push(g) });
+  return {by:by,idx:idx,leader:leader,parentLeader:parentLeader,parts:parts,kids:kids,tops:tops,leaders:leaders,sideOf:sideOf};
+}
+function moveGuest(i,dir){
+  ensureIds(); var T=treeModel(), g=state.guests[i], L=T.leader(g), grp;
+  if(L!==g) grp=T.parts[L.id]; else { var P=T.parentLeader(g); grp=P?T.kids[P.id]:T.tops[T.sideOf(g)]; }
+  if(!grp) return;
+  var ix=grp.map(function(x){return T.idx[x.id]}), pos=ix.indexOf(i), j=ix[pos+dir];
+  if(pos<0||j===undefined) return;
+  var t=state.guests[i]; state.guests[i]=state.guests[j]; state.guests[j]=t;
+  saveState(); renderGuests();
+}
+function fxIni(n){ var w=String(n||'?').trim().split(/\s+/); return ((w[0]||'?')[0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase() }
 function renderGuestTree(){
   var box=document.getElementById('guest-tree'); if(!box) return;
-  var sides=treeSides(guestFilter), total=sides.reduce(function(a,s){return a+s.count},0);
-  var h='<div class="gtree"><div class="tt-top"><div class="tt-n"><div class="tt-av tt-big tt-noivo">'+COUPLE.noivo.charAt(0)+'</div><div class="tt-nm">'+COUPLE.noivo+'</div></div><div class="tt-heart">♥</div><div class="tt-n"><div class="tt-av tt-big tt-noiva">'+COUPLE.noiva.charAt(0)+'</div><div class="tt-nm">'+COUPLE.noiva+'</div></div></div>'+
-    '<div class="tt-cnt">'+total+' convidado'+(total===1?'':'s')+'</div><div class="tt-sides">';
-  sides.forEach(function(s){
-    var items=arrange(s.roots);
-    h+='<div class="tt-card tt-s-'+s.key+'"><div class="tt-ttl">'+s.icon+' '+s.label+' <span class="bdg bdg-gray">'+s.count+'</span></div><div class="tt-col">'+ttRoot(s.key)+
-      (items.length?'<div class="tt-sp"></div>'+ttBlocks(items).join('<div class="tt-sp"></div>'):'')+'</div>'+(items.length?'':'<div class="gt-empty">Nenhum convidado nesta lista.</div>')+'</div>';
+  ensureIds();
+  var T=treeModel(), seen={}, cnt={noiva:0,noivo:0,sem:0};
+  function dimmed(g){ return (guestFilter==='convite'&&!g.viaConvite)||(guestFilter==='criancas'&&!g.crianca) }
+  function card(g,side){
+    var cls=g.rsvp==='Confirmado'?'r-ok':g.rsvp==='Recusou'?'r-no':'r-wait', i=T.idx[g.id];
+    var rl=[g.parentesco||'',g.crianca?'👶':'',g.viaConvite?'📨':''].filter(Boolean).join(' ');
+    seen[g.id]=1; cnt[side]++;
+    return '<div class="fx-cw'+(dimmed(g)?' fx-dim':'')+'"><div class="fx-card '+(side==='sem'?'':side)+'" onclick="editGuest('+i+')" title="'+esc(g.nome+' · '+g.rsvp)+'"><span class="fx-dot '+cls+'"></span><div class="fx-av">'+esc(fxIni(g.nome))+'</div><div class="fx-nm">'+esc(g.nome)+'</div>'+(rl?'<div class="fx-rl">'+esc(rl)+'</div>':'')+'</div>'+
+      (treeEdit?'<div class="fx-mv"><button onclick="moveGuest('+i+',-1)" aria-label="Subir">◀</button><button onclick="moveGuest('+i+',1)" aria-label="Descer">▶</button></div>':'')+'</div>';
+  }
+  // uma unidade (pessoa ou casal) por linha; 3+ pessoas (padrasto/madrasta) continuam na linha seguinte
+  function rows(L,side){
+    var list=[L].concat(T.parts[L.id]||[]), h='';
+    for(var k=0;k<list.length;k+=2){ var a=list[k], b=list[k+1]; h+='<div class="fv-row">'+card(a,side)+(b?'<span class="fx-link"></span>'+card(b,side):'')+'</div>'; }
+    return h;
+  }
+  function plain(L){ return !(T.parts[L.id]||[]).length&&!(T.kids[L.id]||[]).length }
+  function nodes(list,side){
+    var out='',i=0;
+    while(i<list.length){
+      var L=list[i], N=list[i+1];
+      if(plain(L)&&N&&plain(N)){ out+='<div class="fv-kid"><div class="fv-row">'+card(L,side)+card(N,side)+'</div></div>'; i+=2; }  // dois sozinhos na mesma linha
+      else { var ch=T.kids[L.id]||[]; out+='<div class="fv-kid">'+rows(L,side)+(ch.length?'<div class="fv-kids">'+nodes(ch,side)+'</div>':'')+'</div>'; i++; }
+    }
+    return out;
+  }
+  var defs=[['noivo','Willians','WM','Noivo'],['noiva','Poliana','PR','Noiva'],['sem','Sem lista','?','']], roots='';
+  defs.forEach(function(d){
+    if(guestFilter==='noiva'&&d[0]!=='noiva') return; if(guestFilter==='noivo'&&d[0]!=='noivo') return; if(guestFilter==='sem'&&d[0]!=='sem') return;
+    var tp=T.tops[d[0]]; if(d[0]==='sem'&&!tp.length) return;
+    var inner=nodes(tp,d[0]);
+    roots+='<div class="fv-root"><div class="fx-cw" style="align-items:flex-start"><div class="fx-card root '+(d[0]==='sem'?'':d[0])+'"><div class="fx-av">'+d[2]+'</div><div class="fx-nm">'+d[1]+'</div><div class="fx-rl">'+(d[3]?d[3]+' · ':'')+cnt[d[0]]+' convidado'+(cnt[d[0]]===1?'':'s')+'</div></div></div>'+(inner?'<div class="fv-kids">'+inner+'</div>':'')+'</div>';
   });
-  box.innerHTML=h+'</div></div>';
-}
-// ─── exportação (PDF / Excel): linhas com nível ───
-function treeUnitLine(u,depth){
-  var m=u.members, sub=m.map(function(x){return u.labels[x.id]}).filter(Boolean);
-  var st=m.map(function(x){return x.rsvp}).filter(Boolean)[0]||'';
-  var extra=[]; if(m.some(function(x){return x.crianca})) extra.push('criança'); if(m[0].mesa) extra.push('Mesa '+m[0].mesa);
-  return {t:'n',g:m[0],depth:depth,name:m.map(function(x){return cleanNome(x.nome)}).join(' & '),rel:sub.join(' · '),rsvp:st,mesa:m[0].mesa||'',rest:m.map(function(x){return x.rest}).filter(Boolean).join(', '),
-    sub:sub.concat(st?[st]:[],extra).join(' - ')};
-}
-function treeFlatten(items,depth,out){
-  items.forEach(function(it){
-    if(it.type==='group'){ out.push({t:'g',text:it.label+' ('+it.units.length+')',depth:depth}); it.units.forEach(function(u){ out.push(treeUnitLine(u,depth+1)) }); }
-    else{ out.push(treeUnitLine(it.u,depth)); treeFlatten(arrange(it.u.children),depth+1,out); }
-  });
-  return out;
-}
-function treeBranches(scope,group){
-  return treeSides(scope).map(function(s){ return {key:s.key,label:s.label.replace(/^Lado/,'Lista'),icon:s.icon,count:s.count,lines:treeFlatten(arrange(s.roots),0,[])} });
+  var lost=T.leaders.filter(function(L){ return !seen[L.id] });
+  if(lost.length&&guestFilter!=='noiva'&&guestFilter!=='noivo'){
+    roots+='<div class="fv-root"><div class="fx-cw" style="align-items:flex-start"><div class="fx-card root"><div class="fx-av">?</div><div class="fx-nm">Revisar vínculos</div></div></div><div class="fv-kids">'+nodes(lost,'sem')+'</div></div>';
+  }
+  box.innerHTML=!state.guests.length?'<div class="gt-empty" style="text-align:center;padding:18px 0">Cadastre convidados para montar a árvore.</div>':
+    '<div class="fx-hint">Toque num cartão para editar. No cadastro, use <b>Parentesco</b> e <b>Posição na árvore</b> para ligar casais e filhos.'+(treeEdit?' <b>◀ ▶ muda a ordem.</b>':'')+'</div>'+
+    '<div class="fx-scroll"><div class="gt-root" style="display:inline-block">💍 Willians &amp; Poliana <small>'+state.guests.length+' convidado'+(state.guests.length===1?'':'s')+'</small></div>'+roots+'</div>';
 }
 
 // ─── exportação em árvore ───
@@ -2783,7 +2684,12 @@ function buildTreePDF(opts){
   }
   if(!n){ title(); doc.setFontSize(11); doc.text('Nenhum convidado.',M,92); return doc.output('blob'); }
   var cols=br.map(function(b){
-    return {b:b,lines:b.lines.slice(),pos:0};
+    var lines=[];
+    b.groups.forEach(function(gr){
+      if(gr.nome) lines.push({t:'g',text:gr.nome+' ('+gr.items.length+')'});
+      gr.items.forEach(function(x){ lines.push({t:'n',g:x.g,ind:gr.nome?1:0}) });
+    });
+    return {b:b,lines:lines,pos:0};
   });
   var first=true;
   do{
@@ -2813,12 +2719,12 @@ function buildTreePDF(opts){
       var yy=y+34, lineX=x0+8, startY=y+24, lastMid=null;
       if(!c.lines.length){ doc.setFont('helvetica','italic'); doc.setFontSize(8.5); doc.setTextColor(140,140,160); doc.text('Nenhum convidado.',x0+8,yy+6); return; }
       while(c.pos<c.lines.length){
-        var ln=c.lines[c.pos], jx=lineX+Math.min(ln.depth||0,5)*11, tx=jx+(ln.t==='g'?13:22), avail=x0+cw-tx-2, nameL, subL=null, hgt;
+        var ln=c.lines[c.pos], jx=lineX+(ln.ind?12:0), tx=jx+(ln.t==='g'?13:22), avail=x0+cw-tx-2, nameL, subL=null, hgt;
         if(ln.t==='g'){ nameL=[pdfSafe(ln.text)]; hgt=16; }
         else{
           doc.setFont('helvetica','bold'); doc.setFontSize(9);
-          nameL=doc.splitTextToSize(pdfSafe(ln.name||ln.g.nome),avail);
-          var sub=ln.sub!==undefined?ln.sub:[ln.g.rsvp,ln.g.mesa?'Mesa '+ln.g.mesa:'',ln.g.rest||''].filter(Boolean).join(' - ');
+          nameL=doc.splitTextToSize(pdfSafe(ln.g.nome),avail);
+          var sub=[ln.g.rsvp,ln.g.mesa?'Mesa '+ln.g.mesa:'',ln.g.rest||''].filter(Boolean).join(' - ');
           subL=sub?doc.splitTextToSize(pdfSafe(sub),avail):null;
           hgt=nameL.length*10.5+(subL?subL.length*9.5:0)+5;
         }
@@ -3096,7 +3002,7 @@ function renderGuests(){
 
   var vis=state.guests.map(function(g,i){return {g:g,i:i}}).filter(function(x){return guestMatches(x.g)});
   var vw=document.getElementById('guest-view');
-  if(vw) vw.innerHTML='<button class="chip'+(guestView==='lista'?' on':'')+'" onclick="setGuestView(\'lista\')">☰ Lista</button><button class="chip'+(guestView==='arvore'?' on':'')+'" onclick="setGuestView(\'arvore\')">🌳 Árvore</button>';
+  if(vw) vw.innerHTML='<button class="chip'+(guestView==='lista'?' on':'')+'" onclick="setGuestView(\'lista\')">☰ Lista</button><button class="chip'+(guestView==='arvore'?' on':'')+'" onclick="setGuestView(\'arvore\')">🌳 Árvore</button>'+(guestView==='arvore'?'<button class="chip'+(treeEdit?' on':'')+'" onclick="toggleTreeEdit()">↔ Mudar ordem</button>':'');
   document.getElementById('guest-list').style.display=guestView==='arvore'?'none':'block';
   document.getElementById('guest-tree').style.display=guestView==='arvore'?'block':'none';
 
@@ -3131,10 +3037,8 @@ function renderGuests(){
 
 function editGuest(i){
   var g=state.guests[i];
-  fillGuestLinkSelects(i);
-  setVal('fg-par',g.parentesco||'');setVal('fg-sexo',g.sexo||'');setVal('fg-parceiro',g.parceiroId||'');setVal('fg-pai',g.paiId||'');
   setVal('fg-idx',i);setVal('fg-nome',g.nome);setVal('fg-cat',g.cat);setVal('fg-rsvp',g.rsvp);setVal('fg-mesa',g.mesa);setVal('fg-rest',g.rest);setVal('fg-lado',ladoOf(g));document.getElementById('fg-crianca').checked=!!g.crianca;
-  guestConviteInfo(g);
+  guestConviteInfo(g);ensureIds();loadVinc(g);
   document.getElementById('fp-guest-ttl').textContent='Editar convidado';
   openPanel('fp-guest','edit');
   document.getElementById('fp-guest').scrollIntoView({behavior:'smooth',block:'start'});
@@ -3146,10 +3050,10 @@ function editGuest(i){
 var CONVITE_URL='https://martinswillians.github.io/CasamentoWeP/convite';
 var MONO_IMG=null;
 function conviteLink(o){ return CONVITE_URL+(o?'?o='+o:'') }
-function drawQR(canvas,url,px,quiet){
+function drawQR(canvas,url,px){
   var ctx=canvas.getContext&&canvas.getContext('2d'); if(!ctx||typeof qrcode!=='function') return false;
   var qr=qrcode(0,'H'); qr.addData(url); qr.make();
-  var n=qr.getModuleCount(), q=(quiet||4), tot=n+2*q, cell=Math.max(1,Math.floor(px/tot)), size=cell*tot;
+  var n=qr.getModuleCount(), q=4, tot=n+2*q, cell=Math.max(1,Math.floor(px/tot)), size=cell*tot;
   canvas.width=size; canvas.height=size;
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,size,size); ctx.fillStyle='#3b2a24';
   for(var r=0;r<n;r++) for(var k=0;k<n;k++) if(qr.isDark(r,k)) ctx.fillRect((k+q)*cell,(r+q)*cell,cell,cell);
@@ -3161,65 +3065,13 @@ function drawQR(canvas,url,px,quiet){
   }
   return true;
 }
-var CONFIRMAR_ATE='01/02/2027';
-function conviteDataTexto(){
-  var d=(state.evento&&state.evento.religioso)||'2027-03-14', m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
-  var dt=m?new Date(+m[1],+m[2]-1,+m[3]):new Date(2027,2,14);
-  var wd=dt.toLocaleDateString('pt-BR',{weekday:'long'}), mes=dt.toLocaleDateString('pt-BR',{month:'long'});
-  var h=String((state.espaco&&state.espaco.hora)||'').replace(/[^0-9:hH]/g,'').replace(/[:hH]/,'h'); if(!/^\d{1,2}h\d{0,2}$/.test(h)) h='15h30';
-  return wd.charAt(0).toUpperCase()+wd.slice(1)+', '+dt.getDate()+' de '+mes+' de '+dt.getFullYear()+' · '+h;
-}
-// convite completo para compartilhar: monograma, nomes, data e QR Code para abrir o convite e confirmar presença
-function drawConviteArt(canvas){
-  var W=1080, H=1350, c=canvas.getContext&&canvas.getContext('2d'); if(!c) return false;
-  canvas.width=W; canvas.height=H;
-  var GOLD='#b8934a', BROWN='#3b2a24', SOFT='#5a443b';
-  c.fillStyle='#f6efe3'; c.fillRect(0,0,W,H);
-  c.strokeStyle=GOLD; c.lineWidth=3; c.strokeRect(40,40,W-80,H-80); c.lineWidth=1; c.strokeRect(56,56,W-112,H-112);
-  var T=function(txt,y,font,color,sp){
-    c.font=font; c.fillStyle=color; c.textBaseline='alphabetic';
-    if(!sp){ c.textAlign='center'; c.fillText(txt,W/2,y); return }
-    c.textAlign='left'; var w=0, i; for(i=0;i<txt.length;i++) w+=c.measureText(txt[i]).width+sp; w-=sp;
-    var x=(W-w)/2; for(i=0;i<txt.length;i++){ c.fillText(txt[i],x,y); x+=c.measureText(txt[i]).width+sp }
-  };
-  if(MONO_IMG&&MONO_IMG.complete&&MONO_IMG.naturalWidth){ var mw=150, mh=mw*MONO_IMG.naturalHeight/MONO_IMG.naturalWidth; c.drawImage(MONO_IMG,(W-mw)/2,88,mw,mh); }
-  T('CONVITE DE CASAMENTO',266,'500 20px Montserrat, Arial, sans-serif','#8a7a70',6);
-  T('POLIANA',362,'600 80px "Cormorant Garamond", Georgia, serif',BROWN,8);
-  T('&',420,'italic 400 58px "Cormorant Garamond", Georgia, serif',GOLD);
-  T('WILLIANS',500,'600 80px "Cormorant Garamond", Georgia, serif',BROWN,8);
-  T(conviteDataTexto(),566,'italic 400 32px "Cormorant Garamond", Georgia, serif',SOFT);
-  var q=document.createElement('canvas'); drawQR(q,conviteLink('virtual'),520,2);
-  var pad=22, box=q.width+pad*2, bx=(W-box)/2, by=600;
-  c.fillStyle='#fff'; c.fillRect(bx,by,box,box); c.strokeStyle=GOLD; c.lineWidth=3; c.strokeRect(bx,by,box,box);
-  c.drawImage(q,bx+pad,by+pad);
-  var y=by+box+38;
-  T('Aponte a câmera do celular para abrir',y,'italic 400 32px "Cormorant Garamond", Georgia, serif',SOFT);
-  T('o convite e confirmar sua presença',y+40,'italic 400 32px "Cormorant Garamond", Georgia, serif',SOFT);
-  T('CONFIRME ATÉ '+CONFIRMAR_ATE,y+92,'500 20px Montserrat, Arial, sans-serif',GOLD,4);
-  return true;
-}
 function renderConvite(){
   var set=function(id,val){ var e=document.getElementById(id); if(e) e.value=val };
   set('cv-link-ver',conviteLink('')); set('cv-link-env',conviteLink('virtual')); set('cv-link-cartao',conviteLink('cartao'));
   if(!MONO_IMG){ MONO_IMG=new Image(); MONO_IMG.onload=renderConvite; MONO_IMG.src=MONO_B64; }
   [['qr-cartao-cv','cartao'],['qr-virtual-cv','virtual']].forEach(function(x){
-    var cv=document.getElementById(x[0]); if(!cv) return;
-    if(x[1]==='virtual') drawConviteArt(cv); else drawQR(cv,conviteLink(x[1]),1200);
+    var cv=document.getElementById(x[0]); if(cv) drawQR(cv,conviteLink(x[1]),1200);
   });
-  if(!window._cvFontsAsked&&document.fonts&&document.fonts.load){
-    window._cvFontsAsked=true;
-    Promise.all(['600 80px "Cormorant Garamond"','italic 400 32px "Cormorant Garamond"','500 20px Montserrat'].map(function(f){return document.fonts.load(f)}))
-      .then(function(){ renderConvite() }).catch(function(){});
-  }
-}
-function compartilharConvite(){
-  var cv=document.getElementById('qr-virtual-cv'); if(!cv||!cv.toBlob){ alert('Não foi possível gerar a imagem neste navegador.'); return }
-  cv.toBlob(function(b){
-    if(!b) return;
-    var f; try{ f=new File([b],'convite-poliana-willians.png',{type:'image/png'}) }catch(e){ f=null }
-    if(f&&navigator.canShare&&navigator.canShare({files:[f]})) navigator.share({files:[f],title:'Convite de casamento',text:'Convite de casamento Poliana & Willians 💍\nConfirme sua presença até '+CONFIRMAR_ATE+':\n'+conviteLink('virtual')}).catch(function(){});
-    else downloadBlob(b,'convite-poliana-willians.png');
-  },'image/png');
 }
 // abre na mesma janela (no app instalado não há botão de voltar do navegador); o convite mostra "← Voltar ao app"
 function abrirConvite(){ location.href=conviteLink('')+'?app=1' }
@@ -3235,7 +3087,7 @@ function zapConvite(){
 }
 function baixarQR(o){
   var cv=document.getElementById(o==='cartao'?'qr-cartao-cv':'qr-virtual-cv'); if(!cv||!cv.toBlob){ alert('Não foi possível gerar a imagem neste navegador.'); return }
-  cv.toBlob(function(b){ if(b) downloadBlob(b,o==='virtual'?'convite-virtual-com-qr.png':'qr-convite-'+o+'.png') },'image/png');
+  cv.toBlob(function(b){ if(b) downloadBlob(b,'qr-convite-'+o+'.png') },'image/png');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3475,34 +3327,23 @@ function guestConviteInfo(g){
     (g.conviteMsg?'<div class="sub" style="margin:-4px 0 10px;font-style:italic">“'+esc(g.conviteMsg)+'”</div>':'');
 }
 
-function fillGuestLinkSelects(ex){
-  ensureIds(state,false);
-  var opts='<option value="">— nenhum —</option>'+state.guests.map(function(g,i){return {g:g,i:i}}).filter(function(x){return x.i!==ex})
-    .sort(function(a,b){return String(a.g.nome).localeCompare(String(b.g.nome),'pt-BR')}).map(function(x){return '<option value="'+x.g.id+'">'+esc(x.g.nome)+'</option>'}).join('');
-  var p=document.getElementById('fg-parceiro'), q=document.getElementById('fg-pai');
-  if(p) p.innerHTML=opts; if(q) q.innerHTML=opts.replace('— nenhum —','— direto dos noivos —');
-  setVal('fg-par','');setVal('fg-sexo','');setVal('fg-parceiro','');setVal('fg-pai','');
-}
 function saveGuest(){
   var idx=parseInt(v('fg-idx'));
   var nome=v('fg-nome').trim();if(!nome)return;
   var obj=Object.assign({},idx>=0?state.guests[idx]:{},{nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest'),lado:v('fg-lado')});
   if(document.getElementById('fg-crianca').checked) obj.crianca=true; else delete obj.crianca;
-  var _par=v('fg-par').trim(), _sx=v('fg-sexo'), _np=v('fg-parceiro'), _pai=v('fg-pai'), _op=(idx>=0&&state.guests[idx].parceiroId)||'';
-  if(_par) obj.parentesco=_par; else delete obj.parentesco;
-  if(_sx) obj.sexo=_sx; else delete obj.sexo;
-  if(_pai) obj.paiId=_pai; else delete obj.paiId;
-  if(_np) obj.parceiroId=_np; else delete obj.parceiroId;
-  if(!obj.id) obj.id=newId();
-  state.guests.forEach(function(o){                       // casal sempre nos dois lados
-    if(o===obj) return;
-    if(_op&&o.id===_op&&_op!==_np&&o.parceiroId===obj.id) delete o.parceiroId;
-    if(_np&&o.id!==_np&&o.parceiroId===_np) delete o.parceiroId;
-    if(_np&&o.id===_np) o.parceiroId=obj.id;
-  });
+  if(!obj.id) obj.id=newGid();
+  var par=v('fg-par'), vt=v('fg-vt'), vc=v('fg-vc');
+  if(par) obj.parentesco=par; else delete obj.parentesco;
+  if(vt&&!vc){ alert('Escolha com quem '+nome+' se vincula, ou mude a posição para “Direto sob o noivo/noiva”.'); return; }
+  if(vt&&vc){
+    var by0=gMap(); by0[obj.id]=obj;
+    if(vc===obj.id||reaches(by0,vc,obj.id)){ alert('Esse vínculo criaria um círculo na árvore. Escolha outra pessoa.'); return; }
+    obj.vinculoTipo=vt; obj.vinculoId=vc;
+  } else { delete obj.vinculoTipo; delete obj.vinculoId; }
   if(idx>=0){addLog('edit','Convidado editado',state.guests[idx].nome+' → '+nome);state.guests[idx]=obj;}
   else{addLog('add','Convidado adicionado',nome);state.guests.push(obj);}
-  setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');setVal('fg-lado','');document.getElementById('fg-crianca').checked=false;guestConviteInfo(null);
+  setVal('fg-idx',-1);setVal('fg-nome','');setVal('fg-mesa','');setVal('fg-rest','');setVal('fg-lado','');document.getElementById('fg-crianca').checked=false;guestConviteInfo(null);loadVinc(null);
   document.getElementById('fp-guest-ttl').textContent='Novo convidado';
   closePanel('fp-guest');saveState();renderGuests();
 }
@@ -3511,7 +3352,7 @@ function delGuest(i){
   var gg=state.guests[i], ids=(gg.rsvpIds||[]).slice();
   addLog('del','Convidado removido',gg.nome);
   state.guests.splice(i,1);
-  state.guests.forEach(function(o){ if(o.parceiroId===gg.id) delete o.parceiroId; if(o.paiId===gg.id) delete o.paiId; });
+  if(gg.id) state.guests.forEach(function(o){ if(o.vinculoId===gg.id){ delete o.vinculoId; delete o.vinculoTipo } });
   saveState();renderGuests();
   if(ids.length&&window.FB&&FB.deleteRsvp&&confirm('Esse convidado respondeu pelo convite.\nExcluir também a resposta dele da nuvem?\n(OK = excluir · Cancelar = manter a resposta em “📥 Convite”)')){
     Promise.all(ids.map(function(id){return FB.deleteRsvp(id)})).then(function(){
@@ -3961,6 +3802,7 @@ function shareEmail(){
 function resetApp(){
   if(!confirm('Tem certeza? Isso apagará TODOS os dados do app.')) return;
   if(!confirm('Segunda confirmação: apagar tudo e voltar ao estado inicial?')) return;
+  allowShrinkOnce=true;
   state = JSON.parse(JSON.stringify(defaultState));
   state.guests = [];
   logs = [];
@@ -3986,7 +3828,7 @@ import {
 import {
   initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
   doc, getDoc, setDoc, onSnapshot, serverTimestamp,
-  collection, getDocs, query, orderBy, deleteDoc, updateDoc, deleteField, runTransaction
+  collection, getDocs, where, query, orderBy, deleteDoc, updateDoc, deleteField
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -4035,6 +3877,7 @@ const dataRef = doc(db, "wedding", "main");
 const userRef = (uid) => doc(db, "users", uid);
 let pendingProfile = null;   // nome/função escolhidos no cadastro
 let unsubData = null;
+let unsubGuests = null;
 
 async function loadProfile(user) {
   let prof = null, readOk = true;
@@ -4096,25 +3939,21 @@ window.FB = {
     const snap = await getDocs(query(collection(db, "rsvps"), orderBy("createdAt")));
     return snap.docs.map(d => { const x = d.data(); const ts = (x.createdAt && x.createdAt.toMillis) ? x.createdAt.toMillis() : 0; delete x.createdAt; return { id: d.id, ...x, ts }; });
   },
+  async readMain() { const s = await getDoc(dataRef); return s.exists() ? s.data() : null; },
+  watchGuests(cb, errCb) {
+    if (unsubGuests) return;
+    unsubGuests = onSnapshot(query(collection(db, "wedding"), where("kind", "==", "guest")),
+      (snap) => cb(snap.docs.map(d => d.data()), { fromCache: snap.metadata.fromCache }), errCb);
+  },
+  saveGuest(g) {
+    return setDoc(doc(db, "wedding", "guest_" + g.id), { ...g, kind: "guest", uby: auth.currentUser ? auth.currentUser.uid : null, at: serverTimestamp() });
+  },
+  deleteGuest(id) { return deleteDoc(doc(db, "wedding", "guest_" + id)); },
   deleteRsvp(id) { return deleteDoc(doc(db, "rsvps", id)); },
   removeDefaultGuests() { return updateDoc(dataRef, { defaultGuests: deleteField() }); },
   resetPassword(email) { return sendPasswordResetEmail(auth, email); },
   logout() { return signOut(auth); },
   getToken() { return auth.currentUser ? auth.currentUser.getIdToken() : Promise.reject(new Error('sem login')); },
-  async saveMerged(localState, mergeFn, localLogs, mergeLogsFn) {
-    return runTransaction(db, async (tx) => {
-      const snap = await tx.get(dataRef);
-      const cur = snap.exists() ? snap.data() : {};
-      const curState = (cur.state && typeof cur.state === "object") ? cur.state : {};
-      const outState = {};
-      for (const k of Object.keys(localState)) outState[k] = mergeFn(k, curState[k]);
-      const payload = { state: outState, updatedAt: serverTimestamp(), updatedBy: auth.currentUser ? auth.currentUser.uid : null };
-      let outLogs = null;
-      if (localLogs) { outLogs = mergeLogsFn(localLogs, Array.isArray(cur.logs) ? cur.logs : []); payload.logs = outLogs; }
-      tx.set(dataRef, payload, { merge: true });
-      return { state: outState, logs: outLogs };
-    });
-  },
   saveData(patch) {
     return setDoc(dataRef, {
       ...patch,
@@ -4140,6 +3979,7 @@ getRedirectResult(auth).catch(e => { if (window.onAuthError) window.onAuthError(
 // Fonte única da verdade sobre quem está logado — roda também ao reabrir o app
 onAuthStateChanged(auth, async (user) => {
   if (unsubData) { unsubData(); unsubData = null; }
+  if (unsubGuests) { unsubGuests(); unsubGuests = null; }
   if (!user) { window.onAuthChanged(null); return; }
 
   const profile = await loadProfile(user);
