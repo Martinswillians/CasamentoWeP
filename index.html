@@ -426,7 +426,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
 .fx-card.root{width:calc(var(--cw) + 14px);cursor:default}
 .fx-av{width:var(--av);height:var(--av);border-radius:50%;background:var(--bg);border:1.5px solid var(--c);margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:calc(var(--av)*.38);font-weight:700;color:var(--txt)}
 .fx-nm{font-size:var(--fs);font-weight:700;line-height:1.2;color:var(--txt);overflow-wrap:anywhere}
-.fx-rl{font-size:var(--fs2);color:var(--txt2);margin-top:1px}
+.fx-rl{font-size:var(--fs2);color:var(--txt2);margin-top:1px;overflow-wrap:anywhere;line-height:1.15}
 .fx-dot{position:absolute;top:5px;right:7px;width:7px;height:7px;border-radius:50%}
 .fx-dot.r-ok{background:#4ecba0}.fx-dot.r-wait{background:#d4941c}.fx-dot.r-no{background:#f87171}
 .fx-dim{opacity:.28}
@@ -602,7 +602,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
       <div id="guest-kids" style="font-size:12px;color:var(--txt2);margin:-4px 0 12px"></div>
       <div class="view-row" id="guest-view"></div>
       <div class="chips" id="guest-filter"></div>
-      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-convite" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
+      <div class="sec-hdr"><span class="sec-ttl">Lista de Convidados</span><div class="sec-act"><button class="btn-sm" id="btn-convite" onclick="openRsvps()">📥 Convite</button><button class="btn-sm" id="btn-dups" onclick="openDups()" style="display:none">🧹 Duplicados</button><button class="btn-sm" onclick="openExport('guests')">⤓ Exportar</button><button class="btn-sm" onclick="openPanel('fp-guest','novo')">+ Adicionar</button></div></div>
       <div class="form-panel" id="fp-guest">
         <div class="form-panel-ttl"><span id="fp-guest-ttl">Novo convidado</span><button onclick="closePanel('fp-guest')">×</button></div>
         <input type="hidden" id="fg-idx" value="-1">
@@ -626,6 +626,7 @@ body.drag-active{user-select:none;-webkit-user-select:none;cursor:grabbing}
         <div id="fg-convite-info" style="display:none"></div>
         <button class="btn-save" onclick="saveGuest()">Salvar convidado</button>
       </div>
+      <div class="form-panel" id="fp-dups"><div class="form-panel-ttl"><span>🧹 Nomes repetidos</span><button onclick="closePanel('fp-dups')">×</button></div><div id="dups-box" style="max-height:68vh;overflow:auto"></div></div>
       <div id="guest-list"></div>
       <div id="guest-tree" style="display:none"></div>
     </div>
@@ -1232,6 +1233,28 @@ function saveState(){
 //  CONVIDADOS: cada um é um documento próprio (wedding/guest_<id>)
 //  Assim uma gravação antiga ou de outro aparelho nunca apaga a lista inteira.
 // ═══════════════════════════════════════════════════
+var APP_VERSION='2026-11-27 · convidados em documentos', _mainServer=false;
+function checkOldClient(data){
+  var old=(data&&data.state&&Array.isArray(data.state.guests))?data.state.guests:[];
+  var el=document.getElementById('old-client');
+  if(!(state.meta&&state.meta.guestsDocs&&old.length)){ if(el) el.remove(); return; }
+  if(!el){ el=document.createElement('div'); el.id='old-client';
+    el.style.cssText='position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 74px);z-index:99998;background:#7a4b00;color:#fff;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.4;box-shadow:0 6px 20px rgba(0,0,0,.5);cursor:pointer';
+    el.onclick=adoptLegacyGuests; document.body.appendChild(el); }
+  el.textContent='⚠️ Outro aparelho está usando uma versão antiga do app e gravou '+old.length+' convidado(s) no formato antigo. Peça para atualizar a página. Toque aqui para tratar esses dados.';
+  el._old=old;
+}
+function adoptLegacyGuests(){
+  var el=document.getElementById('old-client'); if(!el||!el._old) return;
+  var old=el._old, add=[];
+  old.forEach(function(g){ if(!g||!g.nome) return; if(!state.guests.some(function(x){return _gBase(x.nome)===_gBase(g.nome)})) add.push(g); });
+  if(add.length&&confirm('Importar '+add.length+' convidado(s) que ainda não estão na lista (os que já existem não serão duplicados)?\n\nObs.: pode incluir pessoas que você já tinha apagado.')){
+    add.forEach(function(g){ var n=Object.assign({},g); delete n.id; n.id=newGid(); state.guests.push(n); });
+    addLog('add','Convidados importados do formato antigo',add.length+' pessoa(s)');
+    saveState(); flushPending(); renderGuests();
+  } else if(!confirm('Descartar esses dados antigos? (a lista atual não muda)')) return;
+  Promise.resolve().then(function(){ return FB.saveData({state:{guests:[]}}) }).then(function(){ el.remove() }).catch(function(e){ alert('Não consegui limpar: '+((e&&e.message)||e)) });
+}
 var allowShrinkOnce=false, guestsLoaded=false, _gSent={}, _gDirty={}, _gInfl={}, _gWatch=false, _gMigrating=false, _gLast=null;
 function _gnk(t){ return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase() }
 function _fnv(t){ var h=2166136261; for(var i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619) } return (h>>>0).toString(36) }
@@ -1241,6 +1264,54 @@ function guestMode(){ return !!(state.meta&&state.meta.guestsDocs) }
 function startGuestWatch(){
   if(_gWatch||!window.FB||!FB.watchGuests) return; _gWatch=true;
   FB.watchGuests(onGuestsData,function(e){ console.error('Convidados:',e); showSaveError([{name:'convidados',err:e}]); });
+}
+
+// ─── Duplicados: o nome sem "(parentesco)" é igual ───
+function _gBase(n){ return _gnk(String(n||'').replace(/\(.*?\)/g,' ')) }
+function dupGroups(){
+  var m={}; state.guests.forEach(function(g,i){ var k=_gBase(g.nome); if(!k) return; (m[k]=m[k]||[]).push(i) });
+  return Object.keys(m).filter(function(k){return m[k].length>1}).map(function(k){return {k:k,idx:m[k]}});
+}
+function updateDupBtn(){
+  var b=document.getElementById('btn-dups'); if(!b) return;
+  var n=dupGroups().length; b.style.display=n?'':'none'; b.textContent='🧹 Duplicados ('+n+')';
+}
+function openDups(){ ensureIds(); openPanel('fp-dups','novo'); renderDups(); document.getElementById('fp-dups').scrollIntoView({behavior:'smooth',block:'start'}); }
+function renderDups(){
+  var box=document.getElementById('dups-box'); if(!box) return;
+  var gr=dupGroups();
+  if(!gr.length){ box.innerHTML='<div class="empty">✓ Nenhum nome repetido.</div>'; updateDupBtn(); return; }
+  box.innerHTML='<div class="sub" style="margin-bottom:8px">Estes nomes aparecem mais de uma vez. Escolha qual manter: os dados que faltarem nele são completados com os dos outros, e quem estava ligado a um repetido passa a ligar ao que ficou.</div>'+
+    gr.map(function(g){
+      return '<div class="card" style="margin-bottom:8px">'+g.idx.map(function(i){ var x=state.guests[i];
+        return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><div class="nm">'+esc(x.nome)+'</div><div class="sub">'+esc([x.lado==='noivo'?'Noivo':x.lado==='noiva'?'Noiva':'Sem lado',x.parentesco||'',x.rsvp||'',x.viaConvite?'via convite':'cadastro manual'].filter(Boolean).join(' · '))+'</div></div>'+
+          '<button class="btn-sm" onclick="keepGuest(\''+g.k.replace(/'/g,"")+'\',\''+x.id+'\')">Manter este</button></div>' }).join('')+'</div>';
+    }).join('');
+  updateDupBtn();
+}
+function keepGuest(k,keepId){
+  var grp=dupGroups().filter(function(g){return g.k===k})[0]; if(!grp) return;
+  var keep=state.guests.filter(function(g){return g.id===keepId})[0]; if(!keep) return;
+  var others=grp.idx.map(function(i){return state.guests[i]}).filter(function(g){return g.id!==keepId});
+  others.forEach(function(o){
+    state.guests.forEach(function(x){ if(x.vinculoId===o.id) x.vinculoId=keep.id });
+    ['parentesco','lado','vinculoTipo','vinculoId','crianca','viaConvite','acompDe','mesa','rest'].forEach(function(f){
+      if((keep[f]===undefined||keep[f]===''||keep[f]===null)&&o[f]!==undefined&&o[f]!=='') keep[f]=o[f];
+    });
+    if(o.rsvp==='Confirmado'&&keep.rsvp!=='Confirmado') keep.rsvp='Confirmado';
+    addLog('del','Duplicado removido',o.nome+' (mantido: '+keep.nome+')');
+  });
+  if(keep.vinculoId===keep.id){ delete keep.vinculoId; delete keep.vinculoTipo; }
+  state.guests=state.guests.filter(function(g){ return others.indexOf(g)<0 });
+  saveState(); flushPending(); renderGuests(); renderDups();
+}
+
+function adoptGuestDocs(){
+  // já existem documentos de convidados na nuvem: usa só eles e descarta a lista antiga que este aparelho tinha
+  state.guests=[];
+  state.meta=(state.meta&&typeof state.meta==='object')?state.meta:{}; state.meta.guestsDocs=true;
+  saveState();
+  if(_gLast) onGuestsData(_gLast.list,_gLast.meta);
 }
 function migrateGuests(map){
   _gMigrating=true;
@@ -1264,7 +1335,11 @@ function onGuestsData(list,meta){
   var cloud=list.map(_gStrip).filter(function(g){return g.id}).sort(_gOrd), map={};
   cloud.forEach(function(g){ map[g.id]=g });
   if(!guestMode()){
-    if(!meta.fromCache&&!_gMigrating&&cloudLoaded){ try{ migrateGuests(map) }catch(e){ _gMigrating=false; console.error('Migração de convidados:',e); showSaveError([{name:'convidados',err:e}]) } }
+    // só decide com dados confirmados pelo servidor (nunca com cópia velha guardada no aparelho)
+    if(!meta.fromCache&&!_gMigrating&&cloudLoaded&&_mainServer){
+      try{ if(Object.keys(map).length===0) migrateGuests(map); else adoptGuestDocs(); }
+      catch(e){ _gMigrating=false; console.error('Migração de convidados:',e); showSaveError([{name:'convidados',err:e}]) }
+    }
     return;
   }
   var out=[], used={};
@@ -1380,7 +1455,7 @@ function runDiag(){
     out.innerHTML='<div class="card" style="padding:10px 12px;margin-top:8px">'+
       '<div style="font-size:13px;font-weight:700;margin-bottom:6px">'+(bad?'⚠️ '+bad+' problema(s) encontrado(s)':'✅ Tudo gravou e foi conferido na nuvem')+'</div>'+
       rows.map(function(r){ return '<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)">'+(r.ok?(r.conf?'✅':'⚠️'):'❌')+' <b>'+(SEC_NOMES[r.k]||r.k)+'</b> <span style="color:var(--txt2)">'+r.kb.toFixed(1)+' KB</span>'+(r.ok?(r.conf?'':'<div style="color:#f0be6c">Gravou, mas o servidor devolveu um valor diferente.</div>'):'<div style="color:#f87171;word-break:break-word">'+esc(r.msg)+'</div>')+'</div>' }).join('')+
-      '<div style="font-size:11px;color:var(--txt2);margin-top:8px">Seções na nuvem: '+(cloudKeys.join(', ')||'nenhuma')+(miss.length?' · <b style="color:#f87171">faltando: '+miss.join(', ')+'</b>':'')+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Convidados: '+state.guests.length+' no app · '+Object.keys(_gSent).length+' na nuvem (um documento cada)'+(guestMode()?'':' · <b>modo antigo</b>')+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Tamanho total ≈ '+(total/1024).toFixed(0)+' KB de 1024 KB (limite do Firestore para o documento).'+(total>900*1024?' <b style="color:#f87171">Perto do limite!</b>':'')+'</div></div>';
+      '<div style="font-size:11px;color:var(--txt2);margin-top:8px">Seções na nuvem: '+(cloudKeys.join(', ')||'nenhuma')+(miss.length?' · <b style="color:#f87171">faltando: '+miss.join(', ')+'</b>':'')+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Versão do app neste aparelho: '+APP_VERSION+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Convidados: '+state.guests.length+' no app · '+Object.keys(_gSent).length+' na nuvem (um documento cada)'+(guestMode()?'':' · <b>modo antigo</b>')+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">Tamanho total ≈ '+(total/1024).toFixed(0)+' KB de 1024 KB (limite do Firestore para o documento).'+(total>900*1024?' <b style="color:#f87171">Perto do limite!</b>':'')+'</div></div>';
   }).catch(function(e){ out.innerHTML='<div class="empty">Falha no teste: '+esc((e&&e.message)||e)+'</div>'; });
 }
 
@@ -1406,6 +1481,7 @@ function mergeLogs(a,b){
 function wasLoadedEarly(){ return cloudLoaded }
 window.onCloudData=function(data,meta){
   meta=meta||{};
+  var _wasSrv=_mainServer; if(!meta.fromCache) _mainServer=true;
   if(!data){
     // Documento ainda não existe. Só cria se o SERVIDOR confirmou (nunca a partir do cache offline).
     if(meta.fromCache){ return }
@@ -1413,7 +1489,8 @@ window.onCloudData=function(data,meta){
   }
   var prevMax=maxTs(logs), wasLoaded=cloudLoaded;
   var st=normalizeState(data.state);
-  if(st.meta&&st.meta.guestsDocs) st.guests=state.guests||[];
+  // modo novo: a lista na memória espelha os documentos; se acabamos de passar para o modo novo, descarta a lista antiga (cache/localStorage)
+  if(st.meta&&st.meta.guestsDocs) st.guests=guestMode()?(state.guests||[]):[];
   var lg=Array.isArray(data.logs)?data.logs:[];
 
   // "Último estado conhecido da nuvem" (base para enviar só o que mudar)
@@ -1451,6 +1528,8 @@ window.onCloudData=function(data,meta){
   if(data.defaultGuests!==undefined&&!_defRemoved&&window.FB&&FB.removeDefaultGuests){ _defRemoved=true; FB.removeDefaultGuests().catch(function(){}); }
   cloudLoaded=true; clearTimeout(_waitTimer);
   startGuestWatch();
+  checkOldClient(data);
+  if(!_wasSrv&&_mainServer&&_gLast) setTimeout(function(){ if(_gLast) onGuestsData(_gLast.list,_gLast.meta) },0);
   if(!appEntered){ appEntered=true; enterApp(); }
   else {
     renderAll();
@@ -2114,7 +2193,7 @@ window.onAuthChanged=function(profile){
   if(!profile){
     clearTimeout(_saveTimer); _saveTimer=null;
     currentUser=null; cloudLoaded=false; appEntered=false; _lastSent={};
-    _gWatch=false; guestsLoaded=false; _gSent={}; _gDirty={}; _gInfl={}; _gLast=null; _gMigrating=false;
+    _gWatch=false; guestsLoaded=false; _gSent={}; _gDirty={}; _gInfl={}; _gLast=null; _gMigrating=false; _mainServer=false;
     state=clone(defaultState); logs=[];
     closeProfile(); closeOv('edit-profile-modal');
     document.getElementById('main-app').style.display='none';document.body.classList.remove('in-app');
@@ -2628,6 +2707,7 @@ function moveGuest(i,dir){
   saveState(); renderGuests();
 }
 function fxIni(n){ var w=String(n||'?').trim().split(/\s+/); return ((w[0]||'?')[0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase() }
+var _rgOrig=null;
 function renderGuestTree(){
   var box=document.getElementById('guest-tree'); if(!box) return;
   ensureIds();
@@ -2984,7 +3064,8 @@ function guestMatches(g,f){
   return f==='todos'||(f==='convite'?!!g.viaConvite:(f==='criancas'?!!g.crianca:(f==='sem'?l==='':l===f)));
 }
 
-function renderGuests(){
+function renderGuests(){ _renderGuestsCore(); try{ updateDupBtn() }catch(e){} }
+function _renderGuestsCore(){
   var adultos=state.guests.filter(function(g){return !g.crianca}), kids=state.guests.filter(function(g){return g.crianca});
   var c=adultos.length,
       conf=adultos.filter(function(g){return g.rsvp==='Confirmado'}).length,
@@ -3344,6 +3425,10 @@ function saveGuest(){
   var nome=v('fg-nome').trim();if(!nome)return;
   var obj=Object.assign({},idx>=0?state.guests[idx]:{},{nome:nome,cat:v('fg-cat'),rsvp:v('fg-rsvp'),mesa:v('fg-mesa'),rest:v('fg-rest'),lado:v('fg-lado')});
   if(document.getElementById('fg-crianca').checked) obj.crianca=true; else delete obj.crianca;
+  if(!(idx>=0)){
+    var rep0=state.guests.filter(function(g){return _gBase(g.nome)===_gBase(nome)})[0];
+    if(rep0&&!confirm('Já existe um convidado chamado “'+rep0.nome+'”. Adicionar mesmo assim?')) return;
+  }
   if(!obj.id) obj.id=newGid();
   var par=v('fg-par'), vt=v('fg-vt'), vc=v('fg-vc');
   if(par) obj.parentesco=par; else delete obj.parentesco;
